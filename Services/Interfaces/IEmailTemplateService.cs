@@ -1,5 +1,6 @@
 ﻿using Entities.Models.Settings.Email;
 using Enums;
+using Microsoft.AspNetCore.Http;
 using Models.Response;
 using Models.Response.Settings.Email;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Services.Interfaces
 {
-  public interface IEmailTemplateSettingsService
+  public interface IEmailTemplateService
   {
     /// <summary>
     /// Get all email templates.
@@ -51,5 +52,14 @@ namespace Services.Interfaces
     /// <param name="id">Entity Id.</param>
     /// <returns>Error code and message if could not delete.</returns>
     Task<ErrorResponse> Delete(int id);
+
+    /// <summary>
+    /// Generate Template Preview.
+    /// </summary>
+    /// <param name="id">Template Id.</param>
+    /// <returns>Email template with replaced variables.</returns>
+    Task<EmailTemplateResponse> Preview(int id);
+
+    Task<string> ImageUpload(byte[] data, string fileType);
   }
 }

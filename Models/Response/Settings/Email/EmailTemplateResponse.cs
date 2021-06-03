@@ -17,10 +17,10 @@ namespace Models.Response.Settings.Email
     /// <summary>
     /// Email template response.
     /// </summary>
-    /// <param name="emailTemplates">Email templates.</param>
-    public EmailTemplateResponse(EmailTemplate emailTemplates)
+    /// <param name="emailTemplate">Email templates.</param>
+    public EmailTemplateResponse(EmailTemplate emailTemplate)
     {
-      this.EmailTemplate = emailTemplates;
+      this.EmailTemplate = emailTemplate;
     }
 
     /// <summary>

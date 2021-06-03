@@ -45,12 +45,5 @@ namespace Entities.Models.Settings.Email
       /// Default Server.
       /// </summary>
       public bool Default { get; set; }
-
-      // Navigation Properties
-
-      /// <summary>
-      /// Navigation Property to EmailSender Entity.
-      /// </summary>
-      public List<EmailSender> EmailSender { get; set; }
     }
 }

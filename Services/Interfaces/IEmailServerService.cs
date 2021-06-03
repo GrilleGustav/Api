@@ -6,14 +6,11 @@ using Entities.Models.Settings.Email;
 using Models.Request.Settings.Email;
 using Models.Response;
 using Models.Response.Settings.Email;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces
 {
-  public interface IEmailServerSettingsService
+  public interface IEmailServerService
   {
     /// <summary>
     /// Get all email server.
@@ -27,13 +24,6 @@ namespace Services.Interfaces
     /// <param name="id">Entity id.</param>
     /// <returns>Email server entity.</returns>
     Task<EmailServerSettingResponse> GetOne(int id);
-
-    /// <summary>
-    /// Get one email server with senders.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    /// <returns>Email server entity with senders. If fails return error code and or error message.</returns>
-    Task<EmailServerSettingResponse> GetOneWithSenders(int id);
 
     /// <summary>
     /// Get default email server.

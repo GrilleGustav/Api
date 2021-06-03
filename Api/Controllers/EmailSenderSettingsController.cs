@@ -21,10 +21,10 @@ namespace Api.Controllers
   public class EmailSenderSettingsController : ControllerBase
   {
     private ILogger<EmailSenderSettingsController> _logger;
-    private IEmailSenderSettingsService _emailSenderSettingsService;
+    private IEmailSenderService _emailSenderSettingsService;
     private readonly IMapper _mapper;
 
-    public EmailSenderSettingsController(ILogger<EmailSenderSettingsController> logger, IEmailSenderSettingsService emailSenderSettingsService, IMapper mapper)
+    public EmailSenderSettingsController(ILogger<EmailSenderSettingsController> logger, IEmailSenderService emailSenderSettingsService, IMapper mapper)
     {
       _logger = logger;
       _emailSenderSettingsService = emailSenderSettingsService;
@@ -35,21 +35,6 @@ namespace Api.Controllers
     public async Task<ActionResult<EmailSenderSettingsResponse>> GetAll()
     {
       EmailSenderSettingsResponse emailSenderSettingsResponse = await _emailSenderSettingsService.GetAll();
-      return Ok(emailSenderSettingsResponse);
-    }
-
-    /// <summary>
-    /// Get all sender from specified server.
-    /// </summary>
-    /// <param name="id">Email server id.</param>
-    /// <returns>List of email senders or error code.</returns>
-    [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<EmailSenderSettingsController>> GetAllFromSpecifiedServer(int id)
-    {
-      if (id == 0)
-        return BadRequest();
-
-      EmailSenderSettingsResponse emailSenderSettingsResponse = await _emailSenderSettingsService.GetAllFromSpecifiedServer(id);
       return Ok(emailSenderSettingsResponse);
     }
 

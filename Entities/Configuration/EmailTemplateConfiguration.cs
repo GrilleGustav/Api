@@ -29,9 +29,9 @@ namespace Entities.Configuration
         new EmailTemplate
         {
           Id = 1,
-          Name = "developper",
-          Description = "Developper template for testing.",
-          Content = "<h1>Developper Email for testing</h1>",
+          Name = "Register 1",
+          Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
+          Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
           EmailTemplateType = Enums.EmailTemplateType.Register,
           Predefined = true,
           EmailSenderId = 1

@@ -26,11 +26,11 @@ namespace Entities.Configuration
         {
           Id = 1,
           Default = true,
-          ServerIp = "192.168.21.4",
+          ServerIp = "mail.grillegustav.de",
           ServerPort = "25",
-          ServerUsername = "admin@web.de",
-          ServerPassword = "123",
-          Description = "Testdatensatz"
+          ServerUsername = "developper@grillegustav.de",
+          ServerPassword = "mobuapXikC",
+          Description = "Testbenutzer"
         });
     }
   }

@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models.Settings.Email;
 using Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models.Response;
@@ -8,17 +9,18 @@ using Models.Response.Settings.Email;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
 {
-  public class EmailTemplateSettingsService : IEmailTemplateSettingsService
+  public class EmailTemplateService : IEmailTemplateService
   {
-    private readonly ILogger<EmailTemplateSettingsService> _logger;
+    private readonly ILogger<EmailTemplateService> _logger;
     private readonly IRepositoryManager _repository;
 
-    public EmailTemplateSettingsService(IRepositoryManager repository, ILogger<EmailTemplateSettingsService> logger)
+    public EmailTemplateService(IRepositoryManager repository, ILogger<EmailTemplateService> logger)
     {
       _repository = repository;
       _logger = logger;
@@ -96,7 +98,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Id != data.Id, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;
@@ -107,7 +109,7 @@ namespace Services
         {
           EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
           if (emailTemplate != null)
-            return new ErrorResponse(errorCode: "EmailTemplate.5", errorMessage: "Can't set default server to false.");
+            return new ErrorResponse(errorCode: "EmailTemplate.5", errorMessage: "Can't set default template to false.");
         }
 
         _repository.EmailTemplate.Update(data);
@@ -178,6 +180,76 @@ namespace Services
         _logger.LogError(e.Message);
         return new ErrorResponse(errorCode: "EmailTemplate.10", errorMessage: e.Message);
       }
+    }
+
+    /// <summary>
+    /// Generate Template Preview.
+    /// </summary>
+    /// <param name="id">Template Id.</param>
+    /// <returns>Email template with replaced variables.</returns>
+    public async Task<EmailTemplateResponse> Preview(int id)
+    {
+      try
+      {
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).SingleOrDefaultAsync();
+        if (emailTemplate != null)
+        {
+         string newContent = emailTemplate.Content.Replace("{Date}", DateTime.Now.ToString());
+          emailTemplate.Content = newContent;
+          return new EmailTemplateResponse(emailTemplate: emailTemplate);
+        }
+        return new EmailTemplateResponse(errorCode: "1");
+      }
+      catch (Exception e)
+      {
+        _logger.LogError(e.Message);
+        return new EmailTemplateResponse(errorCode: "2", errorMessage: e.Message);
+      }
+    }
+
+    public async Task<string> ImageUpload(byte[] data, string fileType)
+    {
+      string fileExtension = "";
+      switch (fileType)
+      {
+        case "jpeg":
+          fileExtension = "jpg";
+          break;
+        case "png":
+          fileExtension = "png";
+          break;
+        case "gif":
+          fileExtension = "gif";
+          break;
+        case "bmp":
+          fileExtension = "bmp";
+          break;
+        case "webp":
+          fileExtension = "webp";
+          break;
+        case "tiff":
+          fileExtension = "tiff";
+          break;
+        default:
+          fileExtension = "jpg";
+          break;
+      }
+      string fileName = string.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
+      string imagePath = string.Format(@"./Upload/Editor/Images/{0}", fileName);
+      try
+      {
+        using (FileStream fs = File.Create(imagePath))
+        {
+          await fs.WriteAsync(data, 0, data.Length);
+        }
+
+      }
+      catch (Exception e)
+      {
+        _logger.LogError(e.Message);
+      }
+
+      return fileName;
     }
   }
 }

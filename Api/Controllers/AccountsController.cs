@@ -4,12 +4,17 @@
 
 using Api.Jwt;
 using AutoMapper;
+using Contracts;
 using Entities.Models.Account;
+using Entities.Models.Email;
+using Entities.Models.Settings.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Models.Request;
 using Models.Response;
+using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +30,16 @@ namespace Api.Controllers
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     private readonly JwtHandler _jwtHandler;
+    private readonly IEmailService _emailService;
+    private readonly IRepositoryManager _repositoryManager;
 
-    public AccountsController(UserManager<User> userManager, IMapper mapper, JwtHandler jwtHandler)
+    public AccountsController(UserManager<User> userManager, IMapper mapper, JwtHandler jwtHandler, IEmailService emailService, IRepositoryManager repositoryManager)
     {
       _userManager = userManager;
       _mapper = mapper;
       _jwtHandler = jwtHandler;
+      _emailService = emailService;
+      _repositoryManager = repositoryManager;
     }
 
     /// <summary>
@@ -55,21 +64,25 @@ namespace Api.Controllers
       }
 
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-      var param = new Dictionary<string, string>
-      {
-        {"token", token },
-        {"email", user.Email }
-      };
-
-      var callback = QueryHelpers.AddQueryString(registrationRequest.ClientURI, param);
-
-      //var message = new Message(new string[] { "codemazetest@gmail.com" }, "Email Confirmation token", callback, null);
-      //await _emailSender.SendEmailAsync(message); TODO
+      EmailMessage emailMessage = await this.GenerateRegisterConfirmMessage(user, registrationRequest.ClientURI, token);
+      await _emailService.SendMail(emailMessage);
 
       await _userManager.AddToRoleAsync(user, "User");
 
       return StatusCode(201);
+    }
+
+    [HttpDelete("[action]")]
+    public async Task<ActionResult<ErrorResponse>> UserDelete([FromQuery] string email)
+    {
+      var user = await _userManager.FindByEmailAsync(email);
+      if (user == null)
+        return BadRequest(new ErrorResponse("User.1", "User with emial not found"));
+      var result = await _userManager.DeleteAsync(user);
+      if (result.Succeeded)
+        return Ok(new ErrorResponse());
+      else
+        return Ok(new ErrorResponse(errorCode: "User.2", errorMessage: "User can't delete."));
     }
 
     /// <summary>
@@ -158,18 +171,35 @@ namespace Api.Controllers
       return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = token });
     }
 
-    [HttpPost("[action]")]
-    public async Task<IActionResult> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
+    [HttpGet("[action]")]
+    public async Task<ActionResult<ErrorResponse>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
     {
       var user = await _userManager.FindByEmailAsync(email);
       if (user == null)
-        return BadRequest();
+        return BadRequest(new ErrorResponse(errorCode: "account.1", errorMessage: "User not found."));
 
       var confirmResult = await _userManager.ConfirmEmailAsync(user, token);
       if (!confirmResult.Succeeded)
-        return BadRequest();
+        return Ok(new ErrorResponse(errorCode: "account.2", errorMessage: "confirm email fails."));
 
-      return Ok();
+      return Ok(new ErrorResponse());
+    }
+
+    [HttpPost("[action]")]
+    public async Task<ActionResult<ErrorResponse>> ResendEmailConfirmLink([FromBody] EmailConfirmLinkRequest request)
+    {
+      if (request == null)
+        return BadRequest(new ErrorResponse(errorCode: "account.3"));
+      else if (request.Email == null || request.ClientURI == null)
+        return BadRequest(new ErrorResponse(errorCode: "account.4"));
+
+      var user = await _userManager.FindByEmailAsync(request.Email);
+
+      var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+      EmailMessage emailMessage = await this.GenerateRegisterConfirmMessage(user, request.ClientURI, token);
+      await _emailService.SendMail(emailMessage);
+      return Ok(new ErrorResponse());
     }
 
     [HttpPost("[action]")]
@@ -270,6 +300,26 @@ namespace Api.Controllers
       //await _emailSender.SendEmailAsync(message);
 
       return Ok(new AuthenticationResponse { Is2StepVerificationRequired = true, Provider = "Email" });
+    }
+
+    private async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
+    {
+      EmailTemplate emailTemplate = await _repositoryManager.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true, false).SingleOrDefaultAsync();
+      var param = new Dictionary<string, string>
+      {
+        {"token", token },
+        {"email", user.Email }
+      };
+      var callback = QueryHelpers.AddQueryString(clientURI, param);
+      string content = emailTemplate.Content;
+      content = content.Replace("{Date}", DateTime.Now.ToString());
+      content = content.Replace("{RegisterConfirm}", callback);
+      content = content.Replace("{Firstname}", user.Firstname);
+      content = content.Replace("{Lastname}", user.Lastname);
+      content = content.Replace("{UserName}", user.UserName);
+
+      EmailMessage emailMessage = new EmailMessage(new string[] { user.Email }, "developper@grillegustav.de", "Confirm Registration", content);
+      return emailMessage;
     }
   }
 }

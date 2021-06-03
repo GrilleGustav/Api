@@ -25,10 +25,10 @@ namespace Api.Controllers
   public class EmailServerSettingsController : ControllerBase
   {
     private ILogger<EmailServerSettingsController> _logger;
-    private IEmailServerSettingsService _emailServerSettingsService;
+    private IEmailServerService _emailServerSettingsService;
     private readonly IMapper _mapper;
 
-    public EmailServerSettingsController(ILogger<EmailServerSettingsController> logger, IEmailServerSettingsService emailServerSettingsService, IMapper mapper)
+    public EmailServerSettingsController(ILogger<EmailServerSettingsController> logger, IEmailServerService emailServerSettingsService, IMapper mapper)
     {
       _logger = logger;
       _emailServerSettingsService = emailServerSettingsService;
@@ -60,21 +60,6 @@ namespace Api.Controllers
       return Ok(await _emailServerSettingsService.GetOne(id));
     }
 
-    /// <summary>
-    /// Get Server with senders.
-    /// </summary>
-    /// <param name="id">Server id.</param>
-    /// <returns></returns>
-    [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<EmailServerSettingResponse>> GetOneWithSenders(int id)
-    {
-      if (id == 0)
-        BadRequest();
-
-      EmailServerSettingResponse emailServerSettingResponse = await _emailServerSettingsService.GetOneWithSenders(id);
-      return Ok(emailServerSettingResponse);
-    }
-
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Add([FromBody] EmailServerAddRequest emailServerAddRequest)
     {
@@ -91,6 +76,15 @@ namespace Api.Controllers
         return BadRequest();
 
       return Ok(await _emailServerSettingsService.Update(_mapper.Map<EmailServer>(emailServerEditRequest)));
+    }
+
+    [HttpDelete("[action]/{id}")]
+    public async Task<ActionResult<ErrorResponse>> Delete(int id)
+    {
+      if (id == 0)
+        return BadRequest();
+
+      return Ok(await _emailServerSettingsService.Delete(id));
     }
 
     [HttpPost("[action]")]

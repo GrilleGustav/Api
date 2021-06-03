@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Services.Interfaces
 {
-  public interface IEmailSenderSettingsService
+  public interface IEmailSenderService
   {
     /// <summary>
     /// Get all email sender.
@@ -23,19 +23,6 @@ namespace Services.Interfaces
     /// <param name="id">Entity id.</param>
     /// <returns>Email sender entity. If fails return error code and or error message.</returns>
     Task<EmailSenderSettingResponse> GetOne(int id);
-
-    /// <summary>
-    /// Get all email sender from specified server.
-    /// </summary>
-    /// <param name="id">Server id.</param>
-    /// <returns>All found senders.</returns>
-    Task<EmailSenderSettingsResponse> GetAllFromSpecifiedServer(int id);
-
-    /// <summary>
-    /// Get email senders from default email server.
-    /// </summary>
-    /// <returns>List of Email senders entitties.</returns>
-    Task<EmailSenderSettingsResponse> GetEmailSendersFromDefaultServer();
 
     /// <summary>
     /// Create email sender.

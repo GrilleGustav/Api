@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20210522224625_deleteSenderEmailServerRelation")]
+    partial class deleteSenderEmailServerRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +99,7 @@ namespace Entities.Migrations
                         {
                             Id = "493adb36-1365-4cd5-9ecf-93e0078e152b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d0502a3-c142-452e-9685-029d87bbbcee",
+                            ConcurrencyStamp = "93cfb952-4656-45d8-a40f-c6f192402950",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
@@ -105,9 +107,9 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGCtYByGL7fmy/K1R9JD2kx7O4dgZRGr5ERc7EgEOKFvZVxXSaT32rvl8pLYjJ2Giw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFpt3KAX5Y8lZdEaG2w6rT6/RBsM+AIgYni5nIwfgNhKO4D5qaJC3M3ECK9VcDuUZQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8fe4fd33-cbd8-43fc-916d-d3d5851ea90b",
+                            SecurityStamp = "575fddbe-5ae3-4f11-897b-e89c65a91b4d",
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
                         });
@@ -167,11 +169,11 @@ namespace Entities.Migrations
                         {
                             Id = 1,
                             Default = true,
-                            Description = "Testbenutzer",
-                            ServerIp = "mail.grillegustav.de",
-                            ServerPassword = "mobuapXikC",
+                            Description = "Testdatensatz",
+                            ServerIp = "192.168.21.4",
+                            ServerPassword = "123",
                             ServerPort = "25",
-                            ServerUsername = "developper@grillegustav.de"
+                            ServerUsername = "admin@web.de"
                         });
                 });
 
@@ -212,12 +214,12 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
-                            Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
+                            Content = "<h1>Developper Email for testing</h1>",
                             Default = false,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
+                            Description = "Developper template for testing.",
                             EmailSenderId = 1,
                             EmailTemplateType = 0,
-                            Name = "Register 1",
+                            Name = "developper",
                             Predefined = true
                         });
                 });
@@ -250,22 +252,22 @@ namespace Entities.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cb70271f-d5a4-441d-b59e-bdd5cf4e0ef2",
-                            ConcurrencyStamp = "5a16f7c0-8d4c-48f7-8836-d2bbb8256e64",
+                            Id = "1684de3e-3ff6-47fd-9f0c-a6b8658b4354",
+                            ConcurrencyStamp = "98cdd4be-0d5d-408b-95b5-678be3b9cf50",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = "a0615a54-e885-46a9-9215-ea78faec2084",
-                            ConcurrencyStamp = "35733f8b-d62d-4a17-99cf-f97273caff27",
+                            ConcurrencyStamp = "7eee849c-0c18-476c-8e94-6c23775af00d",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "cfecd490-b98d-4edc-96be-35db1d7856d4",
-                            ConcurrencyStamp = "b93d8a4c-2c52-4c24-9836-2e195d5b7c9d",
+                            Id = "1ee44866-65bd-469f-a63d-97f3632c88a8",
+                            ConcurrencyStamp = "c59b2a1a-5f3f-4b18-a774-bcae749192de",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER"
                         });

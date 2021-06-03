@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Services.Interfaces;
 using Services;
 using Newtonsoft.Json;
+using Api.Providers;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Api
 {
@@ -52,16 +55,16 @@ namespace Api
         opt.Password.RequireDigit = false;
 
         opt.User.RequireUniqueEmail = true;
-
         opt.Lockout.AllowedForNewUsers = true;
-        opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+        opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
         opt.Lockout.MaxFailedAccessAttempts = 3;
+        //opt.Tokens.ProviderMap.Add("CustomEmailConfirmation", new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<IdentityUser>)));
+        //opt.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
       })
         .AddEntityFrameworkStores<RepositoryContext>()
         .AddDefaultTokenProviders();
 
-      services.Configure<DataProtectionTokenProviderOptions>(opt =>
-      opt.TokenLifespan = TimeSpan.FromHours(2));
+      //services.AddTransient<CustomEmailConfirmationTokenProvider<IdentityUser>>();
 
       var jwtSettings = Configuration.GetSection("JwtSettings");
       services.AddAuthentication(opt =>
@@ -84,9 +87,10 @@ namespace Api
       });
 
       services.AddScoped<JwtHandler>();
-      services.AddScoped<IEmailServerSettingsService, EmailServerSettingsService>();
-      services.AddScoped<IEmailSenderSettingsService, EmailSenderSettingsService>();
-      services.AddScoped<IEmailTemplateSettingsService, EmailTemplateSettingsService>();
+      services.AddScoped<IEmailServerService, EmailServerService>();
+      services.AddScoped<IEmailSenderService, EmailSenderService>();
+      services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+      services.AddScoped<IEmailService, EmailService>();
 
 
       services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
@@ -108,7 +112,14 @@ namespace Api
       }
 
       //app.UseHttpsRedirection();
-      app.UseStaticFiles();
+      if (!Directory.Exists(Path.Combine(env.ContentRootPath, "Upload/Editor/Images")))
+        Directory.CreateDirectory(Path.Combine(env.ContentRootPath, "Upload/Editor/Images"));
+
+      app.UseStaticFiles(new StaticFileOptions {
+        FileProvider = new PhysicalFileProvider(
+          Path.Combine(env.ContentRootPath, "Upload")),
+        RequestPath = "/Upload"
+      });
 
       app.UseCors("CorsPolicy");
 

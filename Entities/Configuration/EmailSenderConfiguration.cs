@@ -20,15 +20,11 @@ namespace Entities.Configuration
     public void Configure(EntityTypeBuilder<EmailSender> builder)
     {
       builder.HasKey(x => x.Id);
-      builder.HasOne(x => x.EmailServer)
-        .WithMany(x => x.EmailSender)
-        .HasForeignKey(x => x.EmailServerId);
 
       builder.HasData(
         new EmailSender
         {
           Id = 1,
-          EmailServerId = 1,
           Sender = "info@web.de"
         });
     }

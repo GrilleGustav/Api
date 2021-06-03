@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-  public class EmailServerSettingsService : IEmailServerSettingsService
+  public class EmailServerService : IEmailServerService
   {
-    private readonly ILogger<EmailServerSettingsService> _logger;
+    private readonly ILogger<EmailServerService> _logger;
     private readonly IRepositoryManager _repository;
-    public EmailServerSettingsService(IRepositoryManager repository, ILogger<EmailServerSettingsService> logger)
+    public EmailServerService(IRepositoryManager repository, ILogger<EmailServerService> logger)
     {
       _repository = repository;
       _logger = logger;
@@ -67,28 +67,6 @@ namespace Services
     }
 
     /// <summary>
-    /// Get one email server with senders.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    /// <returns>Email server entity with senders. If fails return error code and or error message.</returns>
-    public async Task<EmailServerSettingResponse> GetOneWithSenders(int id)
-    {
-      try
-      {
-        EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).FirstOrDefaultAsync();
-        if (emailServer == null)
-          return new EmailServerSettingResponse(errorCode: "EmailServerSettings_13", errorMessage: "No server found.");
-
-        return new EmailServerSettingResponse(emailServer);
-      }
-      catch (Exception e)
-      {
-        _logger.LogError(e.Message);
-        return new EmailServerSettingResponse("EmailServerSettings_14", e.Message);
-      }
-    }
-
-    /// <summary>
     /// Get default email server.
     /// </summary>
     /// <returns>Email server entity.</returns>
@@ -120,7 +98,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, true).SingleOrDefaultAsync();
+          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id != data.Id, true).SingleOrDefaultAsync();
           if (emailServer != null)
           {
             emailServer.Default = false;

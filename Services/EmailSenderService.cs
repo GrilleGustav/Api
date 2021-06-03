@@ -17,12 +17,12 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-  public class EmailSenderSettingsService : IEmailSenderSettingsService
+  public class EmailSenderService : IEmailSenderService
   {
-    private readonly ILogger<EmailSenderSettingsService> _logger;
+    private readonly ILogger<EmailSenderService> _logger;
     private readonly IRepositoryManager _repository;
 
-    public EmailSenderSettingsService(IRepositoryManager repositoryManager, ILogger<EmailSenderSettingsService> logger)
+    public EmailSenderService(IRepositoryManager repositoryManager, ILogger<EmailSenderService> logger)
     {
       _repository = repositoryManager;
       _logger = logger;
@@ -64,53 +64,6 @@ namespace Services
       {
         _logger.LogError(e.Message);
         return new EmailSenderSettingResponse("EmailSenderSettings.3", e.Message);
-      }
-    }
-
-    /// <summary>
-    /// Get all email sender from specified server.
-    /// </summary>
-    /// <param name="id">Server id.</param>
-    /// <returns>All found senders.</returns>
-    public async Task<EmailSenderSettingsResponse> GetAllFromSpecifiedServer(int id)
-    {
-      try
-      {
-        return new EmailSenderSettingsResponse(await _repository.EmailSender.FindByCondition(x => x.EmailServerId == id, false).ToListAsync());
-      }
-      catch (Exception e)
-      {
-        _logger.LogError(e.Message);
-        return new EmailSenderSettingsResponse("EmailSenderSettings.10");
-      }
-    }
-
-    /// <summary>
-    /// Get email senders from default email server.
-    /// </summary>
-    /// <returns>List of Email senders entitties.</returns>
-    public async Task<EmailSenderSettingsResponse> GetEmailSendersFromDefaultServer()
-    {
-      try
-      {
-        List<EmailSender> emailSender = await _repository.EmailSender.FindByCondition(x => x.EmailServer.Default == true, false).ToListAsync();
-        if (emailSender == null)
-        {
-          _logger.LogError("Fail to get email senders from default server.");
-          return new EmailSenderSettingsResponse(errorCode: "EmailSenderSettings.4", errorMessage: "Fail to get email senders from default server.");
-        }
-        else if (emailSender.Count == 0)
-        {
-          _logger.LogInformation("No senders for default server found.");
-          return new EmailSenderSettingsResponse(errorCode: "EmailSenderSettings.5", errorMessage: "No senders for default server found.");
-        }
-
-        return new EmailSenderSettingsResponse(emailSender);
-      }
-      catch(Exception e)
-      {
-        _logger.LogError(e.Message);
-        return new EmailSenderSettingsResponse(errorCode: "EmailSenderSettings.6", errorMessage: e.Message);
       }
     }
 

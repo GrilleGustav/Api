@@ -17,21 +17,11 @@ namespace Entities.Models.Settings.Email
     public int Id { get; set; }
 
     /// <summary>
-    /// Get or set EmailServerId.
-    /// </summary>
-    public int EmailServerId { get; set; }
-
-    /// <summary>
     /// Get or set sender.
     /// </summary>
     public string Sender { get; set; }
 
     // Navigation Properties
-
-    /// <summary>
-    /// Navigation Property to EmailSender Entity.
-    /// </summary>
-    public EmailServer EmailServer { get; set; }
 
     /// <summary>
     /// Navigation Property to EmailTemplate Entity.
