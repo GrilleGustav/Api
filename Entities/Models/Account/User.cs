@@ -2,6 +2,7 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
 
@@ -21,6 +22,11 @@ namespace Entities.Models.Account
     /// Get or set Lastname.
     /// </summary>
     public string Lastname { get; set; }
+
+    /// <summary>
+    /// Get or set Language.
+    /// </summary>
+    public Language Language { get; set; }
 
     /// <summary>
     /// Get or set time user was crated.

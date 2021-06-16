@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20210610075515_userLanguage")]
+    partial class userLanguage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,20 +102,20 @@ namespace Entities.Migrations
                         {
                             Id = "493adb36-1365-4cd5-9ecf-93e0078e152b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ab3f1ea7-b7d0-4242-a797-8b53a0814850",
+                            ConcurrencyStamp = "baec5ac6-2122-47d2-9218-f06bf2e84e7f",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
                             Firstname = "Sam",
-                            Language = 0,
+                            Language = 1,
                             LastAccessedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Lastname = "Sampleman",
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEN5CudG72fwZR99sk0e5o/3cOYQ2Ez/TBoBklzuLjxP93Ij17AYRJq2H32CQM48SMg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKrUUulWDjG+c/Z6xlZAEUyH3MHYubzr48j/heGW4fHMsBazj9j3t+5mllqSmimPJA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ddc51584-147d-40ab-a195-6cb937a8a09f",
+                            SecurityStamp = "5bcee591-c8da-49eb-ace7-bd35c75d9b0b",
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
                         });
@@ -202,8 +204,8 @@ namespace Entities.Migrations
                     b.Property<int>("EmailTemplateType")
                         .HasColumnType("int");
 
-                    b.Property<int>("LanguageCode")
-                        .HasColumnType("int");
+                    b.Property<string>("LanguageCode")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -226,7 +228,7 @@ namespace Entities.Migrations
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
                             EmailTemplateType = 0,
-                            LanguageCode = 0,
+                            LanguageCode = "de",
                             Name = "Register 1",
                             Predefined = true
                         });
@@ -260,22 +262,22 @@ namespace Entities.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "988db999-a7dc-4206-8bd4-1be6ac00f0f1",
-                            ConcurrencyStamp = "9232626d-d6c5-486c-b87e-d8f8da22cf54",
+                            Id = "abaecc0c-3463-4809-b402-a2ade833c669",
+                            ConcurrencyStamp = "28d05d61-88ca-45c0-a7d2-551d9690927c",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = "a0615a54-e885-46a9-9215-ea78faec2084",
-                            ConcurrencyStamp = "2a14a41f-2a5c-4d0b-9434-a76e6faac428",
+                            ConcurrencyStamp = "38db4eca-9451-4876-8b71-4690c9f8594d",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "a52a8d1b-8426-4444-bed3-28c7a6aaa34d",
-                            ConcurrencyStamp = "b0895b0f-491c-4d2e-8c39-074819113893",
+                            Id = "74248b1e-5cea-43dd-a37d-5f7a32bad36c",
+                            ConcurrencyStamp = "167782ca-97b9-49b6-a983-e390908548b7",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER"
                         });

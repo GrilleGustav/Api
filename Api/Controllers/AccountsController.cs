@@ -304,7 +304,7 @@ namespace Api.Controllers
 
     private async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
     {
-      EmailTemplate emailTemplate = await _repositoryManager.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true, false).SingleOrDefaultAsync();
+      EmailTemplate emailTemplate = await _repositoryManager.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.LanguageCode == user.Language, false).SingleOrDefaultAsync();
       var param = new Dictionary<string, string>
       {
         {"token", token },

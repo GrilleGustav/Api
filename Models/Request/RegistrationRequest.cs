@@ -2,6 +2,8 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Enums;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Models.Request
@@ -20,6 +22,13 @@ namespace Models.Request
     /// Get or set lastname.
     /// </summary>
     public string Lastname { get; set; }
+
+    /// <summary>
+    /// Get or set language.
+    /// </summary>
+    [Required(ErrorMessage = "Email is required.")]
+    [JsonProperty(PropertyName = "language1")]
+    public Language Language { get; set; }
 
     /// <summary>
     /// Get or set email.

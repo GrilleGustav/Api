@@ -34,6 +34,11 @@ namespace Entities.Models.Settings.Email
     public bool Default { get; set; }
 
     /// <summary>
+    /// Get or set LanguageCode.
+    /// </summary>
+    public Language LanguageCode { get; set; }
+
+    /// <summary>
     /// Get or set email type. Is used to provide the correct variables.
     /// </summary>
     public EmailTemplateType EmailTemplateType { get; set; }

@@ -34,7 +34,7 @@ namespace Services
     {
       try
       {
-        return new EmailTemplatesResponse(await _repository.EmailTemplate.FindAll(false).ToListAsync());
+        return new EmailTemplatesResponse(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).ToListAsync());
       }
       catch (Exception e)
       {
@@ -98,7 +98,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Id != data.Id, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode && x.Id != data.Id, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;
@@ -134,7 +134,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;
