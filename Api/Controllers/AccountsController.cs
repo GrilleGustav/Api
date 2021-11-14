@@ -8,12 +8,15 @@ using Contracts;
 using Entities.Models.Account;
 using Entities.Models.Email;
 using Entities.Models.Settings.Email;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using Models.Request;
 using Models.Response;
+using Models.Response.User;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +25,10 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-  
+  /// <summary>
+  /// Controller for authentication request.
+  /// </summary>
+  [Authorize]
   [ApiController]
   [Route("[controller]")]
   public class AccountsController : ControllerBase
@@ -47,6 +53,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="registrationRequest">User registration request.</param>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> RegisterUser([FromBody] RegistrationRequest registrationRequest)
     {
@@ -64,7 +71,7 @@ namespace Api.Controllers
       }
 
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-      EmailMessage emailMessage = await this.GenerateRegisterConfirmMessage(user, registrationRequest.ClientURI, token);
+      EmailMessage emailMessage = await _emailService.GenerateRegisterConfirmMessage(user, registrationRequest.ClientURI, token);
       await _emailService.SendMail(emailMessage);
 
       await _userManager.AddToRoleAsync(user, "User");
@@ -75,14 +82,22 @@ namespace Api.Controllers
     [HttpDelete("[action]")]
     public async Task<ActionResult<ErrorResponse>> UserDelete([FromQuery] string email)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       var user = await _userManager.FindByEmailAsync(email);
       if (user == null)
-        return BadRequest(new ErrorResponse("User.1", "User with emial not found"));
+      {
+        errorResponse.AddError(errorCode: "2", "User with emial not found");
+        return BadRequest(errorResponse);
+      }
       var result = await _userManager.DeleteAsync(user);
       if (result.Succeeded)
-        return Ok(new ErrorResponse());
+      {
+        errorResponse.IsSuccess = true;
+        return Ok(errorResponse);
+      }
       else
-        return Ok(new ErrorResponse(errorCode: "User.2", errorMessage: "User can't delete."));
+        errorResponse.AddError(errorCode: "7", "User can't delete.");
+      return Ok(errorResponse);
     }
 
     /// <summary>
@@ -90,8 +105,9 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="emailExistRequest">User account email</param>
     /// <returns>Returns httpStatusCode 200, user with email already exist or or httpStatusCode 400.</returns>
+    [AllowAnonymous]
     [HttpPost("[action]")]
-    public async Task<ActionResult<EmailExistResponse>> UserAccountExist([FromBody]EmailExistRequest emailExistRequest)
+    public async Task<ActionResult<EmailExistResponse>> UserAccountExist([FromBody] EmailExistRequest emailExistRequest)
     {
       if (emailExistRequest != null && ModelState.IsValid)
       {
@@ -101,7 +117,17 @@ namespace Api.Controllers
           if (user == null)
             return Ok(new EmailExistResponse(exist: false));
           else
-            return Ok(new EmailExistResponse(exist: true));
+          {
+            if (!string.IsNullOrEmpty(emailExistRequest.Id))
+            {
+              if (user.Id == Guid.Parse(emailExistRequest.Id))
+                return Ok(new EmailExistResponse(exist: false));
+              else
+                return Ok(new EmailExistResponse(exist: true));
+            }
+            else
+              return Ok(new EmailExistResponse(exist: true));
+          }
         }
         else
           return BadRequest();
@@ -110,6 +136,7 @@ namespace Api.Controllers
         return BadRequest();
     }
 
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> Login([FromBody] AuthenticationRequest authenticationRequest)
     {
@@ -138,11 +165,11 @@ namespace Api.Controllers
 
       if (await _userManager.GetTwoFactorEnabledAsync(user))
         return await GenerateOTPFor2StepVerification(user);
-      string token;
+      TokenResponse tokenResponse;
       if (authenticationRequest.StayLoggedIn)
-        token = await _jwtHandler.GenerateToken(user, 525600);
+        tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 525600);
       else
-        token = await _jwtHandler.GenerateToken(user, 0);
+        tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
 
       await _userManager.ResetAccessFailedCountAsync(user);
       //List<string> test = new List<string>();
@@ -150,9 +177,10 @@ namespace Api.Controllers
       //test.Add("Administrator");
       //var a = await _userManager.AddToRolesAsync(user, test);
 
-      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = token });
+      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
     }
 
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> TwoStepVerification([FromBody] TwoFactorRequest twoFactorRequest)
     {
@@ -167,20 +195,27 @@ namespace Api.Controllers
       if (!validVerification)
         return BadRequest();
 
-      var token = await _jwtHandler.GenerateToken(user);
-      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = token });
+      TokenResponse tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
+      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
     }
 
     [HttpGet("[action]")]
     public async Task<ActionResult<ErrorResponse>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       var user = await _userManager.FindByEmailAsync(email);
       if (user == null)
-        return BadRequest(new ErrorResponse(errorCode: "account.1", errorMessage: "User not found."));
+      {
+        errorResponse.AddError(errorCode: "2", "User not found.");
+        return BadRequest(errorResponse);
+      }
 
       var confirmResult = await _userManager.ConfirmEmailAsync(user, token);
       if (!confirmResult.Succeeded)
-        return Ok(new ErrorResponse(errorCode: "account.2", errorMessage: "confirm email fails."));
+      {
+        errorResponse.AddError(errorCode: "8", "Confirm email fails.");
+        return Ok(errorResponse);
+      }
 
       return Ok(new ErrorResponse());
     }
@@ -188,20 +223,28 @@ namespace Api.Controllers
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> ResendEmailConfirmLink([FromBody] EmailConfirmLinkRequest request)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       if (request == null)
-        return BadRequest(new ErrorResponse(errorCode: "account.3"));
+      {
+        errorResponse.AddError(errorCode: "9");
+        return BadRequest(errorResponse);
+      }
       else if (request.Email == null || request.ClientURI == null)
-        return BadRequest(new ErrorResponse(errorCode: "account.4"));
+      {
+        errorResponse.AddError(errorCode: "10");
+        return BadRequest(errorResponse);
+      }
 
       var user = await _userManager.FindByEmailAsync(request.Email);
 
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-      EmailMessage emailMessage = await this.GenerateRegisterConfirmMessage(user, request.ClientURI, token);
+      EmailMessage emailMessage = await _emailService.GenerateRegisterConfirmMessage(user, request.ClientURI, token);
       await _emailService.SendMail(emailMessage);
       return Ok(new ErrorResponse());
     }
 
+    // ToDo: ErrorResponse
     [HttpPost("[action]")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordDto)
     {
@@ -227,6 +270,7 @@ namespace Api.Controllers
       return Ok();
     }
 
+    // ToDo: ErrorResponse
     [HttpPost("[action]")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
     {
@@ -285,8 +329,8 @@ namespace Api.Controllers
 
       //check for the Locked out account
 
-      var token = await _jwtHandler.GenerateToken(user);
-      return Ok(new AuthenticationResponse { Token = token, IsAuthSuccessful = true });
+      TokenResponse tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
+      return Ok(new AuthenticationResponse { Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken, IsAuthSuccessful = true });
     }
 
     private async Task<IActionResult> GenerateOTPFor2StepVerification(User user)
@@ -302,24 +346,19 @@ namespace Api.Controllers
       return Ok(new AuthenticationResponse { Is2StepVerificationRequired = true, Provider = "Email" });
     }
 
-    private async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
+    /// <summary>
+    /// Get IP from request.
+    /// </summary>
+    /// <returns>Ip-Address.</returns>
+    private string IpAddress()
     {
-      EmailTemplate emailTemplate = await _repositoryManager.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.LanguageCode == user.Language, false).SingleOrDefaultAsync();
-      var param = new Dictionary<string, string>
+      if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        return Request.Headers["X-Forwarded-For"];
+      else
       {
-        {"token", token },
-        {"email", user.Email }
-      };
-      var callback = QueryHelpers.AddQueryString(clientURI, param);
-      string content = emailTemplate.Content;
-      content = content.Replace("{Date}", DateTime.Now.ToString());
-      content = content.Replace("{RegisterConfirm}", callback);
-      content = content.Replace("{Firstname}", user.Firstname);
-      content = content.Replace("{Lastname}", user.Lastname);
-      content = content.Replace("{UserName}", user.UserName);
-
-      EmailMessage emailMessage = new EmailMessage(new string[] { user.Email }, "developper@grillegustav.de", "Confirm Registration", content);
-      return emailMessage;
+        var test = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        return test;
+      }
     }
   }
 }

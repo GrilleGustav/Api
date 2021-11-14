@@ -6,13 +6,13 @@ using Contracts;
 using Entities.Models.Settings.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Models;
 using Models.Request.Settings.Email;
 using Models.Response;
 using Models.Response.Settings.Email;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
@@ -21,6 +21,7 @@ namespace Services
   {
     private readonly ILogger<EmailServerService> _logger;
     private readonly IRepositoryManager _repository;
+
     public EmailServerService(IRepositoryManager repository, ILogger<EmailServerService> logger)
     {
       _repository = repository;
@@ -33,6 +34,7 @@ namespace Services
     /// <returns>List of email servers. If fails error code and error message.</returns>
     public async Task<EmailServerSettingsResponse> GetAll()
     {
+      EmailServerSettingsResponse emailServerSettingsResponse = new EmailServerSettingsResponse();
       try
       {
         return new EmailServerSettingsResponse(await _repository.EmailServer.FindAll(false).ToListAsync());
@@ -40,7 +42,8 @@ namespace Services
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailServerSettingsResponse("EmailServerSettings_1", e.Message);
+        emailServerSettingsResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailServerSettingsResponse;
       }
     }
 
@@ -51,18 +54,23 @@ namespace Services
     /// <returns>Email server entity. If fails return error code and or error message.</returns>
     public async Task<EmailServerSettingResponse> GetOne(int id)
     {
+      EmailServerSettingResponse emailServerSettingResponse = new EmailServerSettingResponse();
       try
       {
         EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
         if (emailServer == null)
-          return new EmailServerSettingResponse(errorCode: "EmailServerSettings_2", errorMessage: "No server found.");
+        {
+          emailServerSettingResponse.AddError(errorCode: "2", errorMessage: "Not found.");
+          return emailServerSettingResponse;
+        }
 
         return new EmailServerSettingResponse(emailServer);
       }
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailServerSettingResponse("EmailServerSettings_3", e.Message);
+        emailServerSettingResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailServerSettingResponse;
       }
     }
 
@@ -72,18 +80,23 @@ namespace Services
     /// <returns>Email server entity.</returns>
     public async Task<EmailServerSettingResponse> GetDefault()
     {
+      EmailServerSettingResponse emailServerSettingResponse = new EmailServerSettingResponse();
       try
       {
         EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, false).SingleOrDefaultAsync();
         if (emailServer == null)
-          return new EmailServerSettingResponse(errorCode: "EmailServerSettings_4", errorMessage: "No default server found.");
+        {
+          emailServerSettingResponse.AddError(errorCode: "3", errorMessage: "No default server found.");
+          return emailServerSettingResponse;
+        }
 
         return new EmailServerSettingResponse(emailServer);
       }
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailServerSettingResponse("EmailServerSettings_5", e.Message);
+        emailServerSettingResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailServerSettingResponse;
       }
     }
 
@@ -94,6 +107,7 @@ namespace Services
     /// <returns>If update failed return error code.</returns>
     public async Task<ErrorResponse> Update(EmailServer data)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
@@ -109,17 +123,21 @@ namespace Services
         {
           EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id == data.Id, true).SingleOrDefaultAsync();
           if (emailServer != null)
-            return new ErrorResponse(errorCode: "EmailServerSettings_6", errorMessage: "Can´t set default server to false.");
+          {
+            errorResponse.AddError(errorCode: "4", errorMessage: "Can´t set default server to false.");
+            return errorResponse;
+          }
         }
 
         _repository.EmailServer.Update(data);
         await _repository.SaveAsync();
-        return new ErrorResponse(errorCode: "EmailServerSettings_0");
+        return errorResponse;
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailServerSettings_7", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -130,6 +148,7 @@ namespace Services
     /// <returns>If create failed return error code.</returns>
     public async Task<ErrorResponse> Create(EmailServer data)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
@@ -144,12 +163,14 @@ namespace Services
 
         _repository.EmailServer.Create(data);
         await _repository.SaveAsync();
-        return new ErrorResponse(errorCode: "EmailServerSettings_0");
+        errorResponse.IsSuccess = true;
+        return errorResponse;
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailServerSettings_8", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -160,25 +181,31 @@ namespace Services
     /// <returns>Error code and message if could not delete.</returns>
     public async Task<ErrorResponse> Delete(int id)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
         if (emailServer != null)
         {
           if (emailServer.Default == true)
-            return new ErrorResponse(errorCode: "EmailServerSettings_9", errorMessage: "Default server can´t delete. Choose some other as default server first.");
+          {
+            errorResponse.AddError(errorCode: "5", errorMessage: "Default server can´t delete. Choose some other as default server first.");
+            return errorResponse;
+          }
 
           _repository.EmailServer.Delete(emailServer);
           await _repository.SaveAsync();
-          return new ErrorResponse(errorCode: "EmailServerSettings_0");
+          return errorResponse;
         }
 
-        return new ErrorResponse(errorCode: "EmailServerSettings_10", errorMessage: "Server not found.");
+        errorResponse.AddError(errorCode: "2", errorMessage: "Server not found.");
+        return errorResponse;
       }
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailServerSettings_11", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -189,6 +216,7 @@ namespace Services
     /// <returns>If fails return some error code and message, otherwise return true if server with Ip/Domain and port exist. If no server found return false.</returns>
     public async Task<EmailServerExistResponse> EmailServerExist(EmailServerExistRequest emailServerExistRequest)
     {
+      EmailServerExistResponse emailServerExistResponse = new EmailServerExistResponse();
       try
       {
         EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.ServerIp == emailServerExistRequest.ServerIp && x.ServerPort == emailServerExistRequest.ServerPort && x.Id != emailServerExistRequest.Id, false).SingleOrDefaultAsync();
@@ -200,7 +228,8 @@ namespace Services
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailServerExistResponse("EmailServerSettings_12", e.Message);
+        emailServerExistResponse.AddError("1", e.Message);
+        return emailServerExistResponse;
       }
     }
   }

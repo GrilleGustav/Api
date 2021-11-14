@@ -9,32 +9,19 @@ namespace Models.Response.Settings.Sender
   public class EmailSenderSettingResponse : ErrorResponse
   {
     /// <summary>
+    /// Email sender settings reponse.
+    /// </summary>
+    public EmailSenderSettingResponse()
+    { }
+
+    /// <summary>
     /// Set initial with email sender.
     /// </summary>
     /// <param name="emailSenders">List of email senders.</param>
     public EmailSenderSettingResponse(EmailSender emailSender)
     {
       this.EmailSender = emailSender;
-    }
-
-    /// <summary>
-    /// Set initial with error code.
-    /// </summary>
-    /// <param name="errorCode">Error code.</param>
-    public EmailSenderSettingResponse(string errorCode)
-    {
-      this.ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Set initial with error code and message.
-    /// </summary>
-    /// <param name="errorCode">Error code.</param>
-    /// <param name="errorMessage">Error message.</param>
-    public EmailSenderSettingResponse(string errorCode, string errorMessage)
-    {
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = errorMessage;
+      this.IsSuccess = true;
     }
 
     /// <summary>

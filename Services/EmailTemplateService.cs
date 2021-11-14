@@ -1,9 +1,9 @@
 ﻿using Contracts;
 using Entities.Models.Settings.Email;
 using Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Models;
 using Models.Response;
 using Models.Response.Settings.Email;
 using Services.Interfaces;
@@ -32,6 +32,7 @@ namespace Services
     /// <returns>List of email templates. If fails error code and error message.</returns>
     public async Task<EmailTemplatesResponse> GetAll()
     {
+      EmailTemplatesResponse emailTemplatesResponse = new EmailTemplatesResponse();
       try
       {
         return new EmailTemplatesResponse(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).ToListAsync());
@@ -39,7 +40,8 @@ namespace Services
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailTemplatesResponse("EmailTemplate.1", e.Message);
+        emailTemplatesResponse.AddError("1", e.Message);
+        return emailTemplatesResponse;
       }
     }
 
@@ -50,18 +52,23 @@ namespace Services
     /// <returns>Email template entity. If fails return error code and or error message.</returns>
     public async Task<EmailTemplateResponse> GetOne(int id)
     {
+      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
         if (emailTemplate == null)
-          return new EmailTemplateResponse(errorCode: "EmailTemplate.2", errorMessage: "No email template found");
+        {
+          emailTemplateResponse.AddError(errorCode: "2", errorMessage: "Not found.");
+          return emailTemplateResponse;
+        }
 
         return new EmailTemplateResponse(emailTemplate);
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailTemplateResponse("EmailTemplate.3", e.Message);
+        emailTemplateResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailTemplateResponse;
       }
     }
 
@@ -72,18 +79,23 @@ namespace Services
     /// <returns>Emial template.</returns>
     public async Task<EmailTemplateResponse> GetDefaultTemplateForType(EmailTemplateType emailTemplateType)
     {
+      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == emailTemplateType, false).SingleOrDefaultAsync();
         if (emailTemplate == null)
-          return new EmailTemplateResponse(errorCode: "EmailTemplate.2", errorMessage: "No email template found");
+        {
+          emailTemplateResponse.AddError(errorCode: "3", errorMessage: "No email template found");
+          return emailTemplateResponse;
+        }
 
         return new EmailTemplateResponse(emailTemplate);
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailTemplateResponse("EmailTemplate.4", e.Message);
+        emailTemplateResponse.AddError("1", e.Message);
+        return emailTemplateResponse;
       }
     }
 
@@ -94,6 +106,7 @@ namespace Services
     /// <returns>If update failed return error code.</returns>
     public async Task<ErrorResponse> Update(EmailTemplate data)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
@@ -109,7 +122,10 @@ namespace Services
         {
           EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
           if (emailTemplate != null)
-            return new ErrorResponse(errorCode: "EmailTemplate.5", errorMessage: "Can't set default template to false.");
+          {
+            errorResponse.AddError(errorCode: "4", errorMessage: "Can't set default template to false.");
+            return errorResponse;
+          }
         }
 
         _repository.EmailTemplate.Update(data);
@@ -119,7 +135,8 @@ namespace Services
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailTemplate.6", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -130,6 +147,7 @@ namespace Services
     /// <returns>If create failed return error code.</returns>
     public async Task<ErrorResponse> Create(EmailTemplate data)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
@@ -149,7 +167,8 @@ namespace Services
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailTemplate.7", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -160,25 +179,31 @@ namespace Services
     /// <returns>Error code and message if could not delete.</returns>
     public async Task<ErrorResponse> Delete(int id)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
         if (emailTemplate != null)
         {
           if (emailTemplate.Default == true)
-            return new ErrorResponse(errorCode: "EmailTemplate.8", errorMessage: "Default template can't delete.");
+          {
+            errorResponse.AddError(errorCode: "5", errorMessage: "Default template can't delete.");
+            return errorResponse;
+          }
 
           _repository.EmailTemplate.Delete(emailTemplate);
           await _repository.SaveAsync();
           return new ErrorResponse();
         }
 
-        return new ErrorResponse(errorCode: "EmailTemplate.9", errorMessage: "Template not found");
+        errorResponse.AddError(errorCode: "2", errorMessage: "Template not found");
+        return errorResponse;
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailTemplate.10", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -189,6 +214,7 @@ namespace Services
     /// <returns>Email template with replaced variables.</returns>
     public async Task<EmailTemplateResponse> Preview(int id)
     {
+      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).SingleOrDefaultAsync();
@@ -198,12 +224,14 @@ namespace Services
           emailTemplate.Content = newContent;
           return new EmailTemplateResponse(emailTemplate: emailTemplate);
         }
-        return new EmailTemplateResponse(errorCode: "1");
+        emailTemplateResponse.AddError(errorCode: "2", errorMessage: "Not found.");
+        return emailTemplateResponse;
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailTemplateResponse(errorCode: "2", errorMessage: e.Message);
+        emailTemplateResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailTemplateResponse;
       }
     }
 

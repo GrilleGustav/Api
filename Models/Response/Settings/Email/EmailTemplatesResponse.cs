@@ -22,27 +22,9 @@ namespace Models.Response.Settings.Email
     public EmailTemplatesResponse(List<EmailTemplate> emailTemplates)
     {
       this.EmailTemplates = emailTemplates;
+      this.IsSuccess = true;
     }
 
-    /// <summary>
-    /// Email templates response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    public EmailTemplatesResponse(string errorCode)
-    {
-      this.ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Email termplates response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    /// <param name="errorMessage">Error message.</param>
-    public EmailTemplatesResponse(string errorCode, string errorMessage)
-    {
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = errorMessage;
-    }
     /// <summary>
     /// Get or set email template list.
     /// </summary>

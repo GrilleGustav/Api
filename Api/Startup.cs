@@ -1,18 +1,11 @@
-using AutoMapper;
 using Api.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Entities.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Entities.Context;
@@ -24,9 +17,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Services.Interfaces;
 using Services;
 using Newtonsoft.Json;
-using Api.Providers;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Api.Filters;
 
 namespace Api
 {
@@ -49,7 +42,7 @@ namespace Api
       services.ConfigureLoggerService();
       services.AddAutoMapper(typeof(Startup));
 
-      services.AddIdentity<User, IdentityRole>(opt =>
+      services.AddIdentity<User, Role>(opt =>
       {
         opt.Password.RequiredLength = 7;
         opt.Password.RequireDigit = false;
@@ -91,9 +84,16 @@ namespace Api
       services.AddScoped<IEmailSenderService, EmailSenderService>();
       services.AddScoped<IEmailTemplateService, EmailTemplateService>();
       services.AddScoped<IEmailService, EmailService>();
+      services.AddScoped<IEmailMessageService, EmailMessageService>();
+
+      services.ConfigureApplicationClaimsService();
 
 
-      services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+      services.AddControllers(config =>
+      {
+        config.Filters.Add(new TokenFilter());
+      })
+        .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
       services.AddSwaggerGen(c =>
       {
@@ -110,7 +110,7 @@ namespace Api
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
       }
-
+      
       //app.UseHttpsRedirection();
       if (!Directory.Exists(Path.Combine(env.ContentRootPath, "Upload/Editor/Images")))
         Directory.CreateDirectory(Path.Combine(env.ContentRootPath, "Upload/Editor/Images"));

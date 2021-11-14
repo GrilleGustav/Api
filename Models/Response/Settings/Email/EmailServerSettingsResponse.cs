@@ -25,26 +25,7 @@ namespace Models.Response.Settings.Email
     public EmailServerSettingsResponse(List<EmailServer> emailServers)
     {
       this.EmailServers = emailServers;
-    }
-
-    /// <summary>
-    /// Email servers response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    public EmailServerSettingsResponse(string errorCode)
-    {
-      this.ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Email servers response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    /// <param name="ErrorMessage">Error message.</param>
-    public EmailServerSettingsResponse(string errorCode, string ErrorMessage)
-    {
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = ErrorMessage;
+      this.IsSuccess = true;
     }
 
     /// <summary>

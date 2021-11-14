@@ -14,6 +14,8 @@ namespace Repository
     private IEmailServerRepository _emailServerRepository;
     private IEmailSenderRepository _emailSenderRepository;
     private IEmailTemplateRepository _emailTemplateRepository;
+    private IEmailMessageRepository _emailMessageRepository;
+    private IRefreshTokenRepository _refreshTokenRepository;
 
     public RepositoryManager(RepositoryContext repositoryContext)
     {
@@ -50,6 +52,28 @@ namespace Repository
           _emailTemplateRepository = new EmailTemplateRepository(_repositoryContext);
 
         return _emailTemplateRepository;
+      }
+    }
+
+    public IEmailMessageRepository EmailMessage
+    {
+      get
+      {
+        if (_emailMessageRepository == null)
+          _emailMessageRepository = new EmailMessageRepository(_repositoryContext);
+
+        return _emailMessageRepository;
+      }
+    }
+
+    public IRefreshTokenRepository RefreshToken
+    {
+      get
+      {
+        if (_refreshTokenRepository == null)
+          _refreshTokenRepository = new RefreshTokenRepository(_repositoryContext);
+
+        return _refreshTokenRepository;
       }
     }
 

@@ -19,7 +19,7 @@ using Entities.Models.Settings.Email;
 
 namespace Api.Controllers
 {
-  [Authorize]
+  [Authorize(Roles = "Aminitrator")]
   [ApiController]
   [Route("[controller]")]
   public class EmailServerSettingsController : ControllerBase

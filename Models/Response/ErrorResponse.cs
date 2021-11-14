@@ -2,6 +2,8 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
+
 namespace Models.Response
 {
   /// <summary>
@@ -13,35 +15,57 @@ namespace Models.Response
     /// Error response.
     /// </summary>
     public ErrorResponse()
+    {
+      this.Errors = new List<Error>();
+    }
+
+    /// <summary>
+    /// Error response.
+    /// </summary>
+    /// <param name="isSuccess"></param>
+    public ErrorResponse(bool isSuccess)
+    {
+      this.IsSuccess = isSuccess;
+    }
+
+    /// <summary>
+    /// Initiate error response with list of errors.
+    /// </summary>
+    /// <param name="errors">List of errors.</param>
+    public ErrorResponse(List<Error> errors)
     { }
 
     /// <summary>
-    /// Error response.
+    /// Get or set succefull
     /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    public ErrorResponse(string errorCode)
+    public bool IsSuccess { get; set; } = false;
+
+    public bool TokenNeedsRefresh { get; set; } = false;
+
+    /// <summary>
+    /// Get or set errors.
+    /// </summary>
+    public List<Error> Errors { get; set; } = new List<Error>();
+
+    /// <summary>
+    /// Add error with error code and message.
+    /// </summary>
+    /// <param name="errorCode">Error code.</param>
+    /// <param name="errorMessage">Error message.</param>
+    public void AddError(string errorCode, string errorMessage)
     {
-      ErrorCode = errorCode;
+
+      this.Errors.Add(new Error(errorCode: errorCode, errorMessage: errorMessage));
     }
 
     /// <summary>
-    /// Error response.
+    /// Add error with error code, without message.
     /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    /// <param name="ErrorMessage">Error message.</param>
-    public ErrorResponse(string errorCode, string errorMessage)
+    /// <param name="errorCode">Error code.</param>
+    public void AddError(string errorCode)
     {
-      ErrorCode = errorCode;
-      ErrorMessage = errorMessage;
-    }
-    /// <summary>
-    /// Get or set ErrorCode.
-    /// </summary>
-    public string ErrorCode { get; set; } = "0";
 
-    /// <summary>
-    /// Get or set ErrorMessage.
-    /// </summary>
-    public string ErrorMessage { get; set; }
+      this.Errors.Add(new Error(errorCode: errorCode));
+    }
   }
 }

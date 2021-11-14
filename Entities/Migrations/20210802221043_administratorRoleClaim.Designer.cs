@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20210610075515_userLanguage")]
-    partial class userLanguage
+    [Migration("20210802221043_administratorRoleClaim")]
+    partial class administratorRoleClaim
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,10 +19,65 @@ namespace Entities.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.3");
 
+            modelBuilder.Entity("Entities.Models.Account.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
+                            ConcurrencyStamp = "e3f3ebda-7a32-418b-a006-e09bdeffe445",
+                            Description = "Normal User.",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
+                            ConcurrencyStamp = "0760eef1-7500-48a9-83cd-192785f76b9e",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
+                            ConcurrencyStamp = "b88e5682-2850-49c1-911d-9da7a39b8f82",
+                            Name = "Developper",
+                            NormalizedName = "DEVELOPPER"
+                        });
+                });
+
             modelBuilder.Entity("Entities.Models.Account.User", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -32,7 +87,9 @@ namespace Entities.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime(6)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -100,25 +157,56 @@ namespace Entities.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "493adb36-1365-4cd5-9ecf-93e0078e152b",
+                            Id = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "baec5ac6-2122-47d2-9218-f06bf2e84e7f",
+                            ConcurrencyStamp = "405321ed-6df6-40d9-a25e-3d08d3c08f96",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
                             Firstname = "Sam",
-                            Language = 1,
+                            Language = 0,
                             LastAccessedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Lastname = "Sampleman",
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKrUUulWDjG+c/Z6xlZAEUyH3MHYubzr48j/heGW4fHMsBazj9j3t+5mllqSmimPJA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOpinMczTy92BhEvmYMZCqjR3cInnlec+8we00zFGdheRucL7yAdpJGEL5GVT8Qz7Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5bcee591-c8da-49eb-ace7-bd35c75d9b0b",
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
                         });
+                });
+
+            modelBuilder.Entity("Entities.Models.Email.EmailMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasDefaultValueSql("UUID()");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("From")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<bool>("IsSend")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Receiver")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("SendOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailMessages");
                 });
 
             modelBuilder.Entity("Entities.Models.Settings.Email.EmailSender", b =>
@@ -204,8 +292,8 @@ namespace Entities.Migrations
                     b.Property<int>("EmailTemplateType")
                         .HasColumnType("int");
 
-                    b.Property<string>("LanguageCode")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("LanguageCode")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -228,62 +316,13 @@ namespace Entities.Migrations
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
                             EmailTemplateType = 0,
-                            LanguageCode = "de",
+                            LanguageCode = 0,
                             Name = "Register 1",
                             Predefined = true
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "abaecc0c-3463-4809-b402-a2ade833c669",
-                            ConcurrencyStamp = "28d05d61-88ca-45c0-a7d2-551d9690927c",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "a0615a54-e885-46a9-9215-ea78faec2084",
-                            ConcurrencyStamp = "38db4eca-9451-4876-8b71-4690c9f8594d",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = "74248b1e-5cea-43dd-a37d-5f7a32bad36c",
-                            ConcurrencyStamp = "167782ca-97b9-49b6-a983-e390908548b7",
-                            Name = "Developper",
-                            NormalizedName = "DEVELOPPER"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -295,18 +334,124 @@ namespace Entities.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "Aminitrator",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerCreate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateCreate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailMessagesList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,9 +463,8 @@ namespace Entities.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -329,7 +473,7 @@ namespace Entities.Migrations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -340,9 +484,8 @@ namespace Entities.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -351,13 +494,13 @@ namespace Entities.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -368,15 +511,15 @@ namespace Entities.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "493adb36-1365-4cd5-9ecf-93e0078e152b",
-                            RoleId = "a0615a54-e885-46a9-9215-ea78faec2084"
+                            UserId = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -401,16 +544,16 @@ namespace Entities.Migrations
                     b.Navigation("EmailSender");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Entities.Models.Account.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("Entities.Models.Account.User", null)
                         .WithMany()
@@ -419,7 +562,7 @@ namespace Entities.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("Entities.Models.Account.User", null)
                         .WithMany()
@@ -428,9 +571,9 @@ namespace Entities.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Entities.Models.Account.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -443,7 +586,7 @@ namespace Entities.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Entities.Models.Account.User", null)
                         .WithMany()

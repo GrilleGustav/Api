@@ -1,7 +1,9 @@
-﻿using Entities.Models.Settings.Email;
-using System;
+﻿// <copyright file="EmailServerSettingResponse.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Entities.Models.Settings.Email;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Models.Response.Settings.Email
 {
@@ -20,26 +22,7 @@ namespace Models.Response.Settings.Email
     public EmailServerSettingResponse(EmailServer emailServer)
     {
       this.EmailServer = emailServer;
-    }
-
-    /// <summary>
-    /// Email server response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    public EmailServerSettingResponse(string errorCode)
-    {
-      this.ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Email server response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    /// <param name="ErrorMessage">Error message.</param>
-    public EmailServerSettingResponse(string errorCode, string errorMessage)
-    {
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = ErrorMessage;
+      this.IsSuccess = true;
     }
 
     /// <summary>

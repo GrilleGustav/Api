@@ -12,7 +12,8 @@ namespace Entities.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Name = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
@@ -26,10 +27,11 @@ namespace Entities.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
                     Firstname = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Lastname = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     LastAccessedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "varchar(256) CHARACTER SET utf8mb4", maxLength: 256, nullable: true),
@@ -49,6 +51,36 @@ namespace Entities.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmailMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, defaultValueSql: "UUID()"),
+                    SendOn = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Receiver = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    From = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Subject = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    Content = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    IsSend = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmailSenders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Sender = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailSenders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,7 +107,7 @@ namespace Entities.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    RoleId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
+                    RoleId = table.Column<Guid>(type: "char(36)", nullable: false),
                     ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
                 },
@@ -96,7 +128,7 @@ namespace Entities.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false),
                     ClaimType = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     ClaimValue = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
                 },
@@ -118,7 +150,7 @@ namespace Entities.Migrations
                     LoginProvider = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
                     ProviderKey = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false)
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,8 +167,8 @@ namespace Entities.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
-                    RoleId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false)
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    RoleId = table.Column<Guid>(type: "char(36)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,7 +191,7 @@ namespace Entities.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false),
                     LoginProvider = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
                     Name = table.Column<string>(type: "varchar(255) CHARACTER SET utf8mb4", nullable: false),
                     Value = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
@@ -176,26 +208,6 @@ namespace Entities.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmailSenders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    EmailServerId = table.Column<int>(type: "int", nullable: false),
-                    Sender = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmailSenders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmailSenders_EmailServers_EmailServerId",
-                        column: x => x.EmailServerId,
-                        principalTable: "EmailServers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EmailTemplates",
                 columns: table => new
                 {
@@ -205,9 +217,10 @@ namespace Entities.Migrations
                     Description = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Content = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     Default = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LanguageCode = table.Column<int>(type: "int", nullable: false),
                     EmailTemplateType = table.Column<int>(type: "int", nullable: false),
                     Predefined = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    EmailSenderId = table.Column<int>(type: "int", nullable: false)
+                    EmailSenderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,18 +230,43 @@ namespace Entities.Migrations
                         column: x => x.EmailSenderId,
                         principalTable: "EmailSenders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "6891ecc9-666e-4b26-b36c-c2870ba3aa24", "8f2997e1-144f-4088-a861-c9c989aefaff", "User", "USER" });
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("a0615a54-e885-46a9-9215-ea78faec1457"), "d8cff3b2-8af7-4a4a-a03b-6f3e9db89ec3", "Normal User.", "User", "USER" },
+                    { new Guid("a0615a54-e885-46a9-9215-ea78faec2084"), "4d368bfe-4b93-4c47-b022-9d9b48533ec5", null, "Administrator", "ADMINISTRATOR" },
+                    { new Guid("a0615a54-e885-46a9-9215-ea78faec9985"), "0fe6a368-795b-4b17-9fbf-3eb2cedcc369", null, "Developper", "DEVELOPPER" }
+                });
 
             migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "11e3f7f2-56dc-47c7-b3f4-d6dc5197f821", "964f735c-3ebe-4c25-b107-5cea00025bea", "Administrator", "ADMINISTRATOR" });
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "Firstname", "Language", "LastAccessedOn", "Lastname", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"), 0, "81a68ef0-354c-4422-a7c3-eba0b9ebeafe", "sam@web.de", true, "Sam", 0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sampleman", false, null, "SAM@WEB.DE", "SAM@WEB.DE", "AQAAAAEAACcQAAAAENIDGw8GjD07uUVN3z1fPyuh2ZDyd1Ib5Vkk7SyJghVmIw3e6hWVsucfe4XYHMSTAw==", null, false, null, false, "sam@web.de" });
+
+            migrationBuilder.InsertData(
+                table: "EmailSenders",
+                columns: new[] { "Id", "Sender" },
+                values: new object[] { 1, "info@web.de" });
+
+            migrationBuilder.InsertData(
+                table: "EmailServers",
+                columns: new[] { "Id", "Default", "Description", "ServerIp", "ServerPassword", "ServerPort", "ServerUsername" },
+                values: new object[] { 1, true, "Testbenutzer", "mail.grillegustav.de", "mobuapXikC", "25", "developper@grillegustav.de" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { new Guid("a0615a54-e885-46a9-9215-ea78faec2084"), new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b") });
+
+            migrationBuilder.InsertData(
+                table: "EmailTemplates",
+                columns: new[] { "Id", "Content", "Default", "Description", "EmailSenderId", "EmailTemplateType", "LanguageCode", "Name", "Predefined" },
+                values: new object[] { 1, "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>", true, "Predefined template. Is used for the first installation if the administrator does not create one.", 1, 0, 0, "Register 1", true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -268,11 +306,6 @@ namespace Entities.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmailSenders_EmailServerId",
-                table: "EmailSenders",
-                column: "EmailServerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EmailTemplates_EmailSenderId",
                 table: "EmailTemplates",
                 column: "EmailSenderId");
@@ -296,6 +329,12 @@ namespace Entities.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "EmailMessages");
+
+            migrationBuilder.DropTable(
+                name: "EmailServers");
+
+            migrationBuilder.DropTable(
                 name: "EmailTemplates");
 
             migrationBuilder.DropTable(
@@ -306,9 +345,6 @@ namespace Entities.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmailSenders");
-
-            migrationBuilder.DropTable(
-                name: "EmailServers");
         }
     }
 }

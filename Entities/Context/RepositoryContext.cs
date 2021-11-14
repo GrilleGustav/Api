@@ -1,5 +1,6 @@
 ﻿using Entities.Configuration;
 using Entities.Models.Account;
+using Entities.Models.Email;
 using Entities.Models.Settings.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace Entities.Context
 {
-  public class RepositoryContext : IdentityDbContext<User>
+  public class RepositoryContext : IdentityDbContext<User, Role, Guid>
   {
     public RepositoryContext(DbContextOptions options) : base(options)
     { }
@@ -25,10 +26,13 @@ namespace Entities.Context
       modelBuilder.ApplyConfiguration(new EmailTemplateConfiguration());
       modelBuilder.ApplyConfiguration(new UserConfiguration());
       modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+      modelBuilder.ApplyConfiguration(new EmailMessageConfiguration());
+      modelBuilder.ApplyConfiguration(new RoleClaimsConfiguration());
     }
 
     public DbSet<EmailServer> EmailServers { get; set; }
     public DbSet<EmailSender> EmailSenders { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }
+    public DbSet<EmailMessage> EmailMessages { get; set; }
   }
 }

@@ -7,6 +7,7 @@ using Contracts;
 using Entities.Models.Settings.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Models;
 using Models.Response;
 using Models.Response.Settings.Sender;
 using Services.Interfaces;
@@ -34,6 +35,7 @@ namespace Services
     /// <returns>List of email sender. If fails error code and or error message</returns>
     public async Task<EmailSenderSettingsResponse> GetAll()
     {
+      EmailSenderSettingsResponse errorResponse = new EmailSenderSettingsResponse();
       try
       {
         return new EmailSenderSettingsResponse(await _repository.EmailSender.FindAll(false).ToListAsync());
@@ -41,7 +43,8 @@ namespace Services
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailSenderSettingsResponse("EmailSenderSettings.1");
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
 
@@ -52,18 +55,23 @@ namespace Services
     /// <returns>Email sender entity. If fails return error code and or error message.</returns>
     public async Task<EmailSenderSettingResponse> GetOne(int id)
     {
+      EmailSenderSettingResponse emailSenderSettingResponse = new EmailSenderSettingResponse();
       try
       {
         EmailSender emailSender = await _repository.EmailSender.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
         if (emailSender == null)
-          return new EmailSenderSettingResponse(errorCode: "EmailSenderSettings.2", errorMessage: "No sender found.");
+        {
+          emailSenderSettingResponse.AddError(errorCode: "2", errorMessage: "No sender found.");
+          return emailSenderSettingResponse;
+        }
 
         return new EmailSenderSettingResponse(emailSender);
       }
       catch (Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailSenderSettingResponse("EmailSenderSettings.3", e.Message);
+        emailSenderSettingResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailSenderSettingResponse;
       }
     }
 
@@ -74,11 +82,15 @@ namespace Services
     /// <returns>New email sender data base object.</returns>
     public async Task<EmailSenderSettingResponse> Create(EmailSender data)
     {
+      EmailSenderSettingResponse emailSenderSettingResponse = new EmailSenderSettingResponse();
       try
       {
         EmailSender emailSender = await _repository.EmailSender.FindByCondition(x => x.Sender == data.Sender, false).SingleOrDefaultAsync();
         if (emailSender != null)
-          return new EmailSenderSettingResponse(errorCode: "EmailSenderSettings.7", errorMessage: "Sender already exist.");
+        {
+          emailSenderSettingResponse.AddError(errorCode: "6", errorMessage: "Sender already exist.");
+          return emailSenderSettingResponse;
+        }
 
         _repository.EmailSender.Create(data);
         await _repository.SaveAsync();
@@ -87,7 +99,8 @@ namespace Services
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new EmailSenderSettingResponse(errorCode: "EmailSenderSettings.8", errorMessage: e.Message);
+        emailSenderSettingResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return emailSenderSettingResponse;
       }
     }
 
@@ -98,6 +111,7 @@ namespace Services
     /// <returns>If fails return erro code and message.</returns>
     public async Task<ErrorResponse> Delete(int id)
     {
+      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         EmailSender sender = await _repository.EmailSender.FindByCondition(x => x.Id == id, true).SingleOrDefaultAsync();
@@ -108,7 +122,8 @@ namespace Services
       catch(Exception e)
       {
         _logger.LogError(e.Message);
-        return new ErrorResponse(errorCode: "EmailSenderSettings.9", errorMessage: e.Message);
+        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
+        return errorResponse;
       }
     }
   }
