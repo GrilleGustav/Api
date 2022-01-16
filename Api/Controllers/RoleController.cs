@@ -3,6 +3,7 @@
 // </copyright>
 
 using AutoMapper;
+using Contracts;
 using Entities.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,16 +28,18 @@ namespace Api.Controllers
   {
     RoleManager<Role> _roleManager;
     private readonly IMapper _mapper;
+    private readonly IRepositoryManager _repository;
 
     /// <summary>
     /// Controller to manage user roles.
     /// </summary>
     /// <param name="roleManager">Instance to manage roles in database.</param>
     /// <param name="mapper">Mapper to map entities from database to view data.</param>
-    public RoleController(RoleManager<Role> roleManager, IMapper mapper)
+    public RoleController(RoleManager<Role> roleManager, IMapper mapper, IRepositoryManager repository)
     {
       _roleManager = roleManager;
       _mapper = mapper;
+      _repository = repository;
     }
 
     /// <summary>
@@ -108,6 +111,21 @@ namespace Api.Controllers
 
       response.IsSuccess = true;
       response.Role = await _roleManager.FindByNameAsync(request.Name);
+      foreach (string value in request.Claims)
+      {
+        var claim = new Claim(ClaimTypes.Role, value);
+        IdentityResult claimResult = await _roleManager.AddClaimAsync(role, claim);
+        if (!claimResult.Succeeded)
+        {
+          foreach (var error in result.Errors)
+          {
+            response.AddError(errorCode: error.Code, errorMessage: error.Description);
+          }
+          return Ok(response);
+        }
+      }
+
+      response.IsSuccess = true;
       return Ok(response);
     }
 
@@ -235,6 +253,37 @@ namespace Api.Controllers
 
       response.IsSuccess = true;
       return Ok(response);
+    }
+
+    [HttpPost("[action]")]
+    public async Task<ActionResult<ErrorResponse>> UpdateRoleClaims([FromBody] ClaimsRequest request)
+    {
+      ErrorResponse response = new ErrorResponse(true);
+      if (request == null)
+        return BadRequest();
+      Role role = await _roleManager.FindByIdAsync(request.RoleId);
+      IList<Claim> claims = await _roleManager.GetClaimsAsync(role);
+      // Create new claims
+      List<Claim> requestClaims = new List<Claim>();
+      foreach (string claimValue in request.Claims)
+      {
+        requestClaims.Add(new Claim(ClaimTypes.Role, claimValue));
+      }
+      // Claims how needs to delete.
+      List<Claim> d = claims.Where(x => !requestClaims.Any(y => y.Value == x.Value)).ToList();
+      List<Claim> a = requestClaims.Where(x => !claims.Any(y => y.Value == x.Value)).ToList();
+      foreach (Claim claim in d)
+      {
+        await _roleManager.RemoveClaimAsync(role, claim);
+      }
+
+      foreach (Claim claim in a)
+      {
+        await _roleManager.AddClaimAsync(role, claim);
+      }
+
+      return Ok(response);
+
     }
 
     /// <summary>

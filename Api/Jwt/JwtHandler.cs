@@ -65,6 +65,12 @@ namespace Api.Jwt
         }
       }
 
+      foreach(var claim in await _userManager.GetClaimsAsync(user))
+      {
+        if (!claims.Any(x => x.Value == claim.Value))
+          claims.Add(claim);
+      }
+      
       return claims;
     }
 

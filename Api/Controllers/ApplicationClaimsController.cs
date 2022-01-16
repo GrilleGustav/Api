@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// <copyright file="ApplicationClaimsController.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.Response.Role;

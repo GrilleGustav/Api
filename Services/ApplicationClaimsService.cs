@@ -1,4 +1,7 @@
-﻿using Models;
+﻿// <copyright file="ApplicationClaimsService.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+using Models;
 using Models.Response.Role;
 using Services.Interfaces;
 using System;
@@ -83,6 +86,7 @@ namespace Services
       this.AddClaim("UserDelete", "UserSettings");
       this.AddClaim("UserRoleAdd", "UserSettings");
       this.AddClaim("UserRoleUpdate", "UserSettings");
+      this.AddClaim("UserClaimUpdate", "UserSettings");
       this.AddClaim("RoleView", "RoleSettings");
       this.AddClaim("RoleCreate", "RoleSettings");
       this.AddClaim("RoleUpdate", "RoleSettings");

@@ -43,6 +43,10 @@ namespace Api.Models.MapperConfiguration
       CreateMap<EmailMessage, EmailMessageViewModel>();
 
       CreateMap<Claim, ClaimViewModel>();
+
+      CreateMap<string, Claim>().ForMember(x => x.Value, opt => opt.MapFrom(x => x));//ForMember(dest => dest.Type, act => act.MapFrom(src => ClaimTypes.Role));
+
+      CreateMap<string, Role>().ForMember(u => u.Name, opt => opt.MapFrom(x => x.ToString()));
     }
   }
 }

@@ -2,7 +2,9 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace Models.Request.Role
 {
@@ -21,5 +23,10 @@ namespace Models.Request.Role
     /// Get or set description.
     /// </summary>
     public string Discription { get; set; }
+
+    /// <summary>
+    /// Get or set list of claims.
+    /// </summary>
+    public IList<string> Claims { get; set; }
   }
 }

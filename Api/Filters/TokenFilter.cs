@@ -24,22 +24,25 @@ namespace Api.Filters
     {
       UserManager<User> _userManager = context.HttpContext.RequestServices.GetService(typeof(UserManager<User>)) as UserManager<User>;
       JwtHandler _jwtHandler = context.HttpContext.RequestServices.GetService(typeof(JwtHandler)) as JwtHandler;
-
-      var email = context.HttpContext.User.FindFirstValue(ClaimTypes.Name);
-      if (email != null)
+      string requestPath = context.HttpContext.Request.Path.ToString();
+      if (!requestPath.Contains("RefreshToken"))
       {
-        User user = await _userManager.FindByEmailAsync(email);
-        if (user != null)
+        var email = context.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+        if (email != null)
         {
-
-          List<Claim> roles = context.HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Name || x.Type == ClaimTypes.Role).ToList();
-          List<Claim> claims = await _jwtHandler.GetClaims(user);
-          if (roles.Count != claims.Count)
+          User user = await _userManager.FindByEmailAsync(email);
+          if (user != null)
           {
-            var errorResponse = new ErrorResponse();
-            errorResponse.AddError(errorCode: "1000", errorMessage: "Roles of current user are changed. Use refresh token to renew accesstoken.");
-            errorResponse.TokenNeedsRefresh = true;
-            context.Result = new OkObjectResult(errorResponse);
+
+            List<Claim> roles = context.HttpContext.User.Claims.Where(x => x.Type == ClaimTypes.Name || x.Type == ClaimTypes.Role).ToList();
+            List<Claim> claims = await _jwtHandler.GetClaims(user);
+            if (roles.Count != claims.Count)
+            {
+              var errorResponse = new ErrorResponse();
+              errorResponse.AddError(errorCode: "1000", errorMessage: "Roles of current user are changed. Use refresh token to renew accesstoken.");
+              errorResponse.TokenNeedsRefresh = true;
+              context.Result = new OkObjectResult(errorResponse);
+            }
           }
         }
       }
