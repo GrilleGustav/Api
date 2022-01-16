@@ -21,27 +21,9 @@ namespace Models.Response.Settings.Email
     public EmailTemplateResponse(EmailTemplate emailTemplate)
     {
       this.EmailTemplate = emailTemplate;
+      this.IsSuccess = true;
     }
 
-    /// <summary>
-    /// Email template response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    public EmailTemplateResponse(string errorCode)
-    {
-      this.ErrorCode = errorCode;
-    }
-
-    /// <summary>
-    /// Email termplate response.
-    /// </summary>
-    /// <param name="errorCode">Unique error code.</param>
-    /// <param name="errorMessage">Error message.</param>
-    public EmailTemplateResponse(string errorCode, string errorMessage)
-    {
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = errorMessage;
-    }
     /// <summary>
     /// Get or set email template.
     /// </summary>

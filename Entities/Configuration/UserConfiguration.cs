@@ -6,6 +6,7 @@ using Entities.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace Entities.Configuration
 {
@@ -22,7 +23,7 @@ namespace Entities.Configuration
     {
       User user = new User()
       {
-        Id = "493adb36-1365-4cd5-9ecf-93e0078e152b",
+        Id = Guid.Parse("493adb36-1365-4cd5-9ecf-93e0078e152b"),
         UserName = "sam@web.de",
         Firstname = "Sam",
         Lastname = "Sampleman",
@@ -37,6 +38,8 @@ namespace Entities.Configuration
       user.PasswordHash = passwordHasher.HashPassword(user, "Test123456!");
 
       builder.HasData(user);
+
+      builder.Property(x => x.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAdd();
     }
   }
 }

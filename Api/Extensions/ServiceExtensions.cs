@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Repository;
+using Services;
+using Services.Interfaces;
+using System;
 
 namespace Api.Extensions
 {
@@ -21,9 +24,10 @@ namespace Api.Extensions
       services.AddCors(options =>
       {
         options.AddPolicy("CorsPolicy", builder =>
-        builder.AllowAnyOrigin()
+        builder.WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .AllowCredentials());
       });
 
     public static void ConfigureIISIntegration(this IServiceCollection services) =>
@@ -49,5 +53,10 @@ namespace Api.Extensions
         l.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information);
         l.AddNLog();
       });
+
+    public static void ConfigureApplicationClaimsService(this IServiceCollection services)
+    {
+      services.AddSingleton<IApplicationClaimsService, ApplicationClaimsService>();
+    }
   }
 }

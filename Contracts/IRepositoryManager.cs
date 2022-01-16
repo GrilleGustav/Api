@@ -14,6 +14,10 @@ namespace Contracts
 
     IEmailTemplateRepository EmailTemplate { get; }
 
+    IEmailMessageRepository EmailMessage { get; }
+
+    IRefreshTokenRepository RefreshToken { get; }
+
     /// <summary>
     /// Save database actions.
     /// </summary>

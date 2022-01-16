@@ -23,7 +23,6 @@ namespace Api.Controllers
     private ILogger<EmailTemplateController> _logger;
     private IEmailTemplateService _emailTemplateService;
     private readonly IMapper _mapper;
-    private readonly IEmailService _emailService;
 
     public EmailTemplateController(ILogger<EmailTemplateController> logger, IEmailTemplateService emailTemplateService, IMapper mapper)
     {

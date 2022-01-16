@@ -7,7 +7,7 @@ namespace Models.Response
   /// <summary>
   /// User authentication response.
   /// </summary>
-  public class AuthenticationResponse
+  public class AuthenticationResponse : ErrorResponse
   {
     /// <summary>
     /// Get or set authentication successful.
@@ -23,6 +23,11 @@ namespace Models.Response
     /// Get or set user token.
     /// </summary>
     public string Token { get; set; }
+
+    /// <summary>
+    /// Get or set refresh token.
+    /// </summary>
+    public string RefreshToken { get; set; }
 
     /// <summary>
     /// Get or set 2 step varification is required.

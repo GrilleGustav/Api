@@ -2,6 +2,8 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
+
 namespace Models.Response
 {
   /// <summary>
@@ -16,31 +18,29 @@ namespace Models.Response
     public EmailExistResponse(bool exist)
     {
       this.Exist = exist;
+      this.IsSuccess = true;
+    }
+
+    /// <summary>
+    /// Email exist response.
+    /// </summary>
+    /// <param name="errors">List of errors.</param>
+    public EmailExistResponse(List<Error> errors)
+    {
+      this.Errors = errors;
     }
 
     /// <summary>
     /// Email exist response.
     /// </summary>
     /// <param name="exist">If exist true otherwise false.</param>
-    /// <param name="errorCode">Error code.</param>
-    public EmailExistResponse(bool exist, string errorCode)
+    /// <param name="errors">List of errors.</param>
+    public EmailExistResponse(bool exist, List<Error> errors)
     {
       this.Exist = exist;
-      this.ErrorCode = errorCode;
+      this.Errors = errors;
     }
 
-    /// <summary>
-    /// Email exist response.
-    /// </summary>
-    /// <param name="exist">If exist true otherwise false.</param>
-    /// <param name="errorCode">Error code.</param>
-    /// <param name="errorMessage">Error message.</param>
-    public EmailExistResponse(bool exist, string errorCode, string errorMessage)
-    {
-      this.Exist = exist;
-      this.ErrorCode = errorCode;
-      this.ErrorMessage = errorMessage;
-    }
     /// <summary>
     /// Get or set exist.
     /// Return "true" if email exist.

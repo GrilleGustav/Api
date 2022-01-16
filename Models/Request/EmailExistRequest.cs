@@ -16,5 +16,10 @@ namespace Models.Request
     /// </summary>
     [Required, EmailAddress]
     public string Email { get; set; }
+
+    /// <summary>
+    /// Get or set id.
+    /// </summary>
+    public string Id { get; set; }
   }
 }

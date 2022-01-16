@@ -16,7 +16,7 @@ namespace Entities.Configuration
     /// <summary>
     /// EmailServer entity configuration.
     /// </summary>
-    /// <param name="builder"></param>
+    /// <param name="builder">Configuration builder.</param>
     public void Configure(EntityTypeBuilder<EmailServer> builder)
     {
       builder.HasKey(x => x.Id);

@@ -5,13 +5,14 @@
 using Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 
 namespace Entities.Models.Account
 {
   /// <summary>
   /// Application user.
   /// </summary>
-  public class User : IdentityUser
+  public class User : IdentityUser<Guid>
   {
     /// <summary>
     /// Get or set Firstname.
@@ -37,5 +38,9 @@ namespace Entities.Models.Account
     /// Get or set last user access.
     /// </summary>
     public DateTime LastAccessedOn { get; set; }
+
+    // Navigation Properties
+
+    public virtual List<RefreshToken> RefreshTokens { get; set; }
   }
 }

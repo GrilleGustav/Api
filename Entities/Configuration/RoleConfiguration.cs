@@ -2,40 +2,45 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace Entities.Configuration
 {
   /// <summary>
   /// Class to configure IdentityRole entity.
   /// </summary>
-  public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
+  public class RoleConfiguration : IEntityTypeConfiguration<Role>
   {
     /// <summary>
     /// IdentityRole entity configuration.
     /// </summary>
     /// <param name="builder"></param>
-    public void Configure(EntityTypeBuilder<IdentityRole> builder)
+    public void Configure(EntityTypeBuilder<Role> builder)
     {
       builder.HasData(
-        new IdentityRole
+        new Role
         {
+          Id = Guid.Parse("a0615a54-e885-46a9-9215-ea78faec1457"),
           Name = "User",
-          NormalizedName = "USER"
+          NormalizedName = "USER",
+          Description = "Normal User."
         },
-        new IdentityRole
+        new Role
         {
           Name = "Administrator",
           NormalizedName = "ADMINISTRATOR",
-          Id = "a0615a54-e885-46a9-9215-ea78faec2084"
+          Id = Guid.Parse("a0615a54-e885-46a9-9215-ea78faec2084")
         },
-        new IdentityRole
+        new Role
         {
+          Id = Guid.Parse("a0615a54-e885-46a9-9215-ea78faec9985"),
           Name = "Developper",
-          NormalizedName = "DEVELOPPER"
-        });
+          NormalizedName = "DEVELOPPER",
+        }); ;
     }
   }
 }
