@@ -7,13 +7,10 @@ using AutoMapper;
 using Contracts;
 using Entities.Models.Account;
 using Entities.Models.Email;
-using Entities.Models.Settings.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using Models;
 using Models.Request;
 using Models.Response;
 using Models.Response.User;
@@ -79,22 +76,36 @@ namespace Api.Controllers
       return StatusCode(201);
     }
 
+    /// <summary>
+    /// Delete user from database.
+    /// !!! User can't restored. !!!
+    /// </summary>
+    /// <param name="email">Email of user.</param>
+    /// <returns>Return true, otherwise return one or more errors.</returns>
     [HttpDelete("[action]")]
     public async Task<ActionResult<ErrorResponse>> UserDelete([FromQuery] string email)
     {
       ErrorResponse errorResponse = new ErrorResponse();
+
+      // Get user from database.
       var user = await _userManager.FindByEmailAsync(email);
+
+      // If null user with email dosn't exist.
       if (user == null)
       {
         errorResponse.AddError(errorCode: "2", "User with emial not found");
         return BadRequest(errorResponse);
       }
+
+      // Delete user from database. If fails returns some errors.
       var result = await _userManager.DeleteAsync(user);
+
+      // If result true, set response true and return to frontend.
       if (result.Succeeded)
       {
         errorResponse.IsSuccess = true;
-        return Ok(errorResponse);
       }
+      // Set errors to response.
       else
         errorResponse.AddError(errorCode: "7", "User can't delete.");
       return Ok(errorResponse);
@@ -136,21 +147,31 @@ namespace Api.Controllers
         return BadRequest();
     }
 
+    /// <summary>
+    /// Login user.
+    /// </summary>
+    /// <param name="authenticationRequest">Required login data. Username, password</param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> Login([FromBody] AuthenticationRequest authenticationRequest)
     {
+      // Find user by username.
       var user = await _userManager.FindByNameAsync(authenticationRequest.Email);
       if (user == null)
         return BadRequest("Invalid Request");
-
+      
+      // Check if email is already confirmed.
       if (!await _userManager.IsEmailConfirmedAsync(user))
         return Unauthorized();
 
+      // Check user pasword.
       if (!await _userManager.CheckPasswordAsync(user, authenticationRequest.Password))
       {
+        // If password is wrong. Increase access failed counter.
         await _userManager.AccessFailedAsync(user);
 
+        // Check if user acccount is locked.
         if (await _userManager.IsLockedOutAsync(user))
         {
           //var content = $"Your account is locked out. To reset the password click this link: {userForAuthentication.clientURI}";
@@ -163,20 +184,21 @@ namespace Api.Controllers
         return Unauthorized();
       }
 
+      // Check if twofactor is enabled on this user. 
       if (await _userManager.GetTwoFactorEnabledAsync(user))
         return await GenerateOTPFor2StepVerification(user);
       TokenResponse tokenResponse;
+
+      // Generate access token and refresh token. If stay logged in is enabled user need to login after one year again.
       if (authenticationRequest.StayLoggedIn)
         tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 525600);
       else
         tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
 
+      // If user has succesfully logged in access fail  counter will be reset.
       await _userManager.ResetAccessFailedCountAsync(user);
-      //List<string> test = new List<string>();
-      //test.Add("User");
-      //test.Add("Administrator");
-      //var a = await _userManager.AddToRolesAsync(user, test);
 
+      // return successfully locked in user.
       return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
     }
 
