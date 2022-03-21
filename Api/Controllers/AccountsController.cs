@@ -36,6 +36,14 @@ namespace Api.Controllers
     private readonly IEmailService _emailService;
     private readonly IRepositoryManager _repositoryManager;
 
+    /// <summary>
+    /// Controller for authentication request.
+    /// </summary>
+    /// <param name="userManager">Manage user accounts.</param>
+    /// <param name="mapper">Mapper to copy the same properties of two different objects from the source object to the target object.</param>
+    /// <param name="jwtHandler">Generation of authentication tokens</param>
+    /// <param name="emailService">Service for sending emails.</param>
+    /// <param name="repositoryManager">Managing database data.</param>
     public AccountsController(UserManager<User> userManager, IMapper mapper, JwtHandler jwtHandler, IEmailService emailService, IRepositoryManager repositoryManager)
     {
       _userManager = userManager;
@@ -57,8 +65,9 @@ namespace Api.Controllers
       if (registrationRequest == null || !ModelState.IsValid)
         return BadRequest();
 
+      // Mapp registration data to new user object.
       var user = _mapper.Map<User>(registrationRequest);
-
+      // Create user.
       var result = await _userManager.CreateAsync(user, registrationRequest.Password);
 
       if (!result.Succeeded)
@@ -67,10 +76,14 @@ namespace Api.Controllers
         return BadRequest(new RegistrationResponse { Errors = errors });
       }
 
+      // Generate email confirm token.
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+      // Generate Emial.
       EmailMessage emailMessage = await _emailService.GenerateRegisterConfirmMessage(user, registrationRequest.ClientURI, token);
+      // Sending email.
       await _emailService.SendMail(emailMessage);
 
+      // Add new user to role user. this is the default role for each user of hte application.
       await _userManager.AddToRoleAsync(user, "User");
 
       return StatusCode(201);
@@ -202,10 +215,16 @@ namespace Api.Controllers
       return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
     }
 
+    /// <summary>
+    /// Validate two factor token.
+    /// </summary>
+    /// <param name="twoFactorRequest">Two factor data, email, token, provieder.</param>
+    /// <returns>Authentification data, token, refreshToken and information about if authentification is successful.</returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> TwoStepVerification([FromBody] TwoFactorRequest twoFactorRequest)
     {
+      // Check if request data completely.
       if (!ModelState.IsValid)
         return BadRequest();
 
@@ -221,6 +240,12 @@ namespace Api.Controllers
       return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
     }
 
+    /// <summary>
+    /// Confirm Email.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <param name="token">Confirm token.</param>
+    /// <returns>Return succesfully or some error.</returns>
     [HttpGet("[action]")]
     public async Task<ActionResult<ErrorResponse>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
     {
@@ -235,35 +260,44 @@ namespace Api.Controllers
       var confirmResult = await _userManager.ConfirmEmailAsync(user, token);
       if (!confirmResult.Succeeded)
       {
-        errorResponse.AddError(errorCode: "8", "Confirm email fails.");
+        errorResponse.AddError(errorCode: "8", "Confirm email failed.");
         return Ok(errorResponse);
       }
 
       return Ok(new ErrorResponse());
     }
 
+    /// <summary>
+    /// Resend email confirmation link.
+    /// </summary>
+    /// <param name="request">Client url and email to confirm.</param>
+    /// <returns>Success or some errrors if something fails.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> ResendEmailConfirmLink([FromBody] EmailConfirmLinkRequest request)
     {
       ErrorResponse errorResponse = new ErrorResponse();
-      if (request == null)
+      if (!ModelState.IsValid)
       {
         errorResponse.AddError(errorCode: "9");
         return BadRequest(errorResponse);
       }
-      else if (request.Email == null || request.ClientURI == null)
+
+      // Search user by email. Return error if user not found.
+      var user = await _userManager.FindByEmailAsync(request.Email);
+      if (user == null)
       {
-        errorResponse.AddError(errorCode: "10");
-        return BadRequest(errorResponse);
+        errorResponse.AddError(errorCode: "24", errorMessage: "User with email not found.");
+        return Ok(errorResponse);
       }
 
-      var user = await _userManager.FindByEmailAsync(request.Email);
-
+      // Generate email cofirm token.
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
+      // Generate and send emial confirm message.
       EmailMessage emailMessage = await _emailService.GenerateRegisterConfirmMessage(user, request.ClientURI, token);
       await _emailService.SendMail(emailMessage);
-      return Ok(new ErrorResponse());
+      errorResponse.IsSuccess = true;
+      return Ok(errorResponse);
     }
 
     // ToDo: ErrorResponse
@@ -273,6 +307,7 @@ namespace Api.Controllers
       if (!ModelState.IsValid)
         return BadRequest();
 
+      // Search user by email. Return error if user not found.
       var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
       if (user == null)
         return BadRequest("Invalid Request");
@@ -296,14 +331,19 @@ namespace Api.Controllers
     [HttpPost("[action]")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
     {
+      // Check request data. If not valid return BadRequest(400)
       if (!ModelState.IsValid)
         return BadRequest();
 
+      // Search user by email. Return error if user not found.
       var user = await _userManager.FindByEmailAsync(resetPasswordRequest.Email);
       if (user == null)
         return BadRequest("Invalid Request");
 
+      // Reset user password.
       var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordRequest.Token, resetPasswordRequest.Password);
+
+      // If reset fails return some errors.
       if (!resetPassResult.Succeeded)
       {
         var errors = resetPassResult.Errors.Select(e => e.Description);
@@ -311,11 +351,17 @@ namespace Api.Controllers
         return BadRequest(new { Errors = errors });
       }
 
+      // If password is reset, lockout user immediately.
       await _userManager.SetLockoutEndDateAsync(user, new DateTime(2000, 1, 1));
 
       return Ok();
     }
 
+    /// <summary>
+    /// External login with google account.
+    /// </summary>
+    /// <param name="externalAuth"></param>
+    /// <returns></returns>
     [HttpPost("ExternalLogin")]
     public async Task<IActionResult> ExternalLogin([FromBody] ExternalAuthRequest externalAuth)
     {

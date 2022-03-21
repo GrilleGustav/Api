@@ -35,7 +35,7 @@ namespace Models.Response
     public bool Is2StepVerificationRequired { get; set; }
 
     /// <summary>
-    /// Authentifica provider.
+    /// Authentification provider.
     /// </summary>
     public string Provider { get; set; }
   }

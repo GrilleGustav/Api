@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Repository
 {
+  /// <summary>
+  /// Manage database backend.
+  /// </summary>
   public class RepositoryManager : IRepositoryManager
   {
     private RepositoryContext _repositoryContext;
@@ -17,11 +20,18 @@ namespace Repository
     private IEmailMessageRepository _emailMessageRepository;
     private IRefreshTokenRepository _refreshTokenRepository;
 
+    /// <summary>
+    /// Manage database backend.
+    /// </summary>
+    /// <param name="repositoryContext">Connection to database backend.</param>
     public RepositoryManager(RepositoryContext repositoryContext)
     {
       _repositoryContext = repositoryContext;
     }
 
+    /// <summary>
+    /// Initiate email server repository and make it accessible.
+    /// </summary>
     public IEmailServerRepository EmailServer
     {
       get
@@ -33,6 +43,9 @@ namespace Repository
       }
     }
 
+    /// <summary>
+    /// Initiate email sender repository and make it accessible.
+    /// </summary>
     public IEmailSenderRepository EmailSender
     {
       get
@@ -44,6 +57,9 @@ namespace Repository
       }
     }
 
+    /// <summary>
+    /// Initiate email template repository and make it accessible.
+    /// </summary>
     public IEmailTemplateRepository EmailTemplate
     {
       get
@@ -55,6 +71,9 @@ namespace Repository
       }
     }
 
+    /// <summary>
+    /// Initiate email message repository and make it accessible.
+    /// </summary>
     public IEmailMessageRepository EmailMessage
     {
       get
@@ -66,6 +85,9 @@ namespace Repository
       }
     }
 
+    /// <summary>
+    /// Initiate refresh token repository and make it accessible.
+    /// </summary>
     public IRefreshTokenRepository RefreshToken
     {
       get
@@ -86,6 +108,8 @@ namespace Repository
     /// Save asynchronous database actions.
     /// </summary>
     /// <returns>Returns number of entities changed or add or delete.</returns>
+    /// <exception cref="Microsoft.EntityFrameworkCore.DbUpdateException"></exception>
+    /// <exception cref="Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException"></exception>
     public Task<int> SaveAsync() => _repositoryContext.SaveChangesAsync();
   }
 }

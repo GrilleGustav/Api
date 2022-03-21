@@ -1,6 +1,7 @@
 ﻿// <copyright file="ApplicationClaimsService.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
+using Microsoft.Extensions.Logging;
 using Models;
 using Models.Response.Role;
 using Services.Interfaces;
@@ -17,9 +18,15 @@ namespace Services
   /// </summary>
   public class ApplicationClaimsService : IApplicationClaimsService
   {
+    private ILogger<ApplicationClaimsService> _logger;
 
-    public ApplicationClaimsService()
+    /// <summary>
+    /// Application claims service.
+    /// </summary>
+    /// <param name="logger">Logger service to log messages in console and log files.</param>
+    public ApplicationClaimsService(ILogger<ApplicationClaimsService> logger)
     {
+      _logger = logger;
       this.InitialAddClaims();
     }
     /// <summary>
@@ -59,9 +66,29 @@ namespace Services
     /// Get application claims grouped by display group.
     /// </summary>
     /// <returns>Application claims grouped by display group.</returns>
-    public ApplicationClaimsResponse GetClaimsGroupedBy()
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="Exception"></exception>
+    public Result<Dictionary<string, IGrouping<string, ApplicationClaim>>> GetClaimsGroupedBy()
     {
-      return new ApplicationClaimsResponse(this.ApplicationClaims.GroupBy(x => x.DisplayGroup).ToDictionary(x => x.Key));
+      try
+      {
+        Dictionary<string, IGrouping<string, ApplicationClaim>> claims = this.ApplicationClaims.GroupBy(x => x.DisplayGroup).ToDictionary(x => x.Key);
+        return new Result<Dictionary<string, IGrouping<string, ApplicationClaim>>>(claims);
+      }
+      catch(ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<Dictionary<string, IGrouping<string, ApplicationClaim>>>(new Error("13", "Database connection error."));
+      }
+      catch(Exception e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<Dictionary<string, IGrouping<string, ApplicationClaim>>>(new Error("1", "Error loading data."));
+      }
+
+      
     }
 
     private void InitialAddClaims()

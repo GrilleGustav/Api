@@ -2,8 +2,7 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
-using Entities.Models.Settings.Email;
-using System.Collections.Generic;
+using Models.View.Settings.Email;
 
 namespace Models.Response.Settings.Email
 {
@@ -19,7 +18,7 @@ namespace Models.Response.Settings.Email
     /// Email server response.
     /// </summary>
     /// <param name="emailServer">Email server.</param>
-    public EmailServerSettingResponse(EmailServer emailServer)
+    public EmailServerSettingResponse(EmailServerViewModel emailServer)
     {
       this.EmailServer = emailServer;
       this.IsSuccess = true;
@@ -28,6 +27,6 @@ namespace Models.Response.Settings.Email
     /// <summary>
     /// Get or set email server.
     /// </summary>
-    public EmailServer EmailServer { get; set; }
+    public EmailServerViewModel EmailServer { get; set; }
   }
 }

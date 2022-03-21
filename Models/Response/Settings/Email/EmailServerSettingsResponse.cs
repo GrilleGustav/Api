@@ -3,6 +3,7 @@
 // </copyright>
 
 using Entities.Models.Settings.Email;
+using Models.View.Settings.Email;
 using System.Collections.Generic;
 
 namespace Models.Response.Settings.Email
@@ -22,7 +23,7 @@ namespace Models.Response.Settings.Email
     /// Email servers response.
     /// </summary>
     /// <param name="emailServers">Email servers.</param>
-    public EmailServerSettingsResponse(List<EmailServer> emailServers)
+    public EmailServerSettingsResponse(IList<EmailServerViewModel> emailServers)
     {
       this.EmailServers = emailServers;
       this.IsSuccess = true;
@@ -31,6 +32,6 @@ namespace Models.Response.Settings.Email
     /// <summary>
     /// Get or set email server list.
     /// </summary>
-    public List<EmailServer> EmailServers { get; set; }
+    public IList<EmailServerViewModel> EmailServers { get; set; }
   }
 }

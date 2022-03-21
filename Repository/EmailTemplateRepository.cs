@@ -8,9 +8,17 @@ using Entities.Models.Settings.Email;
 
 namespace Repository
 {
+  /// <summary>
+  /// Used for repository initalization.
+  /// </summary>
   public class EmailTemplateRepository : RepositoryBase<EmailTemplate>, IEmailTemplateRepository
   {
     private RepositoryContext _repositoryContext;
+
+    /// <summary>
+    /// Used for repository initalization.
+    /// </summary>
+    /// <param name="repositoryContext">Database context.</param>
     public EmailTemplateRepository(RepositoryContext repositoryContext) :base(repositoryContext)
     {
       _repositoryContext = repositoryContext;

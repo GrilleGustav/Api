@@ -19,22 +19,42 @@ using System.Threading.Tasks;
 
 namespace Services
 {
+  /// <summary>
+  /// Service for gernerating and sending email content.
+  /// </summary>
   public class EmailService : IEmailService
   {
     private readonly ILogger<EmailService> _logger;
     private readonly IRepositoryManager _repository;
 
+    /// <summary>
+    /// Service for gernerating and sending email content.
+    /// </summary>
+    /// <param name="logger">Logger service to log messages in console and log files.</param>
+    /// <param name="repository">Access to backend store.</param>
     public EmailService(ILogger<EmailService> logger, IRepositoryManager repository)
     {
       _logger = logger;
       _repository = repository;
     }
 
+    /// <summary>
+    /// Creating and sending email.
+    /// </summary>
+    /// <param name="message">Email message.</param>
+    /// <returns>The Task that represents asynchronous operation, containing information abaut sending status.</returns>
     public async Task<int> SendMail(EmailMessage message)
     {
       return await this.Send(this.CreateMail(message), message);
     }
 
+    /// <summary>
+    /// Generate register confirm message.
+    /// </summary>
+    /// <param name="user">User obejct.</param>
+    /// <param name="clientURI">Client url to view.</param>
+    /// <param name="token">Register confirm token.</param>
+    /// <returns>Email message.</returns>
     public async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
     {
       EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.LanguageCode == user.Language, false).SingleOrDefaultAsync();
@@ -55,6 +75,11 @@ namespace Services
       return emailMessage;
     }
 
+    /// <summary>
+    /// Create mail.
+    /// </summary>
+    /// <param name="message">Email message.</param>
+    /// <returns>>Mime message.</returns>
   private MimeMessage CreateMail(EmailMessage message)
     {
       MimeMessage emailMessage = new MimeMessage();
@@ -66,6 +91,12 @@ namespace Services
       return emailMessage;
     }
 
+    /// <summary>
+    /// Sending email.
+    /// </summary>
+    /// <param name="message">Mime message.</param>
+    /// <param name="emailMessage">Email message.</param>
+    /// <returns>The Task that represents asynchronous operation, containing information abaut sending status.</returns>
     private async Task<int> Send(MimeMessage message, EmailMessage emailMessage)
     {
       EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, false).SingleOrDefaultAsync();

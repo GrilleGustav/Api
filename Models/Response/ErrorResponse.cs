@@ -22,10 +22,19 @@ namespace Models.Response
     /// <summary>
     /// Error response.
     /// </summary>
-    /// <param name="isSuccess"></param>
+    /// <param name="isSuccess">State operation completed.</param>
     public ErrorResponse(bool isSuccess)
     {
       this.IsSuccess = isSuccess;
+    }
+
+    /// <summary>
+    /// Add one Error object.
+    /// </summary>
+    /// <param name="error">Error object.</param>
+    public ErrorResponse(Error error)
+    {
+      this.Errors.Add(error);
     }
 
     /// <summary>
@@ -66,6 +75,24 @@ namespace Models.Response
     {
 
       this.Errors.Add(new Error(errorCode: errorCode));
+    }
+
+    /// <summary>
+    /// Add range of errors.
+    /// </summary>
+    /// <param name="errors"></param>
+    public void AddErrors(List<Error> errors)
+    {
+      this.Errors.AddRange(errors);
+    }
+
+    /// <summary>
+    /// Add error object with errorcode and or error message.
+    /// </summary>
+    /// <param name="error">Error object.</param>
+    public void AddError(Error error)
+    {
+      this.Errors.Add(error);
     }
   }
 }

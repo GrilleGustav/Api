@@ -6,6 +6,9 @@ using Entities.Models.Account;
 
 namespace Contracts
 {
+  /// <summary>
+  /// Used for repository initalization.
+  /// </summary>
   public interface IRefreshTokenRepository : IRepositoryBase<RefreshToken>
   {
   }

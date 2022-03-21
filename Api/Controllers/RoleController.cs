@@ -92,13 +92,15 @@ namespace Api.Controllers
       if (!ModelState.IsValid)
         return BadRequest();
 
+      // Checks whether the role already exists.
       if (await _roleManager.RoleExistsAsync(request.Name))
       {
         response.IsSuccess = false;
         response.AddError(errorCode: "23", errorMessage: "Role with name already exist.");
         return Ok(response);
       }
-      Role role = new Role(name: request.Name, description: request.Discription);
+      Role role = new Role(name: request.Name, description: request.Description);
+      // Create new role.
       IdentityResult result = await _roleManager.CreateAsync(role);
       if (!result.Succeeded)
       {
@@ -110,11 +112,16 @@ namespace Api.Controllers
       }
 
       response.IsSuccess = true;
+      // Get the scroll you just created.
       response.Role = await _roleManager.FindByNameAsync(request.Name);
+
+      // Add claims to role.
       foreach (string value in request.Claims)
       {
         var claim = new Claim(ClaimTypes.Role, value);
         IdentityResult claimResult = await _roleManager.AddClaimAsync(role, claim);
+
+        // If add claim failed, return error.
         if (!claimResult.Succeeded)
         {
           foreach (var error in result.Errors)
@@ -133,13 +140,13 @@ namespace Api.Controllers
     /// Update role name or description.
     /// </summary>
     /// <param name="request">Changed role.</param>
-    /// <returns>if role successfuly changed return true. Otherwise return one or more errors.</returns>
+    /// <returns>If role successfuly changed return true. Otherwise return one or more errors.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Update([FromBody] RoleUpdateRequest request)
     {
       ErrorResponse response = new ErrorResponse();
 
-      // Return bad request if input modelm data not valid.
+      // Return bad request if input model data not valid.
       if (!ModelState.IsValid)
         return BadRequest();
 

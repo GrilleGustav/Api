@@ -2,6 +2,7 @@
 using Models.Response.Role;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Services.Interfaces
@@ -34,6 +35,6 @@ namespace Services.Interfaces
     /// Get application claims grouped by display group.
     /// </summary>
     /// <returns>Application claims grouped by display group.</returns>
-    ApplicationClaimsResponse GetClaimsGroupedBy();
+    Result<Dictionary<string, IGrouping<string, ApplicationClaim>>> GetClaimsGroupedBy();
   }
 }
