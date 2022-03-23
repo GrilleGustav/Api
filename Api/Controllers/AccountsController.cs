@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Models;
 using Models.Request;
 using Models.Response;
 using Models.Response.User;
@@ -98,7 +99,7 @@ namespace Api.Controllers
     [HttpDelete("[action]")]
     public async Task<ActionResult<ErrorResponse>> UserDelete([FromQuery] string email)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
+      ErrorResponse response = new ErrorResponse();
 
       // Get user from database.
       var user = await _userManager.FindByEmailAsync(email);
@@ -106,8 +107,8 @@ namespace Api.Controllers
       // If null user with email dosn't exist.
       if (user == null)
       {
-        errorResponse.AddError(errorCode: "2", "User with emial not found");
-        return BadRequest(errorResponse);
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
       }
 
       // Delete user from database. If fails returns some errors.
@@ -116,12 +117,14 @@ namespace Api.Controllers
       // If result true, set response true and return to frontend.
       if (result.Succeeded)
       {
-        errorResponse.IsSuccess = true;
+        response.IsSuccess = true;
       }
       // Set errors to response.
       else
-        errorResponse.AddError(errorCode: "7", "User can't delete.");
-      return Ok(errorResponse);
+        response.AddError(errorCode: "16", "User can't delete.");
+
+      response.IsSuccess = true;
+      return Ok(response);
     }
 
     /// <summary>
@@ -169,10 +172,14 @@ namespace Api.Controllers
     [HttpPost("[action]")]
     public async Task<IActionResult> Login([FromBody] AuthenticationRequest authenticationRequest)
     {
+      AuthenticationResponse response = new AuthenticationResponse();
       // Find user by username.
       var user = await _userManager.FindByNameAsync(authenticationRequest.Email);
       if (user == null)
-        return BadRequest("Invalid Request");
+      {
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
+      }
       
       // Check if email is already confirmed.
       if (!await _userManager.IsEmailConfirmedAsync(user))
@@ -190,11 +197,13 @@ namespace Api.Controllers
           //var content = $"Your account is locked out. To reset the password click this link: {userForAuthentication.clientURI}";
           //var message = new Message(new string[] { userForAuthentication.Email }, "Locked out account information", content, null);
           //await _emailSender.SendEmailAsync(message);
-
-          return Unauthorized();
+          // TODO
+          response.AddError(errorCode: "21", errorMessage: "Your account is locked.");
+          return Unauthorized(response);
         }
 
-        return Unauthorized();
+        response.AddError(errorCode: "20", errorMessage: "Authentication failed.");
+        return Unauthorized(response);
       }
 
       // Check if twofactor is enabled on this user. 
@@ -212,7 +221,7 @@ namespace Api.Controllers
       await _userManager.ResetAccessFailedCountAsync(user);
 
       // return successfully locked in user.
-      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
+      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken, IsSuccess = true });
     }
 
     /// <summary>
@@ -224,20 +233,28 @@ namespace Api.Controllers
     [HttpPost("[action]")]
     public async Task<IActionResult> TwoStepVerification([FromBody] TwoFactorRequest twoFactorRequest)
     {
+      AuthenticationResponse response = new AuthenticationResponse();
       // Check if request data completely.
       if (!ModelState.IsValid)
         return BadRequest();
 
       var user = await _userManager.FindByEmailAsync(twoFactorRequest.Email);
       if (user == null)
-        return BadRequest();
+      {
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
+      }
 
       var validVerification = await _userManager.VerifyTwoFactorTokenAsync(user, twoFactorRequest.Provider, twoFactorRequest.Token);
       if (!validVerification)
-        return BadRequest();
+      {
+        response.AddError(errorCode: "17", "Ivalid two factor token.");
+        return BadRequest(response);
+      }
 
       TokenResponse tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
-      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken });
+
+      return Ok(new AuthenticationResponse { IsAuthSuccessful = true, Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken, IsSuccess = true });
     }
 
     /// <summary>
@@ -249,22 +266,23 @@ namespace Api.Controllers
     [HttpGet("[action]")]
     public async Task<ActionResult<ErrorResponse>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
+      ErrorResponse response = new ErrorResponse();
       var user = await _userManager.FindByEmailAsync(email);
       if (user == null)
       {
-        errorResponse.AddError(errorCode: "2", "User not found.");
-        return BadRequest(errorResponse);
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
       }
 
       var confirmResult = await _userManager.ConfirmEmailAsync(user, token);
       if (!confirmResult.Succeeded)
       {
-        errorResponse.AddError(errorCode: "8", "Confirm email failed.");
-        return Ok(errorResponse);
+        response.AddError(errorCode: "18", "Confirm email failed.");
+        return Ok(response);
       }
 
-      return Ok(new ErrorResponse());
+      response.IsSuccess = true;
+      return Ok(response);
     }
 
     /// <summary>
@@ -275,19 +293,18 @@ namespace Api.Controllers
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> ResendEmailConfirmLink([FromBody] EmailConfirmLinkRequest request)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
+      ErrorResponse response = new ErrorResponse();
       if (!ModelState.IsValid)
       {
-        errorResponse.AddError(errorCode: "9");
-        return BadRequest(errorResponse);
+        return BadRequest(response);
       }
 
       // Search user by email. Return error if user not found.
       var user = await _userManager.FindByEmailAsync(request.Email);
       if (user == null)
       {
-        errorResponse.AddError(errorCode: "24", errorMessage: "User with email not found.");
-        return Ok(errorResponse);
+        response.AddError(errorCode: "15", errorMessage: "User not found.");
+        return Ok(response);
       }
 
       // Generate email cofirm token.
@@ -296,21 +313,25 @@ namespace Api.Controllers
       // Generate and send emial confirm message.
       EmailMessage emailMessage = await _emailService.GenerateRegisterConfirmMessage(user, request.ClientURI, token);
       await _emailService.SendMail(emailMessage);
-      errorResponse.IsSuccess = true;
-      return Ok(errorResponse);
+      response.IsSuccess = true;
+      return Ok(response);
     }
 
     // ToDo: ErrorResponse
     [HttpPost("[action]")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordDto)
     {
+      ErrorResponse response = new ErrorResponse();
       if (!ModelState.IsValid)
         return BadRequest();
 
       // Search user by email. Return error if user not found.
       var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
       if (user == null)
-        return BadRequest("Invalid Request");
+      {
+        response.AddError(errorCode: "15", errorMessage: "User not found.");
+        return BadRequest(response);
+      }
 
       var token = await _userManager.GeneratePasswordResetTokenAsync(user);
       var param = new Dictionary<string, string>
@@ -324,13 +345,15 @@ namespace Api.Controllers
       //var message = new Message(new string[] { "codemazetest@gmail.com" }, "Reset password token", callback, null);
       //await _emailSender.SendEmailAsync(message);
 
-      return Ok();
+      response.IsSuccess = true;
+      return Ok(response);
     }
 
     // ToDo: ErrorResponse
     [HttpPost("[action]")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
     {
+      ErrorResponse response = new ErrorResponse();
       // Check request data. If not valid return BadRequest(400)
       if (!ModelState.IsValid)
         return BadRequest();
@@ -338,7 +361,10 @@ namespace Api.Controllers
       // Search user by email. Return error if user not found.
       var user = await _userManager.FindByEmailAsync(resetPasswordRequest.Email);
       if (user == null)
-        return BadRequest("Invalid Request");
+      {
+        response.AddError(errorCode: "15", errorMessage: "User not found.");
+        return BadRequest(response);
+      }
 
       // Reset user password.
       var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordRequest.Token, resetPasswordRequest.Password);
@@ -346,15 +372,17 @@ namespace Api.Controllers
       // If reset fails return some errors.
       if (!resetPassResult.Succeeded)
       {
-        var errors = resetPassResult.Errors.Select(e => e.Description);
+        foreach (var error in resetPassResult.Errors)
+          response.AddError(errorCode: error.Code, errorMessage: error.Description);
 
-        return BadRequest(new { Errors = errors });
+        return BadRequest(response);
       }
 
       // If password is reset, lockout user immediately.
       await _userManager.SetLockoutEndDateAsync(user, new DateTime(2000, 1, 1));
 
-      return Ok();
+      response.IsSuccess = true;
+      return Ok(response);
     }
 
     /// <summary>
@@ -365,9 +393,13 @@ namespace Api.Controllers
     [HttpPost("ExternalLogin")]
     public async Task<IActionResult> ExternalLogin([FromBody] ExternalAuthRequest externalAuth)
     {
+      AuthenticationResponse response = new AuthenticationResponse();
       var payload = await _jwtHandler.VerifyGoogleToken(externalAuth);
       if (payload == null)
-        return BadRequest("Invalid External Authentication.");
+      {
+        response.AddError(errorCode: "19", errorMessage: "Invalid External Authentication.");
+        return BadRequest(response);
+      }
 
       var info = new UserLoginInfo(externalAuth.Provider, payload.Subject, externalAuth.Provider);
 
@@ -398,7 +430,7 @@ namespace Api.Controllers
       //check for the Locked out account
 
       TokenResponse tokenResponse = await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0);
-      return Ok(new AuthenticationResponse { Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken, IsAuthSuccessful = true });
+      return Ok(new AuthenticationResponse { Token = tokenResponse.Token, RefreshToken = tokenResponse.RefreshToken, IsAuthSuccessful = true, IsSuccess = true });
     }
 
     private async Task<IActionResult> GenerateOTPFor2StepVerification(User user)
@@ -411,7 +443,7 @@ namespace Api.Controllers
       //var message = new Message(new string[] { user.Email }, "Authentication token", token, null);
       //await _emailSender.SendEmailAsync(message);
 
-      return Ok(new AuthenticationResponse { Is2StepVerificationRequired = true, Provider = "Email" });
+      return Ok(new AuthenticationResponse { Is2StepVerificationRequired = true, Provider = "Email", IsSuccess = true });
     }
 
     /// <summary>
@@ -424,8 +456,8 @@ namespace Api.Controllers
         return Request.Headers["X-Forwarded-For"];
       else
       {
-        var test = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        return test;
+        var ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        return ip;
       }
     }
   }
