@@ -41,6 +41,11 @@ namespace Models.View.Settings.Email
     /// </summary>
     public bool Default { get; set; }
 
+    /// <summary>
+    /// A random value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public byte[] ConcurrencyStamp { get; set; }
+
     EmailServerViewModel()
     {}
   }

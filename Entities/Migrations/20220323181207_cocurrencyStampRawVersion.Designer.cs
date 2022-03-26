@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220323181207_cocurrencyStampRawVersion")]
+    partial class cocurrencyStampRawVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,7 +89,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "0d77443c-e615-41c1-a172-afcbb2405001",
+                            ConcurrencyStamp = "eb8a3f68-a536-4a9e-bac5-d1ca1285e9e9",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER"
@@ -95,14 +97,14 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "72a8107e-1276-4c2c-8d66-88a0a65cefb8",
+                            ConcurrencyStamp = "70c933c1-2ff8-4584-9af7-f37275830c17",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "c36c5ea6-1111-4b2e-90d0-f9e2fe3b6170",
+                            ConcurrencyStamp = "ea00ba3b-19a9-4ef3-a62e-599a8f9584bd",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER"
                         });
@@ -194,7 +196,7 @@ namespace Entities.Migrations
                         {
                             Id = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "44517b0f-f6b5-420b-be34-4c1b2be0147d",
+                            ConcurrencyStamp = "1aaef0bb-6dbe-4449-8f62-0a0a23c10f06",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
@@ -205,7 +207,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEP6HLPagAFhZbsN4EoCKVqhhcpV3DnDKBgu0AsxMCTy2DzRK6HaslSzQRDK2w+q1yg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEEtUXxK1K473Q3m4jwfrSjZtyK2JdO9oI2yKKD4/VJfFSt/poM4SCjQVJT2j69Lo0A==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
@@ -271,10 +273,10 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ConcurrencyStamp")
+                    b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp(6)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("Default")
                         .HasColumnType("tinyint(1)");
@@ -317,10 +319,10 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ConcurrencyStamp")
+                    b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp(6)");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Content")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");

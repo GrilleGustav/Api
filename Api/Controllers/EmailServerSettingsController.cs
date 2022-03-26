@@ -88,7 +88,7 @@ namespace Api.Controllers
 
         return Ok(response);
       }
-
+      var test = new EmailServerSettingResponse(_mapper.Map<EmailServer, EmailServerViewModel>(result.Data));
       return Ok(new EmailServerSettingResponse(_mapper.Map<EmailServer, EmailServerViewModel>(result.Data)));
     }
 
@@ -126,15 +126,18 @@ namespace Api.Controllers
       if (request == null)
         return BadRequest();
 
-      ErrorResponse response = new ErrorResponse();
+      EmailServerSettingResponse response = new EmailServerSettingResponse();
       Result<EmailServer> result = await _emailServerSettingsService.Update(_mapper.Map<EmailServerEditRequest, EmailServer>(request));
       if (result.IsSccess == false)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
+        response.EmailServer = _mapper.Map<EmailServer, EmailServerViewModel>(result.Data);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error updating entity. Data not changed.");
       }
+      else
+        response.IsSuccess = true;
 
       return Ok(response); ;
     }

@@ -20,6 +20,7 @@ namespace Entities.Configuration
     public void Configure(EntityTypeBuilder<EmailServer> builder)
     {
       builder.HasKey(x => x.Id);
+      builder.Property(x => x.ConcurrencyStamp).IsRowVersion();
 
       builder.HasData(
         new EmailServer

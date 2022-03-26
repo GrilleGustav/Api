@@ -25,6 +25,8 @@ namespace Entities.Configuration
         .WithMany(x => x.EmailTemplates)
         .HasForeignKey(x => x.EmailSenderId);
 
+      builder.Property(x => x.ConcurrencyStamp).IsRowVersion();
+
       builder.HasData(
         new EmailTemplate
         {

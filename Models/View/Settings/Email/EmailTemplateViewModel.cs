@@ -57,6 +57,11 @@ namespace Models.View.Settings.Email
     public int? EmailSenderId { get; set; }
 
     /// <summary>
+    /// A random value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public byte[] ConcurrencyStamp { get; set; }
+
+    /// <summary>
     /// Navigation property to EmailSender.
     /// </summary>
     public EmailSender EmailSender { get; set; }

@@ -15,6 +15,7 @@ using Models.View.Settings.Email;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Services
@@ -154,32 +155,44 @@ namespace Services
     {
       try
       {
-        if (data.Default)
+        EmailServer emailServerOriginal = await _repository.EmailServer.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
+        if (emailServerOriginal.ConcurrencyStamp.SequenceEqual(data.ConcurrencyStamp))
         {
-          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id != data.Id, true).SingleOrDefaultAsync();
-          if (emailServer != null)
+          if (data.Default)
           {
-            emailServer.Default = false;
-            await _repository.SaveAsync();
+            EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id != data.Id, true).SingleOrDefaultAsync();
+            if (emailServer != null)
+            {
+              emailServer.Default = false;
+              await _repository.SaveAsync();
+            }
           }
-        }
-        else
-        {
-          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id == data.Id, true).SingleOrDefaultAsync();
-          if (emailServer != null)
+          else
           {
-            _logger.LogError("Can´t set default server to false.");
-            return new Result<EmailServer>(new Error(errorCode: "4", errorMessage: "Can´t set default record to false."));
+            EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id == data.Id, true).SingleOrDefaultAsync();
+            if (emailServer != null)
+            {
+              _logger.LogError("Can´t set default server to false.");
+              return new Result<EmailServer>(new Error(errorCode: "4", errorMessage: "Can´t set default record to false."));
+            }
           }
-        }
 
-        _repository.EmailServer.Update(data);
-        if (string.IsNullOrWhiteSpace(data.ServerPassword))
-          _repository.EmailServer.IgnoreProperty(data, x => x.ServerPassword);
+          _repository.EmailServer.Update(data); 
+          if (string.IsNullOrWhiteSpace(data.ServerPassword))
+            _repository.EmailServer.IgnoreProperty(data, x => x.ServerPassword);
 
-        await _repository.SaveAsync();
-        return new Result<EmailServer>(true);
+          await _repository.SaveAsync();
+          return new Result<EmailServer>(true);
       }
+        else
+      {
+        _logger.LogWarning("This record was beeing editied by another user");
+        Result<EmailServer> result = new Result<EmailServer>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+        result.AddData(emailServerOriginal);
+        result.IsSccess = false;
+        return result;
+      }
+    }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
@@ -198,6 +211,7 @@ namespace Services
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
+
 
         return new Result<EmailServer>(new Error("5", "Error updating entity. Data not changed."));
       }

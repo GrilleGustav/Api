@@ -139,7 +139,7 @@ namespace Api.Controllers
       // Check if the user has already been changed. If user alreade changed, sending current user database data back.
       if (userOriginal.ConcurrencyStamp != detailRequest.ConcurrencyStamp)
       {
-        userSettingsResponse.AddError(errorCode: "11", errorMessage: "This record was beeing editied by another user");
+        userSettingsResponse.AddError(errorCode: "2001", errorMessage: "This record was beeing editied by another user");
         userSettingsResponse.User = _mapper.Map<UserDetailViewModel>(userOriginal);
         userSettingsResponse.IsSuccess = false;
         return userSettingsResponse;
