@@ -36,7 +36,7 @@ namespace Entities.Models.Settings.Email
     /// <summary>
     /// Get or set LanguageCode.
     /// </summary>
-    public Language LanguageCode { get; set; }
+    public Language Language { get; set; }
 
     /// <summary>
     /// Get or set email type. Is used to provide the correct variables.

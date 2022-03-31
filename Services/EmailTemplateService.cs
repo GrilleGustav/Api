@@ -10,6 +10,7 @@ using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -159,25 +160,37 @@ namespace Services
     {
       try
       {
-        if (data.Default)
+        EmailTemplate emailTemplateOriginal = await _repository.EmailTemplate.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
+        if (emailTemplateOriginal.ConcurrencyStamp.SequenceEqual(data.ConcurrencyStamp))
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode && x.Id != data.Id, true).SingleOrDefaultAsync();
-          if (emailTemplate != null)
+          if (data.Default)
           {
-            emailTemplate.Default = false;
-            await _repository.SaveAsync();
+            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Language == data.Language && x.Id != data.Id, true).SingleOrDefaultAsync();
+            if (emailTemplate != null)
+            {
+              emailTemplate.Default = false;
+              await _repository.SaveAsync();
+            }
+          }
+          else
+          {
+            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
+            if (emailTemplate != null)
+            {
+              if (_logger.IsEnabled(LogLevel.Error))
+                _logger.LogError("Can't set default record to false.");
+
+              return new Result<EmailTemplate>(new Error(errorCode: "4", errorMessage: "Can't set default record to false."));
+            }
           }
         }
         else
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
-          if (emailTemplate != null)
-          {
-            if (_logger.IsEnabled(LogLevel.Error))
-              _logger.LogError("Can't set default record to false.");
-
-            return new Result<EmailTemplate>(new Error(errorCode: "4", errorMessage: "Can't set default record to false."));
-          }
+          _logger.LogWarning("This record was beeing editied by another user");
+          Result<EmailTemplate> result = new Result<EmailTemplate>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+          result.AddData(emailTemplateOriginal);
+          result.IsSccess = false;
+          return result;
         }
 
         _repository.EmailTemplate.Update(data);
@@ -229,7 +242,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Language == data.Language, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;

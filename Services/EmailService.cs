@@ -57,7 +57,7 @@ namespace Services
     /// <returns>Email message.</returns>
     public async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
     {
-      EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.LanguageCode == user.Language, false).SingleOrDefaultAsync();
+      EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.Language == user.Language, false).SingleOrDefaultAsync();
       var param = new Dictionary<string, string>
       {
         {"token", token },

@@ -121,7 +121,7 @@ namespace Api.Controllers
     /// <param name="emailServerEditRequest">Email server data.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<ErrorResponse>> Update([FromBody] EmailServerEditRequest request)
+    public async Task<ActionResult<EmailServerSettingResponse>> Update([FromBody] EmailServerEditRequest request)
     {
       if (request == null)
         return BadRequest();

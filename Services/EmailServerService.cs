@@ -177,22 +177,22 @@ namespace Services
             }
           }
 
-          _repository.EmailServer.Update(data); 
+          _repository.EmailServer.Update(data);
           if (string.IsNullOrWhiteSpace(data.ServerPassword))
             _repository.EmailServer.IgnoreProperty(data, x => x.ServerPassword);
 
           await _repository.SaveAsync();
           return new Result<EmailServer>(true);
-      }
+        }
         else
-      {
-        _logger.LogWarning("This record was beeing editied by another user");
-        Result<EmailServer> result = new Result<EmailServer>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
-        result.AddData(emailServerOriginal);
-        result.IsSccess = false;
-        return result;
+        {
+          _logger.LogWarning("This record was beeing editied by another user");
+          Result<EmailServer> result = new Result<EmailServer>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+          result.AddData(emailServerOriginal);
+          result.IsSccess = false;
+          return result;
+        }
       }
-    }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
@@ -211,7 +211,6 @@ namespace Services
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-
 
         return new Result<EmailServer>(new Error("5", "Error updating entity. Data not changed."));
       }
@@ -239,7 +238,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x .Default == true, true).SingleOrDefaultAsync();
+          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, true).SingleOrDefaultAsync();
           if (emailServer != null)
           {
             emailServer.Default = false;
@@ -319,7 +318,7 @@ namespace Services
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
         return new Result<EmailServer>(new Error("1", "Error loading data."));
-      }  
+      }
     }
 
     /// <summary>
@@ -339,7 +338,7 @@ namespace Services
 
         return new EmailServerExistResponse(false);
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);

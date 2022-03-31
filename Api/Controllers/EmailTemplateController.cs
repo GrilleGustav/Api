@@ -118,20 +118,26 @@ namespace Api.Controllers
     /// <param name="data">Entity to update.</param>
     /// <returns>Error code or badrequest, if fails.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<ErrorResponse>> Update(EmailTemplate data)
+    public async Task<ActionResult<EmailTemplateResponse>> Update(EmailTemplate data)
     {
       if (data == null)
         return BadRequest();
+
+      EmailTemplateResponse response = new EmailTemplateResponse();
       Result<EmailTemplate> result = await _emailTemplateService.Update(data);
       if (!result.IsSccess)
       {
+        response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
+        response.AddErrors(result.Errors);
+        response.EmailTemplate = _mapper.Map<EmailTemplate, EmailTemplateViewModel>(result.Data);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error updating entity. Data not changed");
 
-        return Ok(new ErrorResponse(result.Errors));
       }
+      else
+        response.IsSuccess = true;
 
-      return Ok(new ErrorResponse(true));
+      return Ok(response);
     }
 
     /// <summary>

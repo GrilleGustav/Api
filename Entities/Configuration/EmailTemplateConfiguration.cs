@@ -36,7 +36,7 @@ namespace Entities.Configuration
           Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
           EmailTemplateType = Enums.EmailTemplateType.Register,
           Predefined = true,
-          LanguageCode = Enums.Language.Germany,
+          Language = Enums.Language.Germany,
           Default = true,
           EmailSenderId = 1
         });

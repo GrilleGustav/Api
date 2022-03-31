@@ -13,7 +13,7 @@ namespace Models.View.Settings.Email
     /// <summary>
     /// Get or set id.
     /// </summary>
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// Get or set sender.
