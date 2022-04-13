@@ -170,7 +170,7 @@ namespace Api.Controllers
     /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
-    public async Task<IActionResult> Login([FromBody] AuthenticationRequest authenticationRequest)
+    public async Task<IActionResult> Login([FromBody] AuthenticationRequestModel authenticationRequest)
     {
       AuthenticationResponse response = new AuthenticationResponse();
       // Find user by username.
