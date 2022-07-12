@@ -19,6 +19,7 @@ using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -61,20 +62,25 @@ namespace Api.Controllers
     /// <returns></returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
-    public async Task<IActionResult> RegisterUser([FromBody] RegistrationRequest registrationRequest)
+    public async Task<ActionResult<ErrorResponse>> RegisterUser([FromBody] RegistrationRequest registrationRequest)
     {
+      ErrorResponse response = new ErrorResponse();
       if (registrationRequest == null || !ModelState.IsValid)
         return BadRequest();
 
       // Mapp registration data to new user object.
       var user = _mapper.Map<User>(registrationRequest);
       // Create user.
+
       var result = await _userManager.CreateAsync(user, registrationRequest.Password);
 
       if (!result.Succeeded)
       {
-        var errors = result.Errors.Select(e => e.Description);
-        return BadRequest(new RegistrationResponse { Errors = errors });
+        foreach (IdentityError error in result.Errors)
+        {
+          response.AddError(errorCode: error.Code, errorMessage: error.Description);
+        }
+        return Ok(response);
       }
 
       // Generate email confirm token.
@@ -85,9 +91,9 @@ namespace Api.Controllers
       await _emailService.SendMail(emailMessage);
 
       // Add new user to role user. this is the default role for each user of hte application.
-      await _userManager.AddToRoleAsync(user, "User");
+      await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "User"));
 
-      return StatusCode(201);
+      return StatusCode(201, new ErrorResponse(true));
     }
 
     /// <summary>
@@ -174,7 +180,7 @@ namespace Api.Controllers
     {
       AuthenticationResponse response = new AuthenticationResponse();
       // Find user by username.
-      var user = await _userManager.FindByNameAsync(authenticationRequest.Email);
+      var user = await _userManager.FindByEmailAsync(authenticationRequest.Email);
       if (user == null)
       {
         response.AddError(errorCode: "15", "User not found.");
@@ -263,6 +269,7 @@ namespace Api.Controllers
     /// <param name="email">User email.</param>
     /// <param name="token">Confirm token.</param>
     /// <returns>Return succesfully or some error.</returns>
+    [AllowAnonymous]
     [HttpGet("[action]")]
     public async Task<ActionResult<ErrorResponse>> EmailConfirmation([FromQuery] string email, [FromQuery] string token)
     {
@@ -318,6 +325,7 @@ namespace Api.Controllers
     }
 
     // ToDo: ErrorResponse
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordDto)
     {
@@ -341,7 +349,8 @@ namespace Api.Controllers
       };
 
       var callback = QueryHelpers.AddQueryString(forgotPasswordDto.ClientURI, param);
-
+      EmailMessage emailMessage = await _emailService.GeneratePasswordResetMessage(user, forgotPasswordDto.ClientURI, token);
+      await _emailService.SendMail(emailMessage);
       //var message = new Message(new string[] { "codemazetest@gmail.com" }, "Reset password token", callback, null);
       //await _emailSender.SendEmailAsync(message);
 
@@ -349,12 +358,49 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Change user password.
+    /// </summary>
+    /// <param name="changePasswordRequest">Old, new, confirm password and user email</param>
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
+    [HttpPost("[action]")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
+    {
+      ErrorResponse response = new ErrorResponse();
+      // Check request data. If not valid return BadRequest(400).
+      if (!ModelState.IsValid)
+      {
+        response.AddError(errorCode: "22", errorMessage: "Request data invalid.");
+        return BadRequest(response);
+      }
+
+      User user = await _userManager.FindByEmailAsync(changePasswordRequest.Email);
+      if (user == null)
+      {
+        response.AddError(errorCode: "15", errorMessage: "User not found.");
+        return BadRequest(response);
+      }
+
+      var changePasswordResult = await _userManager.ChangePasswordAsync(user, changePasswordRequest.Password, changePasswordRequest.NewPassword);
+      if (!changePasswordResult.Succeeded)
+      {
+        foreach (var error in changePasswordResult.Errors)
+          response.AddError(errorCode: error.Code, errorMessage: error.Description);
+
+        return BadRequest(response);
+      }
+
+      response.IsSuccess = true;
+      return Ok(response);
+    }
+
     // ToDo: ErrorResponse
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest resetPasswordRequest)
     {
       ErrorResponse response = new ErrorResponse();
-      // Check request data. If not valid return BadRequest(400)
+      // Check request data. If not valid return BadRequest(400).
       if (!ModelState.IsValid)
         return BadRequest();
 

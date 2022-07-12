@@ -95,6 +95,11 @@ namespace Models.View.User
     public virtual string UserName { get; set; }
 
     /// <summary>
+    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public DateTime UpdatedOn { get; set; }
+
+    /// <summary>
     /// Gets or sets a flag indicating if the user could be locked out.
     /// 
     /// Value:

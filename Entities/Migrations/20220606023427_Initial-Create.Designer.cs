@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20220323181207_cocurrencyStampRawVersion")]
-    partial class cocurrencyStampRawVersion
+    [Migration("20220606023427_Initial-Create")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,7 +89,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "eb8a3f68-a536-4a9e-bac5-d1ca1285e9e9",
+                            ConcurrencyStamp = "45ac7bc2-a9dc-4cfa-906e-50074513d94f",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER"
@@ -97,14 +97,14 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "70c933c1-2ff8-4584-9af7-f37275830c17",
+                            ConcurrencyStamp = "522bb984-4f46-4bc2-826e-72685adc8cf4",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "ea00ba3b-19a9-4ef3-a62e-599a8f9584bd",
+                            ConcurrencyStamp = "94645a5e-b097-460c-b889-5d538ccdf44a",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER"
                         });
@@ -196,7 +196,7 @@ namespace Entities.Migrations
                         {
                             Id = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1aaef0bb-6dbe-4449-8f62-0a0a23c10f06",
+                            ConcurrencyStamp = "5f375fbe-4e9b-4488-8766-4e7748ab7127",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
@@ -207,7 +207,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEtUXxK1K473Q3m4jwfrSjZtyK2JdO9oI2yKKD4/VJfFSt/poM4SCjQVJT2j69Lo0A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGEG4gY8csfVGOpWhFKSE1HtKgvU6bOR7Bs03pCUxcsArzoEHUh52wt5i1xuoQN2mA==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
@@ -273,10 +273,11 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
+                    b.Property<DateTime>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<bool>("Default")
                         .HasColumnType("tinyint(1)");
@@ -304,6 +305,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Default = true,
                             Description = "Testbenutzer",
                             ServerIp = "mail.grillegustav.de",
@@ -319,10 +321,11 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
+                    b.Property<DateTime>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Content")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -336,10 +339,10 @@ namespace Entities.Migrations
                     b.Property<int?>("EmailSenderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmailTemplateType")
-                        .HasColumnType("int");
+                    b.Property<string>("EmailTemplateType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("LanguageCode")
+                    b.Property<int>("Language")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -358,14 +361,57 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
                             Default = true,
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
-                            EmailTemplateType = 0,
-                            LanguageCode = 0,
+                            EmailTemplateType = "register",
+                            Language = 0,
                             Name = "Register 1",
                             Predefined = true
+                        });
+                });
+
+            modelBuilder.Entity("Entities.Models.Settings.Email.TemplateType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("PluginName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TemplateType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Register",
+                            PluginName = "BaseApplication"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "PasswordReset",
+                            PluginName = "BaseApplication"
                         });
                 });
 

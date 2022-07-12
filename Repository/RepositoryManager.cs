@@ -19,6 +19,7 @@ namespace Repository
     private IEmailTemplateRepository _emailTemplateRepository;
     private IEmailMessageRepository _emailMessageRepository;
     private IRefreshTokenRepository _refreshTokenRepository;
+    private ITemplateTypeRepository _templateTypeRepository;
 
     /// <summary>
     /// Manage database backend.
@@ -96,6 +97,20 @@ namespace Repository
           _refreshTokenRepository = new RefreshTokenRepository(_repositoryContext);
 
         return _refreshTokenRepository;
+      }
+    }
+
+    /// <summary>
+    /// Initiate template type repository and make it accessible.
+    /// </summary>
+    public ITemplateTypeRepository TemplateType
+    {
+      get
+      {
+        if (_templateTypeRepository == null)
+          _templateTypeRepository = new TemplateTypeRepository(_repositoryContext);
+
+        return _templateTypeRepository;
       }
     }
 

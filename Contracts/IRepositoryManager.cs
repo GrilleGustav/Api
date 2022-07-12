@@ -2,6 +2,7 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Contracts
@@ -17,6 +18,8 @@ namespace Contracts
     IEmailMessageRepository EmailMessage { get; }
 
     IRefreshTokenRepository RefreshToken { get; }
+
+    ITemplateTypeRepository TemplateType { get; }
 
     /// <summary>
     /// Save database actions.

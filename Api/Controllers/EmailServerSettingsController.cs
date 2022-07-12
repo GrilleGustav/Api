@@ -104,7 +104,7 @@ namespace Api.Controllers
         return BadRequest();
 
       Result<EmailServer> result = await _emailServerSettingsService.Create(_mapper.Map<EmailServerAddRequest, EmailServer>(emailServerAddRequest));
-      if (result.IsSccess == false)
+      if (result.IsSuccess == false)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error creating entity. Data not changed.");
@@ -128,7 +128,7 @@ namespace Api.Controllers
 
       EmailServerSettingResponse response = new EmailServerSettingResponse();
       Result<EmailServer> result = await _emailServerSettingsService.Update(_mapper.Map<EmailServerEditRequest, EmailServer>(request));
-      if (result.IsSccess == false)
+      if (result.IsSuccess == false)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
@@ -154,7 +154,7 @@ namespace Api.Controllers
         return BadRequest();
       ErrorResponse response = new ErrorResponse();
       Result<EmailServer> result = await _emailServerSettingsService.Delete(id);
-      if (result.IsSccess == false)
+      if (result.IsSuccess == false)
       {
         response.AddError(errorCode: "9", errorMessage: "Error deleting record.");
         if (_logger.IsEnabled(LogLevel.Error))

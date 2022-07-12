@@ -50,7 +50,7 @@ namespace Api.Controllers
     public async Task<ActionResult<EmailMessageResponse>> GetAll()
     {
       Result<List<EmailMessage>> result = await _emailMesssageService.GetAll();
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         EmailMessageResponse response = new EmailMessageResponse();
         response.AddErrors(result.Errors);

@@ -25,7 +25,7 @@ namespace Api.Models.MapperConfiguration
   {
     public MapperConfig()
     {
-      CreateMap<RegistrationRequest, User>().ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email));
+      CreateMap<RegistrationRequest, User>();//.ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email));
 
       CreateMap<EmailServer, EmailServerViewModel>().ForMember(x => x.ServerPassword, opt => opt.Ignore());
 
@@ -62,6 +62,10 @@ namespace Api.Models.MapperConfiguration
       CreateMap<string, Claim>().ForMember(x => x.Value, opt => opt.MapFrom(x => x));//ForMember(dest => dest.Type, act => act.MapFrom(src => ClaimTypes.Role));
 
       CreateMap<string, Role>().ForMember(u => u.Name, opt => opt.MapFrom(x => x.ToString()));
+
+      CreateMap<TemplateType, TemplateTypeViewModel>();
+
+      CreateMap<TemplateTypeViewModel, TemplateType>();
     }
   }
 }

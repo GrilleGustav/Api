@@ -156,7 +156,7 @@ namespace Services
       try
       {
         EmailServer emailServerOriginal = await _repository.EmailServer.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
-        if (emailServerOriginal.ConcurrencyStamp.SequenceEqual(data.ConcurrencyStamp))
+        if (emailServerOriginal.ConcurrencyStamp == data.ConcurrencyStamp)
         {
           if (data.Default)
           {
@@ -169,7 +169,7 @@ namespace Services
           }
           else
           {
-            EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id == data.Id, true).SingleOrDefaultAsync();
+            EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
             if (emailServer != null)
             {
               _logger.LogError("Can´t set default server to false.");
@@ -189,7 +189,7 @@ namespace Services
           _logger.LogWarning("This record was beeing editied by another user");
           Result<EmailServer> result = new Result<EmailServer>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
           result.AddData(emailServerOriginal);
-          result.IsSccess = false;
+          result.IsSuccess = false;
           return result;
         }
       }
@@ -233,12 +233,11 @@ namespace Services
     /// <exception cref="Exception"></exception>
     public async Task<Result<EmailServer>> Create(EmailServer data)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
         {
-          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, true).SingleOrDefaultAsync();
+          EmailServer emailServer = await _repository.EmailServer.FindByCondition(x => x.Default == true, false).SingleOrDefaultAsync();
           if (emailServer != null)
           {
             emailServer.Default = false;
@@ -248,7 +247,6 @@ namespace Services
 
         _repository.EmailServer.Create(data);
         await _repository.SaveAsync();
-        errorResponse.IsSuccess = true;
         return new Result<EmailServer>(true);
       }
       catch (ArgumentNullException e)

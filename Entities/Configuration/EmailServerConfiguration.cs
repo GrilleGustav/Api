@@ -5,6 +5,7 @@
 using Entities.Models.Settings.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace Entities.Configuration
 {
@@ -20,7 +21,9 @@ namespace Entities.Configuration
     public void Configure(EntityTypeBuilder<EmailServer> builder)
     {
       builder.HasKey(x => x.Id);
-      builder.Property(x => x.ConcurrencyStamp).IsRowVersion();
+      builder.Property(x => x.ConcurrencyStamp).IsRowVersion().IsRowVersion().ValueGeneratedOnAddOrUpdate();
+
+      builder.Property(x => x.UpdatedOn).ValueGeneratedOnAddOrUpdate();
 
       builder.HasData(
         new EmailServer

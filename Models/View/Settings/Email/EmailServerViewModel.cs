@@ -2,6 +2,8 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace Models.View.Settings.Email
 {
   public class EmailServerViewModel
@@ -42,9 +44,14 @@ namespace Models.View.Settings.Email
     public bool Default { get; set; }
 
     /// <summary>
-    /// A random value that should change whenever a role is persisted to the store.
+    /// A random value that should change whenever a entity is persisted to the store.
     /// </summary>
-    public byte[] ConcurrencyStamp { get; set; }
+    public DateTime ConcurrencyStamp { get; set; }
+
+    /// <summary>
+    /// A DateTime value that should change whenever a entity is persisted to the store.
+    /// </summary>
+    public DateTime UpdatedOn { get; set; }
 
     EmailServerViewModel()
     {}

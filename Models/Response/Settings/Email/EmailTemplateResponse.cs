@@ -4,6 +4,7 @@
 
 using Entities.Models.Settings.Email;
 using Models.View.Settings.Email;
+using System.Collections.Generic;
 
 namespace Models.Response.Settings.Email
 {
@@ -29,5 +30,10 @@ namespace Models.Response.Settings.Email
     /// Get or set email template.
     /// </summary>
     public EmailTemplateViewModel EmailTemplate { get; set; }
+
+    /// <summary>
+    /// Get or set prop names. Used for editor placeholders.
+    /// </summary>
+    public List<string> PropNames { get; set; } = new List<string>();
   }
 }

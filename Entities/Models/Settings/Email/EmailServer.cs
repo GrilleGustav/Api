@@ -2,6 +2,8 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Attributes;
+using System;
 using System.Collections.Generic;
 
 namespace Entities.Models.Settings.Email
@@ -12,7 +14,7 @@ namespace Entities.Models.Settings.Email
   public class EmailServer
   {
     /// <summary>
-    /// Get or set Id.
+    /// Get or set id.
     /// </summary>
     public int Id { get; set; }
 
@@ -47,8 +49,13 @@ namespace Entities.Models.Settings.Email
     public bool Default { get; set; }
 
     /// <summary>
-    /// A random value that should change whenever a role is persisted to the store.
+    /// A DateTime value that should change whenever a role is persisted to the store.
     /// </summary>
-    public byte[] ConcurrencyStamp { get; set; }
+    public DateTime ConcurrencyStamp { get; set; }
+
+    /// <summary>
+    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public DateTime UpdatedOn { get; set; }
   }
 }

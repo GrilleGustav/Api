@@ -45,7 +45,7 @@ namespace Services
     {
       try
       {
-        return new Result<List<EmailTemplate>>(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).ToListAsync());
+        return new Result<List<EmailTemplate>>(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).Include(y => y.TemplateType).ToListAsync());
       }
       catch (ArgumentNullException e)
       {
@@ -73,7 +73,7 @@ namespace Services
     {
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).SingleOrDefaultAsync();
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).Include(y => y.TemplateType).SingleOrDefaultAsync();
         if (emailTemplate == null)
         {
           if (_logger.IsEnabled(LogLevel.Error))
@@ -107,16 +107,16 @@ namespace Services
     /// <summary>
     /// Get default template for template type.
     /// </summary>
-    /// <param name="emailTemplateType">Email template type.</param>
+    /// <param name="Id">Email template type.</param>
     /// <returns>The Task that represents asynchronous operation, containing a template.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<EmailTemplate>> GetDefaultTemplateForType(EmailTemplateType emailTemplateType)
+    public async Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id)
     {
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == emailTemplateType, false).SingleOrDefaultAsync();
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == id, false).SingleOrDefaultAsync();
         if (emailTemplate == null)
         {
           if (_logger.IsEnabled(LogLevel.Error))
@@ -161,11 +161,11 @@ namespace Services
       try
       {
         EmailTemplate emailTemplateOriginal = await _repository.EmailTemplate.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
-        if (emailTemplateOriginal.ConcurrencyStamp.SequenceEqual(data.ConcurrencyStamp))
+        if (emailTemplateOriginal.ConcurrencyStamp == data.ConcurrencyStamp)
         {
           if (data.Default)
           {
-            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Language == data.Language && x.Id != data.Id, true).SingleOrDefaultAsync();
+            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateTypeId == data.TemplateTypeId && x.Language == data.Language && x.Id != data.Id, true).SingleOrDefaultAsync();
             if (emailTemplate != null)
             {
               emailTemplate.Default = false;
@@ -189,7 +189,7 @@ namespace Services
           _logger.LogWarning("This record was beeing editied by another user");
           Result<EmailTemplate> result = new Result<EmailTemplate>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
           result.AddData(emailTemplateOriginal);
-          result.IsSccess = false;
+          result.IsSuccess = false;
           return result;
         }
 
@@ -242,7 +242,7 @@ namespace Services
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.Language == data.Language, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == data.TemplateTypeId && x.Language == data.Language, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;
@@ -297,14 +297,20 @@ namespace Services
     {
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id && x.Default == true, false).SingleOrDefaultAsync();
-          if (emailTemplate != null)
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
+        if (emailTemplate == null)
+        {
+          new Result<EmailTemplate>(new Error("3", "Record not found."));
+        }
+        else
+        {
+          if (emailTemplate.Default)
           {
             return new Result<EmailTemplate>(new Error(errorCode: "5", errorMessage: "Default template can't delete."));
           }
-
           _repository.EmailTemplate.Delete(emailTemplate);
           await _repository.SaveAsync();
+        }
         return new Result<EmailTemplate>(true);
       }
       catch (ArgumentNullException e)

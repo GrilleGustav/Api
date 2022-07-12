@@ -2,20 +2,15 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
-
-using AutoMapper;
 using Contracts;
 using Entities.Models.Settings.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models;
 using Models.Response;
-using Models.Response.Settings.Sender;
-using Models.View.Settings.Email;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
@@ -27,19 +22,16 @@ namespace Services
   {
     private readonly ILogger<EmailSenderService> _logger;
     private readonly IRepositoryManager _repository;
-    private readonly IMapper _mapper;
 
     /// <summary>
     /// Service to manage email sender in abckend store.
     /// </summary>
     /// <param name="repositoryManager">Access to backend store.</param>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
-    /// <param name="mapper">Mapper to copy the same properties of two different objects from the source object to target object.</param>
-    public EmailSenderService(IRepositoryManager repositoryManager, ILogger<EmailSenderService> logger, IMapper mapper)
+    public EmailSenderService(IRepositoryManager repositoryManager, ILogger<EmailSenderService> logger)
     {
       _repository = repositoryManager;
       _logger = logger;
-      _mapper = mapper;
     }
 
     /// <summary>
@@ -82,7 +74,16 @@ namespace Services
     {
       try
       {
-        return new Result<EmailSender>(await _repository.EmailSender.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync());
+        EmailSender emailSender = await _repository.EmailSender.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
+        if (emailSender == null)
+        {
+          if (_logger.IsEnabled(LogLevel.Error))
+            _logger.LogError("Record not found");
+
+          return new Result<EmailSender>(new Error("3", "Record not found."));
+        }
+
+        return new Result<EmailSender>(emailSender);
       }
       catch (ArgumentNullException e)
       {

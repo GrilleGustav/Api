@@ -2,7 +2,9 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Attributes;
 using Enums;
+using System;
 
 namespace Entities.Models.Settings.Email
 {
@@ -39,11 +41,6 @@ namespace Entities.Models.Settings.Email
     public Language Language { get; set; }
 
     /// <summary>
-    /// Get or set email type. Is used to provide the correct variables.
-    /// </summary>
-    public EmailTemplateType EmailTemplateType { get; set; }
-
-    /// <summary>
     /// Get or set predifined Template. Can't remove by user.
     /// </summary>
     public bool Predefined { get; set; }
@@ -54,9 +51,19 @@ namespace Entities.Models.Settings.Email
     public int? EmailSenderId { get; set; }
 
     /// <summary>
-    /// A random value that should change whenever a role is persisted to the store.
+    /// Foreign Key TemplateType.
     /// </summary>
-    public byte[] ConcurrencyStamp { get; set; }
+    public int? TemplateTypeId { get; set; }
+
+    /// <summary>
+    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public DateTime ConcurrencyStamp { get; set; }
+
+    /// <summary>
+    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public DateTime UpdatedOn { get; set; }
 
     // Navigation Properties.
 
@@ -64,5 +71,10 @@ namespace Entities.Models.Settings.Email
     /// Navigation property to EmailSender.
     /// </summary>
     public EmailSender EmailSender { get; set; }
+
+    /// <summary>
+    /// Navigation property to TemplateType.
+    /// </summary>
+    public TemplateType TemplateType { get; set; }
   }
 }

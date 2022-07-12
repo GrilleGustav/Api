@@ -53,7 +53,7 @@ namespace Api.Controllers
     {
       Result<List<EmailSender>> result = await _emailSenderSettingsService.GetAll();
 
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         EmailSenderSettingsResponse response = new EmailSenderSettingsResponse();
         response.AddErrors(result.Errors);
@@ -76,7 +76,7 @@ namespace Api.Controllers
         return BadRequest();
 
       Result<EmailSender> result = await _emailSenderSettingsService.GetOne(id);
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         EmailSenderSettingResponse response = new EmailSenderSettingResponse();
         response.AddErrors(result.Errors);
@@ -99,7 +99,7 @@ namespace Api.Controllers
       if (emailSenderAddRequest == null)
         return BadRequest();
       Result<EmailSender> result = await _emailSenderSettingsService.Create(_mapper.Map<EmailSender>(emailSenderAddRequest));
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         response.AddErrors(result.Errors);
         if (_logger.IsEnabled(LogLevel.Error))
@@ -129,7 +129,7 @@ namespace Api.Controllers
         return BadRequest();
       Result<EmailSender> result = await _emailSenderSettingsService.Delete(id);
       ErrorResponse response = new ErrorResponse();
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         response.AddErrors(result.Errors);
         if (_logger.IsEnabled(LogLevel.Error))
@@ -137,7 +137,7 @@ namespace Api.Controllers
         return Ok(response);
       }
 
-      response.IsSuccess = result.IsSccess;
+      response.IsSuccess = result.IsSuccess;
       return Ok(response);
     }
   }

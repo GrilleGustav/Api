@@ -31,5 +31,10 @@ namespace Entities.Models.Account
     /// Get or set role description
     /// </summary>
     public string Description { get; set; }
+
+    /// <summary>
+    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// </summary>
+    public DateTime UpdatedOn { get; set; }
   }
 }

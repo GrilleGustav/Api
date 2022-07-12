@@ -47,7 +47,7 @@ namespace Api.Controllers
     public ActionResult<ApplicationClaimsResponse> GetClaims()
     {
       Result<Dictionary<string, IGrouping<string, ApplicationClaim>>> result = _applicationClaimsService.GetClaimsGroupedBy();
-      if (!result.IsSccess)
+      if (!result.IsSuccess)
       {
         ApplicationClaimsResponse response = new ApplicationClaimsResponse();
         response.AddErrors(result.Errors);
@@ -56,8 +56,7 @@ namespace Api.Controllers
 
         return Ok(response);
       }
-      ApplicationClaimsResponse applicationClaimsResponse = new ApplicationClaimsResponse();
-      applicationClaimsResponse.ApplicationClaims = result.Data;
+      ApplicationClaimsResponse applicationClaimsResponse = new ApplicationClaimsResponse(result.Data);
       return Ok(applicationClaimsResponse);
     }
   }

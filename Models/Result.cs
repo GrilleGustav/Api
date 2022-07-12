@@ -41,7 +41,7 @@ namespace Models
     public Result(T data)
     {
       this.Data = data;
-      this.IsSccess = true;
+      this.IsSuccess = true;
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace Models
     /// <param name="isSuccess">Operation Succesfull.</param>
     public Result(bool isSuccess)
     {
-      this.IsSccess = isSuccess;
+      this.IsSuccess = isSuccess;
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ namespace Models
     /// <summary>
     /// Get or set operation succesfull.
     /// </summary>
-    public bool IsSccess { get; set; } = false;
+    public bool IsSuccess { get; set; } = false;
 
     /// <summary>
     /// Result data.
@@ -105,7 +105,7 @@ namespace Models
     public void AddData(T data)
     {
       this.Data = data;
-      this.IsSccess = true;
+      this.IsSuccess = true;
     }
 
   }

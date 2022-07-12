@@ -102,7 +102,7 @@ namespace Api.Controllers
       {
         var a = new UserSettingsResponse(_mapper.Map<UserDetailViewModel>(user));
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         var er = e;
       }
@@ -126,7 +126,7 @@ namespace Api.Controllers
         return BadRequest();
 
       User userOriginal = await _userManager.FindByIdAsync(detailRequest.Id);
-      
+
       if (userOriginal == null)
       {
         userSettingsResponse.AddError(errorCode: "2", errorMessage: "User not found.");
@@ -162,7 +162,7 @@ namespace Api.Controllers
 
       if (!result.Succeeded)
       {
-        foreach(IdentityError error in result.Errors)
+        foreach (IdentityError error in result.Errors)
         {
           userSettingsResponse.AddError(errorCode: error.Code, errorMessage: error.Description);
         }
@@ -174,12 +174,12 @@ namespace Api.Controllers
     }
 
     /// <summary>
-    /// 
+    /// Sending email confirm token for given user.
     /// </summary>
-    /// <param name="tokenRequest"></param>
-    /// <returns></returns>
+    /// <param name="tokenRequest">Request containing user id and client url.</param>
+    /// <returns>Email confirm url.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<GeneratedUrlTokenResponse>> EmailChangeToken([FromBody] TokenUrlRequest tokenRequest)
+    public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailConfirmToken([FromBody] TokenUrlRequest tokenRequest)
     {
       GeneratedUrlTokenResponse response = new GeneratedUrlTokenResponse();
       if (string.IsNullOrEmpty(tokenRequest.Id) || string.IsNullOrEmpty(tokenRequest.ClientUrl))
@@ -204,6 +204,66 @@ namespace Api.Controllers
       response.Url = QueryHelpers.AddQueryString(tokenRequest.ClientUrl, param);
       response.IsSuccess = true;
 
+      return Ok(response);
+    }
+
+    /// <summary>
+    /// Get email change url, to initiate changing email of user account.
+    /// </summary>
+    /// <param name="emailChangeRequest"></param>
+    /// <returns>Generated url with token.</returns>
+    [HttpPost("[action]")]
+    public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailChangeToken([FromBody] UserEmailChangeTokenRequest emailChangeRequest)
+    {
+      GeneratedUrlTokenResponse response = new GeneratedUrlTokenResponse();
+      if (string.IsNullOrEmpty(emailChangeRequest.Id) || string.IsNullOrEmpty(emailChangeRequest.ClientUrl))
+        return BadRequest();
+
+      User user = await _userManager.FindByIdAsync(emailChangeRequest.Id);
+
+      if (user == null)
+      {
+        response.AddError(errorCode: "2", errorMessage: "User not found.");
+      }
+
+      var token = await _userManager.GenerateChangeEmailTokenAsync(user, emailChangeRequest.NewEmail);
+
+      var param = new Dictionary<string, string>
+      {
+        {"token", token },
+        {"email", user.Email }
+      };
+
+      response.Url = QueryHelpers.AddQueryString(emailChangeRequest.ClientUrl, param);
+
+      return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("[action]")]
+    public async Task<ActionResult<ErrorResponse>> ChangeEmail([FromBody] UserChangeEmailRequest request)
+    {
+      ErrorResponse response = new ErrorResponse();
+      if (!ModelState.IsValid)
+        return BadRequest();
+
+      var user = await _userManager.FindByEmailAsync(request.UserEmail);
+      if (user == null)
+      {
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
+      }
+
+      var result = await _userManager.ChangeEmailAsync(user, request.NewEmail, request.Token);
+      if (!result.Succeeded)
+      {
+        foreach (var error in result.Errors)
+          response.AddError(errorCode: error.Code, errorMessage: error.Description);
+
+        return BadRequest(response);
+      }
+
+      response.IsSuccess = true;
       return Ok(response);
     }
 

@@ -39,7 +39,9 @@ namespace Entities.Configuration
 
       builder.HasData(user);
 
-      builder.Property(x => x.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAdd();
+      builder.Property(x => x.CreatedOn).ValueGeneratedOnAdd();
+
+      builder.Property(x => x.UpdatedOn).ValueGeneratedOnAddOrUpdate();
     }
   }
 }

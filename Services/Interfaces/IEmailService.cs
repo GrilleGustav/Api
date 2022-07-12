@@ -13,5 +13,7 @@ namespace Services.Interfaces
     Task<int> SendMail(EmailMessage message);
 
     Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token);
+
+    Task<EmailMessage> GeneratePasswordResetMessage(User user, string clientURI, string token);
   }
 }

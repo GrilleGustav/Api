@@ -26,16 +26,19 @@ namespace Services
   {
     private readonly ILogger<EmailService> _logger;
     private readonly IRepositoryManager _repository;
+    private readonly IPlaceholderService _placeholderService;
 
     /// <summary>
     /// Service for gernerating and sending email content.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
     /// <param name="repository">Access to backend store.</param>
-    public EmailService(ILogger<EmailService> logger, IRepositoryManager repository)
+    /// <param name="placeholderService"></param>
+    public EmailService(ILogger<EmailService> logger, IRepositoryManager repository, IPlaceholderService placeholderService)
     {
       _logger = logger;
       _repository = repository;
+      _placeholderService = placeholderService;
     }
 
     /// <summary>
@@ -57,21 +60,48 @@ namespace Services
     /// <returns>Email message.</returns>
     public async Task<EmailMessage> GenerateRegisterConfirmMessage(User user, string clientURI, string token)
     {
-      EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.EmailTemplateType == Enums.EmailTemplateType.Register && x.Default == true && x.Language == user.Language, false).SingleOrDefaultAsync();
+      EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.TemplateType.Name == "register" && x.Default == true && x.Language == user.Language, false).SingleOrDefaultAsync();
+      List<object> data = new List<object>();
+      data.Add(user);
+      string content = _placeholderService.ReplacePlaceholders(data, emailTemplate.Content);
       var param = new Dictionary<string, string>
       {
         {"token", token },
         {"email", user.Email }
       };
+
       var callback = QueryHelpers.AddQueryString(clientURI, param);
-      string content = emailTemplate.Content;
       content = content.Replace("{Date}", DateTime.Now.ToString());
-      content = content.Replace("{RegisterConfirm}", callback);
-      content = content.Replace("{Firstname}", user.Firstname);
-      content = content.Replace("{Lastname}", user.Lastname);
-      content = content.Replace("{UserName}", user.UserName);
+      content = content.Replace("{ConfirmLink}", callback);
 
       EmailMessage emailMessage = new EmailMessage(new string[] { user.Email }, "developper@grillegustav.de", "Confirm Registration", content);
+      return emailMessage;
+    }
+
+    /// <summary>
+    /// Generate password reset message.
+    /// </summary>
+    /// <param name="user">User obejct.</param>
+    /// <param name="clientURI">Client url to view.</param>
+    /// <param name="token">Password reset token.</param>
+    /// <returns>Email message.</returns>
+    public async Task<EmailMessage> GeneratePasswordResetMessage(User user, string clientURI, string token)
+    {
+      EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.TemplateType.Name == "PasswordReset" && x.Default == true && x.Language == user.Language, false).SingleOrDefaultAsync();
+      List<object> data = new List<object>();
+      data.Add(user);
+      string content = _placeholderService.ReplacePlaceholders(data, emailTemplate.Content);
+      var param = new Dictionary<string, string>
+      {
+        {"token", token },
+        {"email", user.Email }
+      };
+
+      var callback = QueryHelpers.AddQueryString(clientURI, param);
+      content = content.Replace("{Date}", DateTime.Now.ToString());
+      content = content.Replace("{PasswordReset}", callback);
+
+      EmailMessage emailMessage = new EmailMessage(new string[] { user.Email }, "developper@grillegustav.de", "Reset Password", content);
       return emailMessage;
     }
 

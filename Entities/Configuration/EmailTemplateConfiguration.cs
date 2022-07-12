@@ -5,6 +5,7 @@
 using Entities.Models.Settings.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 
 namespace Entities.Configuration
 {
@@ -25,7 +26,9 @@ namespace Entities.Configuration
         .WithMany(x => x.EmailTemplates)
         .HasForeignKey(x => x.EmailSenderId);
 
-      builder.Property(x => x.ConcurrencyStamp).IsRowVersion();
+      builder.Property(x => x.ConcurrencyStamp).IsRowVersion().IsRowVersion().ValueGeneratedOnAddOrUpdate();
+
+      builder.Property(x => x.UpdatedOn).ValueGeneratedOnAddOrUpdate();
 
       builder.HasData(
         new EmailTemplate
@@ -34,11 +37,11 @@ namespace Entities.Configuration
           Name = "Register 1",
           Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
           Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
-          EmailTemplateType = Enums.EmailTemplateType.Register,
           Predefined = true,
           Language = Enums.Language.Germany,
           Default = true,
-          EmailSenderId = 1
+          EmailSenderId = 1,
+          TemplateTypeId = 1
         });
     }
   }

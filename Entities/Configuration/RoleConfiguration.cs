@@ -21,6 +21,8 @@ namespace Entities.Configuration
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<Role> builder)
     {
+      builder.Property(x => x.UpdatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAddOrUpdate();
+
       builder.HasData(
         new Role
         {

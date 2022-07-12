@@ -91,6 +91,9 @@ namespace Services
       
     }
 
+    /// <summary>
+    /// Initialise application claims from base software.
+    /// </summary>
     private void InitialAddClaims()
     {
       this.AddClaim("View", "General");

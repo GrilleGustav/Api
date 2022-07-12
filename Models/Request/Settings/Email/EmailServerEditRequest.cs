@@ -44,6 +44,6 @@ namespace Models.Request.Settings.Email
     /// <summary>
     /// A random value that should change whenever a role is persisted to the store.
     /// </summary>
-    public byte[] ConcurrencyStamp { get; set; }
+    public DateTime ConcurrencyStamp { get; set; }
   }
 }
