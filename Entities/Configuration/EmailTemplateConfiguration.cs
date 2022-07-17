@@ -38,11 +38,25 @@ namespace Entities.Configuration
           Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
           Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
           Predefined = true,
-          Language = Enums.Language.Germany,
+          Language = Enums.Language.Englisch,
           Default = true,
           EmailSenderId = 1,
           TemplateTypeId = 1
         });
+
+      builder.HasData(
+        new EmailTemplate
+        {
+          Id = 2,
+          Name = "changeEmail",
+          Description = "Taplate for changing email.",
+          Content = "<p>Click on the link below to change your email:</p><p><span class='placeholder'>{ChangeEmialLink}</span></p>",
+          Predefined = true,
+          Language = Enums.Language.Englisch,
+          Default = true,
+          EmailSenderId = 1,
+          TemplateTypeId = 3
+  });
     }
   }
 }

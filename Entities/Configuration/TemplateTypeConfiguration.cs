@@ -17,21 +17,24 @@ namespace Entities.Configuration
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<TemplateType> builder)
     {
-      TemplateType register = new TemplateType()
+      builder.HasData(new TemplateType()
       {
         Id = 1,
         Name = "Register",
         PluginName = "BaseApplication"
-      };
-      TemplateType passwordReset = new TemplateType()
+      });
+      builder.HasData(new TemplateType()
       {
         Id = 2,
         Name = "PasswordReset",
         PluginName = "BaseApplication"
-      };
-
-      builder.HasData(register);
-      builder.HasData(passwordReset);
+      });
+      builder.HasData(new TemplateType()
+      {
+        Id = 3,
+        Name = "ChangeEmail",
+        PluginName = "BaseApplication"
+      });
 
       builder.HasIndex(x => x.Name).IsUnique();
 

@@ -53,6 +53,9 @@ namespace Api.Controllers
         case "PasswordReset":
           placeholder.Add("PasswortReset");
           break;
+        case "ChangeEmail":
+          placeholder.Add("ChangeEmialLink");
+          break;
         default:
           break;
       }

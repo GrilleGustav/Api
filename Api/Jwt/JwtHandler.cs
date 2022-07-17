@@ -139,7 +139,14 @@ namespace Api.Jwt
         user.RefreshTokens = new List<RefreshToken>();
 
       user.RefreshTokens.Add(refreshToken);
-      await _userManager.UpdateAsync(user);
+      try
+      {
+        await _userManager.UpdateAsync(user);
+      }
+      catch(Exception e)
+      {
+
+      }
 
       return new TokenResponse(accessToken, refreshToken.Token);
     }
