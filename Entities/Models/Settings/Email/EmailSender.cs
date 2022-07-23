@@ -2,6 +2,7 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Attributes;
 using System.Collections.Generic;
 
 namespace Entities.Models.Settings.Email

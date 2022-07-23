@@ -69,5 +69,13 @@ namespace Repository
     /// </summary>
     /// <param name="entity">Entity to delete.</param>
     public void Delete(T entity) => RepositoryContext.Set<T>().Remove(entity);
+
+    /// <summary>
+    /// Ingnore Property of entity.
+    /// </summary>
+    /// <param name="entity">Entity with property to be ignored.</param>
+    /// <param name="expression">Property to ignore.</param>
+    public void IgnoreProperty(T entity, Expression<Func<T, string>> expression) =>
+      RepositoryContext.Entry<T>(entity).Property(expression).IsModified = false;
   }
 }

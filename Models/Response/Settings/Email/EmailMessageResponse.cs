@@ -16,7 +16,7 @@ namespace Models.Response.Settings.Email
     /// Set email messages.
     /// </summary>
     /// <param name="emailMessages">List of email messages.</param>
-    public EmailMessageResponse(List<EmailMessageViewModel> emailMessages)
+    public EmailMessageResponse(IList<EmailMessageViewModel> emailMessages)
     {
       this.EmailMessages = emailMessages;
       this.IsSuccess = true;
@@ -34,6 +34,6 @@ namespace Models.Response.Settings.Email
     /// <summary>
     /// Get or set emial messages.
     /// </summary>
-    public List<EmailMessageViewModel> EmailMessages { get; set; }
+    public IList<EmailMessageViewModel> EmailMessages { get; set; }
   }
 }

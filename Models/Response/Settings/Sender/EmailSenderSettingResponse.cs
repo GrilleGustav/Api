@@ -3,6 +3,7 @@
 // </copyright>
 
 using Entities.Models.Settings.Email;
+using Models.View.Settings.Email;
 
 namespace Models.Response.Settings.Sender
 {
@@ -18,7 +19,7 @@ namespace Models.Response.Settings.Sender
     /// Set initial with email sender.
     /// </summary>
     /// <param name="emailSenders">List of email senders.</param>
-    public EmailSenderSettingResponse(EmailSender emailSender)
+    public EmailSenderSettingResponse(EmailSenderViewModel emailSender)
     {
       this.EmailSender = emailSender;
       this.IsSuccess = true;
@@ -27,6 +28,6 @@ namespace Models.Response.Settings.Sender
     /// <summary>
     /// Get or set email sender.
     /// </summary>
-    public EmailSender EmailSender { get; set; }
+    public EmailSenderViewModel EmailSender { get; set; }
   }
 }

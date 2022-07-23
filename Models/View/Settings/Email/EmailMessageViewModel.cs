@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="EmailMessageViewModel.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace Models.View.Settings.Email
 {

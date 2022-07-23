@@ -10,16 +10,25 @@ using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
 {
+  /// <summary>
+  /// Service to manage email templates.
+  /// </summary>
   public class EmailTemplateService : IEmailTemplateService
   {
     private readonly ILogger<EmailTemplateService> _logger;
     private readonly IRepositoryManager _repository;
 
+    /// <summary>
+    /// Service to manage email templates.
+    /// </summary>
+    /// <param name="repository">Access to backend store.</param>
+    /// <param name="logger">Logger service to log messages in console and log files.</param>
     public EmailTemplateService(IRepositoryManager repository, ILogger<EmailTemplateService> logger)
     {
       _repository = repository;
@@ -29,19 +38,26 @@ namespace Services
     /// <summary>
     /// Get all email templates.
     /// </summary>
-    /// <returns>List of email templates. If fails error code and error message.</returns>
-    public async Task<EmailTemplatesResponse> GetAll()
+    /// <returns>The Task that represents asynchronous operation, containing a list of templates.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<List<EmailTemplate>>> GetAll()
     {
-      EmailTemplatesResponse emailTemplatesResponse = new EmailTemplatesResponse();
       try
       {
-        return new EmailTemplatesResponse(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).ToListAsync());
+        return new Result<List<EmailTemplate>>(await _repository.EmailTemplate.FindAll(false).Include(x => x.EmailSender).Include(y => y.TemplateType).ToListAsync());
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<List<EmailTemplate>>(new Error("13", "Database connection error."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        emailTemplatesResponse.AddError("1", e.Message);
-        return emailTemplatesResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<List<EmailTemplate>>(new Error("1", "Error loading data."));
       }
     }
 
@@ -49,53 +65,85 @@ namespace Services
     /// Get one email template.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    /// <returns>Email template entity. If fails return error code and or error message.</returns>
-    public async Task<EmailTemplateResponse> GetOne(int id)
+    /// <returns>The Task that represents asynchronous operation, containing a template.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> GetOne(int id)
     {
-      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).Include(y => y.TemplateType).SingleOrDefaultAsync();
         if (emailTemplate == null)
         {
-          emailTemplateResponse.AddError(errorCode: "2", errorMessage: "Not found.");
-          return emailTemplateResponse;
+          if (_logger.IsEnabled(LogLevel.Error))
+            _logger.LogError("Record not found");
+
+          return new Result<EmailTemplate>(new Error("3", "Record not found."));
         }
 
-        return new EmailTemplateResponse(emailTemplate);
+        return new Result<EmailTemplate>(emailTemplate);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        emailTemplateResponse.AddError(errorCode: "1", errorMessage: e.Message);
-        return emailTemplateResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
     /// Get default template for template type.
     /// </summary>
-    /// <param name="emailTemplateType">Email template type.</param>
-    /// <returns>Emial template.</returns>
-    public async Task<EmailTemplateResponse> GetDefaultTemplateForType(EmailTemplateType emailTemplateType)
+    /// <param name="Id">Email template type.</param>
+    /// <returns>The Task that represents asynchronous operation, containing a template.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id)
     {
-      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == emailTemplateType, false).SingleOrDefaultAsync();
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == id, false).SingleOrDefaultAsync();
         if (emailTemplate == null)
         {
-          emailTemplateResponse.AddError(errorCode: "3", errorMessage: "No email template found");
-          return emailTemplateResponse;
+          if (_logger.IsEnabled(LogLevel.Error))
+            _logger.LogError("Record not found");
+
+          return new Result<EmailTemplate>(new Error("3", "Record not found."));
         }
 
-        return new EmailTemplateResponse(emailTemplate);
+        return new Result<EmailTemplate>(emailTemplate);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        emailTemplateResponse.AddError("1", e.Message);
-        return emailTemplateResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
@@ -103,40 +151,79 @@ namespace Services
     /// Update email template. If entity to update default == true, set other default to false.
     /// </summary>
     /// <param name="data">Email template entity.</param>
-    /// <returns>If update failed return error code.</returns>
-    public async Task<ErrorResponse> Update(EmailTemplate data)
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> Update(EmailTemplate data)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
-        if (data.Default)
+        EmailTemplate emailTemplateOriginal = await _repository.EmailTemplate.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
+        if (emailTemplateOriginal.ConcurrencyStamp == data.ConcurrencyStamp)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode && x.Id != data.Id, true).SingleOrDefaultAsync();
-          if (emailTemplate != null)
+          if (data.Default)
           {
-            emailTemplate.Default = false;
-            await _repository.SaveAsync();
+            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateTypeId == data.TemplateTypeId && x.Language == data.Language && x.Id != data.Id, true).SingleOrDefaultAsync();
+            if (emailTemplate != null)
+            {
+              emailTemplate.Default = false;
+              await _repository.SaveAsync();
+            }
+          }
+          else
+          {
+            EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
+            if (emailTemplate != null)
+            {
+              if (_logger.IsEnabled(LogLevel.Error))
+                _logger.LogError("Can't set default record to false.");
+
+              return new Result<EmailTemplate>(new Error(errorCode: "4", errorMessage: "Can't set default record to false."));
+            }
           }
         }
         else
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.Id == data.Id, false).SingleOrDefaultAsync();
-          if (emailTemplate != null)
-          {
-            errorResponse.AddError(errorCode: "4", errorMessage: "Can't set default template to false.");
-            return errorResponse;
-          }
+          _logger.LogWarning("This record was beeing editied by another user");
+          Result<EmailTemplate> result = new Result<EmailTemplate>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+          result.AddData(emailTemplateOriginal);
+          result.IsSuccess = false;
+          return result;
         }
 
         _repository.EmailTemplate.Update(data);
         await _repository.SaveAsync();
-        return new ErrorResponse();
+        return new Result<EmailTemplate>(true);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
+      }
+      catch (DbUpdateException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("5", "Error updating entity. Data not changed."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
-        return errorResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
@@ -144,15 +231,18 @@ namespace Services
     /// Create emial template entity. If entity to create default true, set other default to false.
     /// </summary>
     /// <param name="data">Email template entity.</param>
-    /// <returns>If create failed return error code.</returns>
-    public async Task<ErrorResponse> Create(EmailTemplate data)
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> Create(EmailTemplate data)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         if (data.Default)
         {
-          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.EmailTemplateType == data.EmailTemplateType && x.LanguageCode == data.LanguageCode, true).SingleOrDefaultAsync();
+          EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == data.TemplateTypeId && x.Language == data.Language, true).SingleOrDefaultAsync();
           if (emailTemplate != null)
           {
             emailTemplate.Default = false;
@@ -162,13 +252,35 @@ namespace Services
 
         _repository.EmailTemplate.Create(data);
         await _repository.SaveAsync();
-        return new ErrorResponse();
+        return new Result<EmailTemplate>(true);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
+      }
+      catch (DbUpdateException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("5", "Error creating entity. Data not changed."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
-        return errorResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
@@ -176,34 +288,58 @@ namespace Services
     /// Delete template entity.
     /// </summary>
     /// <param name="id">Entity Id.</param>
-    /// <returns>Error code and message if could not delete.</returns>
-    public async Task<ErrorResponse> Delete(int id)
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> Delete(int id)
     {
-      ErrorResponse errorResponse = new ErrorResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
-        if (emailTemplate != null)
+        if (emailTemplate == null)
         {
-          if (emailTemplate.Default == true)
+          new Result<EmailTemplate>(new Error("3", "Record not found."));
+        }
+        else
+        {
+          if (emailTemplate.Default)
           {
-            errorResponse.AddError(errorCode: "5", errorMessage: "Default template can't delete.");
-            return errorResponse;
+            return new Result<EmailTemplate>(new Error(errorCode: "5", errorMessage: "Default template can't delete."));
           }
-
           _repository.EmailTemplate.Delete(emailTemplate);
           await _repository.SaveAsync();
-          return new ErrorResponse();
         }
+        return new Result<EmailTemplate>(true);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
 
-        errorResponse.AddError(errorCode: "2", errorMessage: "Template not found");
-        return errorResponse;
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
+      }
+      catch (DbUpdateException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("5", "Error creating entity. Data not changed."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        errorResponse.AddError(errorCode: "1", errorMessage: e.Message);
-        return errorResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
@@ -211,27 +347,41 @@ namespace Services
     /// Generate Template Preview.
     /// </summary>
     /// <param name="id">Template Id.</param>
-    /// <returns>Email template with replaced variables.</returns>
-    public async Task<EmailTemplateResponse> Preview(int id)
+    /// <returns>The Task that represents asynchronous operation, containing email template with replaced variables.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    public async Task<Result<EmailTemplate>> Preview(int id)
     {
-      EmailTemplateResponse emailTemplateResponse = new EmailTemplateResponse();
       try
       {
         EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Id == id, false).Include(x => x.EmailSender).SingleOrDefaultAsync();
-        if (emailTemplate != null)
+        if (emailTemplate == null)
         {
-         string newContent = emailTemplate.Content.Replace("{Date}", DateTime.Now.ToString());
-          emailTemplate.Content = newContent;
-          return new EmailTemplateResponse(emailTemplate: emailTemplate);
+          return new Result<EmailTemplate>(new Error("3", "Record not found."));
         }
-        emailTemplateResponse.AddError(errorCode: "2", errorMessage: "Not found.");
-        return emailTemplateResponse;
+
+        string newContent = emailTemplate.Content.Replace("{Date}", DateTime.Now.ToString());
+        emailTemplate.Content = newContent;
+        return new Result<EmailTemplate>(emailTemplate);
+      }
+      catch (ArgumentNullException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("13", "Database connection error."));
+      }
+      catch (InvalidOperationException e)
+      {
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
-        _logger.LogError(e.Message);
-        emailTemplateResponse.AddError(errorCode: "1", errorMessage: e.Message);
-        return emailTemplateResponse;
+        if (_logger.IsEnabled(LogLevel.Error))
+          _logger.LogError(e.Message);
+        return new Result<EmailTemplate>(new Error("1", "Error loading data."));
       }
     }
 
@@ -262,6 +412,7 @@ namespace Services
           fileExtension = "jpg";
           break;
       }
+
       string fileName = string.Format("{0}.{1}", Guid.NewGuid().ToString(), fileExtension);
       string imagePath = string.Format(@"./Upload/Editor/Images/{0}", fileName);
       try

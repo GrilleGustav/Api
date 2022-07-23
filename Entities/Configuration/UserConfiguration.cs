@@ -31,7 +31,9 @@ namespace Entities.Configuration
         Email = "sam@web.de",
         NormalizedEmail = "SAM@WEB.DE",
         EmailConfirmed = true,
-        Language = Enums.Language.Germany
+        Language = Enums.Language.Germany,
+        ConcurrencyStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d78",
+        SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79"
       };
 
       PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
@@ -39,7 +41,9 @@ namespace Entities.Configuration
 
       builder.HasData(user);
 
-      builder.Property(x => x.CreatedOn).HasDefaultValueSql("CURRENT_TIMESTAMP").ValueGeneratedOnAdd();
+      builder.Property(x => x.CreatedOn).ValueGeneratedOnAdd();
+
+      builder.Property(x => x.UpdatedOn).ValueGeneratedOnAddOrUpdate();
     }
   }
 }

@@ -3,8 +3,10 @@
 // </copyright>
 
 using Entities.Models.Settings.Email;
+using Models;
 using Models.Response;
 using Models.Response.Settings.Sender;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces
@@ -14,28 +16,40 @@ namespace Services.Interfaces
     /// <summary>
     /// Get all email sender.
     /// </summary>
-    /// <returns>List of email sender. If fails error code and or error message</returns>
-    Task<EmailSenderSettingsResponse> GetAll();
+    /// <returns>The Task that represents asynchronous operation, containing a list of email senders.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<List<EmailSender>>> GetAll();
 
     /// <summary>
     /// Get one email sender.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    /// <returns>Email sender entity. If fails return error code and or error message.</returns>
-    Task<EmailSenderSettingResponse> GetOne(int id);
+    /// <returns>The Task that represents asynchronous operation, containing a email sender.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailSender>> GetOne(int id);
 
     /// <summary>
     /// Create email sender.
     /// </summary>
     /// <param name="data">New email sender entity.</param>
-    /// <returns>New email sender data base object.</returns>
-    Task<EmailSenderSettingResponse> Create(EmailSender data);
+    /// <returns>The Task that represents asynchronous operation, containing email sender or task result.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailSender>> Create(EmailSender data);
 
     /// <summary>
     /// Remove one email sender from database.
     /// </summary>
     /// <param name="id">Email sender entity id to remove.</param>
     /// <returns>If fails return erro code and message.</returns>
-    Task<ErrorResponse> Delete(int id);
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailSender>> Delete(int id);
   }
 }

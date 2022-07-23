@@ -36,7 +36,7 @@ namespace Api.Extensions
 
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
       services.AddDbContext<RepositoryContext>(opt =>
-      opt.UseMySql("Server=127.0.0.1;port=3306;database=api;uid=fabian;pwd=1234;charset=latin1",
+      opt.UseMySql("Server=127.0.0.1;port=3306;database=api;uid=root;pwd=123;charset=latin1",
         new MySqlServerVersion(new System.Version(10, 5, 8)), b => b.MigrationsAssembly("Entities")));
 
     public static void ConfigureRepositoryManager(this IServiceCollection services) =>

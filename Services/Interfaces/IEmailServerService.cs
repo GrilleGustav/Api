@@ -3,9 +3,12 @@
 // </copyright>
 
 using Entities.Models.Settings.Email;
+using Models;
 using Models.Request.Settings.Email;
 using Models.Response;
 using Models.Response.Settings.Email;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces
@@ -13,50 +16,69 @@ namespace Services.Interfaces
   public interface IEmailServerService
   {
     /// <summary>
-    /// Get all email server.
+    /// Get all email servers.
     /// </summary>
-    /// <returns>Email server or error code and error message.</returns>
-    Task<EmailServerSettingsResponse> GetAll();
+    /// <returns>The Task that represents asynchronous operation, containing a list of email servers.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<List<EmailServer>>> GetAll();
 
     /// <summary>
     /// Get one email server.
     /// </summary>
-    /// <param name="id">Entity id.</param>
-    /// <returns>Email server entity.</returns>
-    Task<EmailServerSettingResponse> GetOne(int id);
+    /// <param name="serverId">Email server backend store id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing a email server.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailServer>> GetOne(int serverId);
 
     /// <summary>
-    /// Get default email server.
+    /// Get default server.
     /// </summary>
-    /// <returns>Email server entity.</returns>
-    Task<EmailServerSettingResponse> GetDefault();
+    /// <returns>The Task that represents asynchronous operation, containing a email server.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailServer>> GetDefault();
 
     /// <summary>
     /// Update email server. If entity to update default == true, set other default to false.
     /// </summary>
     /// <param name="data">Email server entity.</param>
-    /// <returns>If update failed return error code.</returns>
-    Task<ErrorResponse> Update(EmailServer data);
+    /// <returns>The Task that represents asynchronous operation, containing some errors.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailServer>> Update(EmailServer data);
 
     /// <summary>
     /// Create email server entity.  If entity to create default == true, set other default to false.
     /// </summary>
     /// <param name="data">Email server entity</param>
-    /// <returns>If create failed return error code.</returns>
-    Task<ErrorResponse> Create(EmailServer data);
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailServer>> Create(EmailServer data);
 
     /// <summary>
-    /// Delete one email server entity.
+    /// Delete email server record.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    /// <returns>Error code and message if could not delete.</returns>
-    Task<ErrorResponse> Delete(int id);
+    /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="Exception"></exception>
+    Task<Result<EmailServer>> Delete(int id);
 
     /// <summary>
     /// Check if server with Ip/Domain and port exist.
     /// </summary>
-    /// <param name="emailServerExistRequest">Data object with Ip/Domain and port.</param>
-    /// <returns>If fails return some error code and message, otherwise return true if server with Ip/Domain and port exist. If no server found return false.</returns>
+    /// <param name="emailServerExistRequest">Data object with IP/Domain, port and Id. Id is only needed in the context of a change form.</param>
+    /// <returns>The Task that represents asynchronous operation, containing task result. Result  true if server with Ip/Domain and port exist. If no server found return false.</returns>
+    /// <exception cref="Exception"></exception>
     Task<EmailServerExistResponse> EmailServerExist(EmailServerExistRequest emailServerExistRequest);
   }
 }

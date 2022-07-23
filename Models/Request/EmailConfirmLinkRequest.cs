@@ -14,12 +14,13 @@ namespace Models.Request
     /// <summary>
     /// Get or set clientURI.
     /// </summary>
+    [Required]
     public string ClientURI { get; set; }
 
     /// <summary>
     /// Get or set email.
     /// </summary>
-    [Required(ErrorMessage = "Email is required.")]
+    [Required]
     public string Email { get; set; }
   }
 }

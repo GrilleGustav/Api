@@ -24,9 +24,15 @@ namespace Models.Request
     public string Lastname { get; set; }
 
     /// <summary>
+    /// Get or set userName.
+    /// </summary>
+    [Required]
+    public string UserName { get; set; }
+
+    /// <summary>
     /// Get or set language.
     /// </summary>
-    [Required(ErrorMessage = "Email is required.")]
+    [Required(ErrorMessage = "Language is required.")]
     [JsonProperty(PropertyName = "language1")]
     public Language Language { get; set; }
 

@@ -3,6 +3,8 @@
 // </copyright>
 
 using Entities.Models.Settings.Email;
+using Models.View.Settings.Email;
+using System.Collections.Generic;
 
 namespace Models.Response.Settings.Email
 {
@@ -18,7 +20,7 @@ namespace Models.Response.Settings.Email
     /// Email template response.
     /// </summary>
     /// <param name="emailTemplate">Email templates.</param>
-    public EmailTemplateResponse(EmailTemplate emailTemplate)
+    public EmailTemplateResponse(EmailTemplateViewModel emailTemplate)
     {
       this.EmailTemplate = emailTemplate;
       this.IsSuccess = true;
@@ -27,6 +29,11 @@ namespace Models.Response.Settings.Email
     /// <summary>
     /// Get or set email template.
     /// </summary>
-    public EmailTemplate EmailTemplate { get; set; }
+    public EmailTemplateViewModel EmailTemplate { get; set; }
+
+    /// <summary>
+    /// Get or set prop names. Used for editor placeholders.
+    /// </summary>
+    public List<string> PropNames { get; set; } = new List<string>();
   }
 }

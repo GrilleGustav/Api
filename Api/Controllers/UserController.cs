@@ -1,4 +1,8 @@
-﻿using Api.Jwt;
+﻿// <copyright file="UserController.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Api.Jwt;
 using Api.Models;
 using AutoMapper;
 using Entities.Models.Account;
@@ -27,6 +31,9 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
+  /// <summary>
+  /// Controller to manage application users.
+  /// </summary>
   [Authorize]
   [ApiController]
   [Route("[controller]")]
@@ -40,6 +47,15 @@ namespace Api.Controllers
     private readonly IConfigurationSection _jwtSettings;
     private readonly JwtHandler _jwtHandler;
 
+    /// <summary>
+    /// Controller to manage application users.
+    /// </summary>
+    /// <param name="userManager">Manage user accounts.</param>
+    /// <param name="roleManager">Manage user roles.</param>
+    /// <param name="mapper">Mapper to map entities from database to view data.</param>
+    /// <param name="emailService">Service for sending emails.</param>
+    /// <param name="configuration">Access to appsettings.json.</param>
+    /// <param name="jwtHandler">Handler for generating access tokens.</param>
     public UserController(UserManager<User> userManager, RoleManager<Role> roleManager, IMapper mapper, IEmailService emailService, IConfiguration configuration, JwtHandler jwtHandler)
     {
       _userManager = userManager;
@@ -52,6 +68,10 @@ namespace Api.Controllers
 
     }
 
+    /// <summary>
+    /// Get all user.
+    /// </summary>
+    /// <returns>List of users.</returns>
     [AllowAnonymous]
     [HttpGet("[action]")]
     public ActionResult<UsersSettingsResponse> GetAll()
@@ -59,6 +79,11 @@ namespace Api.Controllers
       return Ok(new UsersSettingsResponse(_userManager.Users.ToList()));
     }
 
+    /// <summary>
+    /// Get one user.
+    /// </summary>
+    /// <param name="id">User database id.</param>
+    /// <returns>User object.</returns>
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<UserSettingsResponse>> GetOne(string id)
     {
@@ -77,7 +102,7 @@ namespace Api.Controllers
       {
         var a = new UserSettingsResponse(_mapper.Map<UserDetailViewModel>(user));
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         var er = e;
       }
@@ -85,6 +110,11 @@ namespace Api.Controllers
       return Ok(new UserSettingsResponse(_mapper.Map<UserDetailViewModel>(user)));
     }
 
+    /// <summary>
+    /// Update user.
+    /// </summary>
+    /// <param name="detailRequest">User data.</param>
+    /// <returns>Some error or success if user was chnaged.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<UserSettingsResponse>> Update([FromBody] UserDetailRequest detailRequest)
     {
@@ -96,25 +126,29 @@ namespace Api.Controllers
         return BadRequest();
 
       User userOriginal = await _userManager.FindByIdAsync(detailRequest.Id);
-      
+
       if (userOriginal == null)
       {
         userSettingsResponse.AddError(errorCode: "2", errorMessage: "User not found.");
         return Ok(userSettingsResponse);
       }
 
+      // Save temporarily old user email.
       var email = userOriginal.Email;
 
+      // Check if the user has already been changed. If user alreade changed, sending current user database data back.
       if (userOriginal.ConcurrencyStamp != detailRequest.ConcurrencyStamp)
       {
-        userSettingsResponse.AddError(errorCode: "11", errorMessage: "This record was beeing editied by another user");
+        userSettingsResponse.AddError(errorCode: "2001", errorMessage: "This record was beeing editied by another user");
         userSettingsResponse.User = _mapper.Map<UserDetailViewModel>(userOriginal);
         userSettingsResponse.IsSuccess = false;
         return userSettingsResponse;
       }
 
+      // Map request data to user object.
       User user = _mapper.Map<UserDetailRequest, User>(detailRequest, userOriginal);
 
+      // If email has changed sending confirm message to new email.
       if (userOriginal.Email != email)
       {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -123,11 +157,12 @@ namespace Api.Controllers
         user.EmailConfirmed = false;
       }
 
+      // Update user.
       IdentityResult result = await _userManager.UpdateAsync(user);
 
       if (!result.Succeeded)
       {
-        foreach(IdentityError error in result.Errors)
+        foreach (IdentityError error in result.Errors)
         {
           userSettingsResponse.AddError(errorCode: error.Code, errorMessage: error.Description);
         }
@@ -138,8 +173,13 @@ namespace Api.Controllers
       return Ok(userSettingsResponse);
     }
 
+    /// <summary>
+    /// Sending email confirm token for given user.
+    /// </summary>
+    /// <param name="tokenRequest">Request containing user id and client url.</param>
+    /// <returns>Email confirm url.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<GeneratedUrlTokenResponse>> EmailChangeToken([FromBody] TokenUrlRequest tokenRequest)
+    public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailConfirmToken([FromBody] TokenUrlRequest tokenRequest)
     {
       GeneratedUrlTokenResponse response = new GeneratedUrlTokenResponse();
       if (string.IsNullOrEmpty(tokenRequest.Id) || string.IsNullOrEmpty(tokenRequest.ClientUrl))
@@ -167,11 +207,80 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Get email change url, to initiate changing email of user account.
+    /// </summary>
+    /// <param name="emailChangeRequest"></param>
+    /// <returns>Generated url with token.</returns>
+    [HttpPost("[action]")]
+    public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailChangeToken([FromBody] UserEmailChangeTokenRequest emailChangeRequest)
+    {
+      GeneratedUrlTokenResponse response = new GeneratedUrlTokenResponse();
+      if (string.IsNullOrEmpty(emailChangeRequest.Id) || string.IsNullOrEmpty(emailChangeRequest.ClientUrl))
+        return BadRequest();
+
+      User user = await _userManager.FindByIdAsync(emailChangeRequest.Id);
+
+      if (user == null)
+      {
+        response.AddError(errorCode: "2", errorMessage: "User not found.");
+      }
+
+      var token = await _userManager.GenerateChangeEmailTokenAsync(user, emailChangeRequest.NewEmail);
+
+      var param = new Dictionary<string, string>
+      {
+        {"token", token },
+        {"email", user.Email }
+      };
+
+      response.Url = QueryHelpers.AddQueryString(emailChangeRequest.ClientUrl, param);
+
+      EmailMessage emailMessage = await _emailService.GenerateChangeEmailMessage(user, emailChangeRequest.ClientUrl, token);
+      await _emailService.SendMail(emailMessage);
+
+      return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("[action]")]
+    public async Task<ActionResult<ErrorResponse>> ChangeEmail([FromBody] UserChangeEmailRequest request)
+    {
+      ErrorResponse response = new ErrorResponse();
+      if (!ModelState.IsValid)
+        return BadRequest();
+
+      var user = await _userManager.FindByEmailAsync(request.UserEmail);
+      if (user == null)
+      {
+        response.AddError(errorCode: "15", "User not found.");
+        return BadRequest(response);
+      }
+
+      var result = await _userManager.ChangeEmailAsync(user, request.NewEmail, request.Token);
+      if (!result.Succeeded)
+      {
+        foreach (var error in result.Errors)
+          response.AddError(errorCode: error.Code, errorMessage: error.Description);
+
+        return BadRequest(response);
+      }
+
+      response.IsSuccess = true;
+      return Ok(response);
+    }
+
+    /// <summary>
+    /// Renew access and renewal tokens. Required to keep the user logged in.
+    /// </summary>
+    /// <param name="request">Refreshtoken</param>
+    /// <returns>Return access and refresh token.</returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
       string refreshToken = request.RefreshToken;
+      // Get user by id and refresh token.
       User user = _userManager.Users.Include(x => x.RefreshTokens).FirstOrDefault(x => x.RefreshTokens.Any(y => y.Token == refreshToken && y.UserId == x.Id));
 
       var existingRefreshToken = _jwtHandler.GetValidRefreshToken(refreshToken, user);
@@ -184,6 +293,11 @@ namespace Api.Controllers
       return Ok(await _jwtHandler.GenerateTokens(user, IpAddress(), HttpContext, 0));
     }
 
+    /// <summary>
+    /// Revoke token. E.g user logout.
+    /// </summary>
+    /// <param name="request">Refresh token.</param>
+    /// <returns>Return success or error if no refreshtoken found.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> RevokeToken([FromBody] RevokeTokenRequest request)
     {
@@ -201,6 +315,11 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Get all roles from user.
+    /// </summary>
+    /// <param name="id">User id.</param>
+    /// <returns>List of roles.</returns>
     [AllowAnonymous]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<RolesSettingsResponse>> GetUserRoles(string id)
@@ -218,6 +337,11 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Update user roles.
+    /// </summary>
+    /// <param name="request">Entity to update.</param>
+    /// <returns>If fails eturn some error otherwise return success.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> UpdateUserRoles([FromBody] UserRolesUpdateRequest request)
     {
@@ -234,19 +358,26 @@ namespace Api.Controllers
         userRoles2.Add(new Role(name: roleName, description: null));
       }
 
+      // Roles to be deletet.
       List<Role> d = userRoles2.Where(x => !request.Roles.Any(y => y.Name == x.Name)).ToList();
+      // Roles to add.
       List<Role> a = request.Roles.Where(x => !userRoles2.Any(y => y.Name == x.Name)).ToList();
       foreach (Role role in d)
       {
-        await _userManager.RemoveFromRoleAsync(user, role.Name);
+        await _userManager.RemoveFromRoleAsync(user, role.Name); // Remove roles.
       }
 
-      await _userManager.AddToRolesAsync(user, a.Select(x => x.Name));
+      await _userManager.AddToRolesAsync(user, a.Select(x => x.Name)); // Add roles.
 
       response.IsSuccess = true;
       return Ok(response);
     }
 
+    /// <summary>
+    /// Get all suer claims.
+    /// </summary>
+    /// <param name="id">User id.</param>
+    /// <returns></returns>
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<ClaimsSettingsResponse>> GetUserClaims(string id)
     {
@@ -265,6 +396,11 @@ namespace Api.Controllers
       return Ok(new ClaimsSettingsResponse(_mapper.Map<IList<ClaimViewModel>>(claims)));
     }
 
+    /// <summary>
+    /// Update user claims.
+    /// </summary>
+    /// <param name="request">User id and list of cliam names.</param>
+    /// <returns>Error or success.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> UpdateUserClaims([FromBody] UserClaimsUpdateRequest request)
     {
@@ -290,6 +426,11 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Add user to role.
+    /// </summary>
+    /// <param name="request">User id and role name.</param>
+    /// <returns>Error or success.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> AddUserRole([FromBody] UserRoleAddRequest request)
     {
@@ -317,6 +458,11 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Remove role from user.
+    /// </summary>
+    /// <param name="request">User id and role name.</param>
+    /// <returns>Error or success.</returns>
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> RemoveRole([FromBody] UserRoleRemoveRequest request)
     {

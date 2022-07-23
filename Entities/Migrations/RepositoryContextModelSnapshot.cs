@@ -75,6 +75,11 @@ namespace Entities.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
@@ -87,24 +92,27 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "fc72b4ad-f1e0-4954-b89c-dd9b98873d4b",
+                            ConcurrencyStamp = "52c34345-afb3-4de4-bbc4-d0ac055c4237",
                             Description = "Normal User.",
                             Name = "User",
-                            NormalizedName = "USER"
+                            NormalizedName = "USER",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "125bb12c-76b7-43c8-92b5-e33a89963127",
+                            ConcurrencyStamp = "fdb06c88-e1ec-4274-a5bd-9bad8258091e",
                             Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
+                            NormalizedName = "ADMINISTRATOR",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "a731a151-e9f4-49ed-8c75-0f6891489c37",
+                            ConcurrencyStamp = "edf3222e-3780-4f27-ba34-c7ec31ef2150",
                             Name = "Developper",
-                            NormalizedName = "DEVELOPPER"
+                            NormalizedName = "DEVELOPPER",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -123,8 +131,7 @@ namespace Entities.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -174,6 +181,10 @@ namespace Entities.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256) CHARACTER SET utf8mb4");
@@ -194,7 +205,7 @@ namespace Entities.Migrations
                         {
                             Id = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e1c3bf9-16e0-4dfc-9806-1a3ae58b43e0",
+                            ConcurrencyStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d78",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
@@ -205,9 +216,11 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE0qDXElgGGBIvysXkq3le+1u+mHnoju1gEjHy/riPcG24Qt26O5ReyJ9DEQep+AfA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGreIX8a4E6lBEnEx9TM4W7BzG8UfEeYPW3IWopRya2WyrsqzOtRcQ1K8T/LhhsCEA==",
                             PhoneNumberConfirmed = false,
+                            SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79",
                             TwoFactorEnabled = false,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserName = "sam@web.de"
                         });
                 });
@@ -271,6 +284,11 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
                     b.Property<bool>("Default")
                         .HasColumnType("tinyint(1)");
 
@@ -289,6 +307,10 @@ namespace Entities.Migrations
                     b.Property<string>("ServerUsername")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.ToTable("EmailServers");
@@ -297,12 +319,14 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Default = true,
                             Description = "Testbenutzer",
                             ServerIp = "mail.grillegustav.de",
                             ServerPassword = "mobuapXikC",
                             ServerPort = "25",
-                            ServerUsername = "developper@grillegustav.de"
+                            ServerUsername = "developper@grillegustav.de",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -311,6 +335,11 @@ namespace Entities.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Content")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -324,10 +353,7 @@ namespace Entities.Migrations
                     b.Property<int?>("EmailSenderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmailTemplateType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LanguageCode")
+                    b.Property<int>("Language")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -336,9 +362,18 @@ namespace Entities.Migrations
                     b.Property<bool>("Predefined")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int?>("TemplateTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmailSenderId");
+
+                    b.HasIndex("TemplateTypeId");
 
                     b.ToTable("EmailTemplates");
 
@@ -346,14 +381,177 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
                             Default = true,
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
-                            EmailTemplateType = 0,
-                            LanguageCode = 0,
-                            Name = "Register 1",
-                            Predefined = true
+                            Language = 1,
+                            Name = "register 1",
+                            Predefined = true,
+                            TemplateTypeId = 1,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihre Registrierung zu bestätigen.<br><span class='placeholder'>{RegisterConfirm}</span>&nbsp;</p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for email confirmation.",
+                            EmailSenderId = 1,
+                            Language = 0,
+                            Name = "register 2",
+                            Predefined = true,
+                            TemplateTypeId = 1,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Please click on the link below to reset your password.</p><p><span class='placeholder'>{PasswortReset}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for password reset.",
+                            EmailSenderId = 1,
+                            Language = 1,
+                            Name = "password reset 1",
+                            Predefined = true,
+                            TemplateTypeId = 2,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihr Passwort zurück zu setzen.</p><p><span class='placeholder'>{PasswortReset}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for password reset.",
+                            EmailSenderId = 1,
+                            Language = 0,
+                            Name = "password reset 1",
+                            Predefined = true,
+                            TemplateTypeId = 2,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Click on the link below to change your email:</p><p><span class='placeholder'>{ChangeEmialLink}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for changing email.",
+                            EmailSenderId = 1,
+                            Language = 1,
+                            Name = "changeEmail 1",
+                            Predefined = true,
+                            TemplateTypeId = 3,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihre E-Mail Adresse zu ändern.</p><p><span class='placeholder'>{ChangeEmialLink}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for changing email.",
+                            EmailSenderId = 1,
+                            Language = 0,
+                            Name = "changeEmail 2",
+                            Predefined = true,
+                            TemplateTypeId = 3,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Two factor code:&nbsp;<span class='placeholder'>{TowStepCode}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for sending TwoStep code for login.",
+                            EmailSenderId = 1,
+                            Language = 1,
+                            Name = "twoStep 1",
+                            Predefined = true,
+                            TemplateTypeId = 4,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Content = "<p>Zwei Stufen Code:<span class='placeholder'>{TowStepCode}</span></p>",
+                            Default = true,
+                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for sending TwoStep code for login.",
+                            EmailSenderId = 1,
+                            Language = 0,
+                            Name = "twoStep 2",
+                            Predefined = true,
+                            TemplateTypeId = 4,
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("Entities.Models.Settings.Email.TemplateType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("PluginName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TemplateType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Register",
+                            PluginName = "BaseApplication",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "PasswordReset",
+                            PluginName = "BaseApplication",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "ChangeEmail",
+                            PluginName = "BaseApplication",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "TwoStep",
+                            PluginName = "BaseApplication",
+                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -587,7 +785,13 @@ namespace Entities.Migrations
                         .WithMany("EmailTemplates")
                         .HasForeignKey("EmailSenderId");
 
+                    b.HasOne("Entities.Models.Settings.Email.TemplateType", "TemplateType")
+                        .WithMany("EmailTemplates")
+                        .HasForeignKey("TemplateTypeId");
+
                     b.Navigation("EmailSender");
+
+                    b.Navigation("TemplateType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -647,6 +851,11 @@ namespace Entities.Migrations
                 });
 
             modelBuilder.Entity("Entities.Models.Settings.Email.EmailSender", b =>
+                {
+                    b.Navigation("EmailTemplates");
+                });
+
+            modelBuilder.Entity("Entities.Models.Settings.Email.TemplateType", b =>
                 {
                     b.Navigation("EmailTemplates");
                 });

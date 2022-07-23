@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20210802220858_administratorRole")]
-    partial class administratorRole
+    [Migration("20220606023427_Initial-Create")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,6 +18,43 @@ namespace Entities.Migrations
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.3");
+
+            modelBuilder.Entity("Entities.Models.Account.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
+                });
 
             modelBuilder.Entity("Entities.Models.Account.Role", b =>
                 {
@@ -52,7 +89,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "2ad92974-cb62-4392-8162-e23476b1ad9b",
+                            ConcurrencyStamp = "45ac7bc2-a9dc-4cfa-906e-50074513d94f",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER"
@@ -60,14 +97,14 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "9fb0d918-f84c-4df7-b0b9-d338cd2a2599",
+                            ConcurrencyStamp = "522bb984-4f46-4bc2-826e-72685adc8cf4",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "74abe3bc-6e0e-4576-b6cd-9f85abfafd5f",
+                            ConcurrencyStamp = "94645a5e-b097-460c-b889-5d538ccdf44a",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER"
                         });
@@ -159,7 +196,7 @@ namespace Entities.Migrations
                         {
                             Id = new Guid("493adb36-1365-4cd5-9ecf-93e0078e152b"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3b403966-2a2b-4235-b052-35bbebaa66a2",
+                            ConcurrencyStamp = "5f375fbe-4e9b-4488-8766-4e7748ab7127",
                             CreatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "sam@web.de",
                             EmailConfirmed = true,
@@ -170,7 +207,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEI+8PFdMYYovrUWij69G/tNfzloM1mt6LL2GQl5WZ6CbWVjswCECAiZGO6SMjpdg/Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGEG4gY8csfVGOpWhFKSE1HtKgvU6bOR7Bs03pCUxcsArzoEHUh52wt5i1xuoQN2mA==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "sam@web.de"
@@ -236,6 +273,12 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<bool>("Default")
                         .HasColumnType("tinyint(1)");
 
@@ -262,6 +305,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Default = true,
                             Description = "Testbenutzer",
                             ServerIp = "mail.grillegustav.de",
@@ -277,6 +321,12 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("Content")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -289,10 +339,10 @@ namespace Entities.Migrations
                     b.Property<int?>("EmailSenderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmailTemplateType")
-                        .HasColumnType("int");
+                    b.Property<string>("EmailTemplateType")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("LanguageCode")
+                    b.Property<int>("Language")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -311,14 +361,57 @@ namespace Entities.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Content = "<p>Please click on the link below to confirm your registration.</p><p><span class='placeholder'>{ConfirmLink}</span></p>",
                             Default = true,
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
-                            EmailTemplateType = 0,
-                            LanguageCode = 0,
+                            EmailTemplateType = "register",
+                            Language = 0,
                             Name = "Register 1",
                             Predefined = true
+                        });
+                });
+
+            modelBuilder.Entity("Entities.Models.Settings.Email.TemplateType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("PluginName")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TemplateType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Register",
+                            PluginName = "BaseApplication"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "PasswordReset",
+                            PluginName = "BaseApplication"
                         });
                 });
 
@@ -342,6 +435,113 @@ namespace Entities.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "Administrator",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerCreate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailServerRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateCreate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailTemplateRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "EmailMessagesList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupList",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupUpdate",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ClaimValue = "UserGroupRemove",
+                            RoleId = new Guid("a0615a54-e885-46a9-9215-ea78faec2084")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -428,6 +628,17 @@ namespace Entities.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Entities.Models.Account.RefreshToken", b =>
+                {
+                    b.HasOne("Entities.Models.Account.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Entities.Models.Settings.Email.EmailTemplate", b =>
                 {
                     b.HasOne("Entities.Models.Settings.Email.EmailSender", "EmailSender")
@@ -486,6 +697,11 @@ namespace Entities.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Entities.Models.Account.User", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("Entities.Models.Settings.Email.EmailSender", b =>

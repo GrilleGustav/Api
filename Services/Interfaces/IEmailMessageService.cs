@@ -1,7 +1,11 @@
-﻿using Models.Response.Settings.Email;
+﻿// <copyright file="IEmailMessageService.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Entities.Models.Email;
+using Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces
@@ -9,9 +13,9 @@ namespace Services.Interfaces
   public interface IEmailMessageService
   {
     /// <summary>
-    /// Get all email messages.
+    /// Get all email messages, the system has send.
     /// </summary>
-    /// <returns>List of messages.</returns>
-    Task<EmailMessageResponse> GetAll();
+    /// <returns>The Task that represents asynchronous operation, containing a list of email messages.</returns>
+    Task<Result<List<EmailMessage>>> GetAll();
   }
 }

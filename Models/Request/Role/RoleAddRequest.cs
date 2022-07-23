@@ -22,7 +22,7 @@ namespace Models.Request.Role
     /// <summary>
     /// Get or set description.
     /// </summary>
-    public string Discription { get; set; }
+    public string Description { get; set; }
 
     /// <summary>
     /// Get or set list of claims.

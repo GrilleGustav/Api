@@ -15,7 +15,7 @@ namespace Entities.Context
     public RepositoryContext CreateDbContext(string[] args)
     {
       DbContextOptionsBuilder<RepositoryContext> optionsBuilder = new DbContextOptionsBuilder<RepositoryContext>();
-      optionsBuilder.UseMySql("Server=127.0.0.1;port=3306;database=api;uid=fabian;pwd=1234;charset=latin1", new MySqlServerVersion(new System.Version(10, 5, 8)));
+      optionsBuilder.UseMySql("Server=127.0.0.1;port=3306;database=api;uid=root;pwd=123;charset=latin1", new MySqlServerVersion(new System.Version(10, 5, 8)));
       return new RepositoryContext(optionsBuilder.Options);
     }
   }

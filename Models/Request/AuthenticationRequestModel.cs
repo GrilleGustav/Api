@@ -9,7 +9,7 @@ namespace Models.Request
   /// <summary>
   /// Used for user authentication.
   /// </summary>
-  public class AuthenticationRequest
+  public class AuthenticationRequestModel
   {
     /// <summary>
     /// Get or set user email.

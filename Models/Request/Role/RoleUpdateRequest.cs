@@ -12,14 +12,31 @@ namespace Models.Request.Role
   public class RoleUpdateRequest
   {
     /// <summary>
-    /// Get or set role.
+    /// Get or set Id.
     /// </summary>
     [Required]
-    public Entities.Models.Account.Role Role { get; set; }
+    public string Id { get; set; }
+
+    /// <summary>
+    /// Get or set name.
+    /// </summary>
+    [Required]
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Get or set role description
+    /// </summary>
+    public string Description { get; set; }
+
+    /// <summary>
+    /// Get pr set concurrencyStamp.
+    /// </summary>
+    [Required]
+    public string ConcurrencyStamp { get; set; }
 
     /// <summary>
     /// Get or set list of claims.
     /// </summary>
-    public IList<Claim> Claims { get; set; }
+    public IList<string> Claims { get; set; }
   }
 }

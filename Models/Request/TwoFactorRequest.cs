@@ -9,6 +9,9 @@ using System.Text;
 
 namespace Models.Request
 {
+  /// <summary>
+  /// Two factor request.
+  /// </summary>
   public class TwoFactorRequest
   {
     /// <summary>

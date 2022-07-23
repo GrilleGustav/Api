@@ -55,5 +55,12 @@ namespace Contracts
     /// </summary>
     /// <param name="entity">Entity to delete.</param>
     void Delete(T entity);
+
+    /// <summary>
+    /// Ingnore Property of entity.
+    /// </summary>
+    /// <param name="entity">Entity with property to be ignored.</param>
+    /// <param name="expression">Property to ignore.</param>
+    void IgnoreProperty(T entity, Expression<Func<T, string>> expression);
   }
 }

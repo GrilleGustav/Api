@@ -28,6 +28,7 @@ namespace Entities.Context
       modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
       modelBuilder.ApplyConfiguration(new EmailMessageConfiguration());
       modelBuilder.ApplyConfiguration(new RoleClaimsConfiguration());
+      modelBuilder.ApplyConfiguration(new TemplateTypeConfiguration());
     }
 
     public DbSet<EmailServer> EmailServers { get; set; }
