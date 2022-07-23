@@ -236,6 +236,9 @@ namespace Api.Controllers
 
       response.Url = QueryHelpers.AddQueryString(emailChangeRequest.ClientUrl, param);
 
+      EmailMessage emailMessage = await _emailService.GenerateChangeEmailMessage(user, emailChangeRequest.ClientUrl, token);
+      await _emailService.SendMail(emailMessage);
+
       return Ok(response);
     }
 

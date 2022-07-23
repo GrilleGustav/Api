@@ -12,6 +12,7 @@ using Models.Request.Role;
 using Models.Response;
 using Models.Response.Group;
 using Models.View.Settings.Role;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -150,7 +151,9 @@ namespace Api.Controllers
       if (!ModelState.IsValid)
         return BadRequest();
 
-      IdentityResult result = await _roleManager.UpdateAsync(request.Role);
+      Role role = await _roleManager.FindByIdAsync(request.Id);
+      Role role2 = _mapper.Map<RoleUpdateRequest, Role>(request, role);
+      IdentityResult result = await _roleManager.UpdateAsync(role2);
 
       if (!result.Succeeded)
       {
@@ -161,7 +164,28 @@ namespace Api.Controllers
         return Ok(response);
       }
 
+      IList<Claim> claims = await _roleManager.GetClaimsAsync(role2);
+      // Create new claims
+      List<Claim> requestClaims = new List<Claim>();
+      foreach (string claimValue in request.Claims)
+      {
+        requestClaims.Add(new Claim(ClaimTypes.Role, claimValue));
+      }
+      // Claims how needs to delete.
+      List<Claim> d = claims.Where(x => !requestClaims.Any(y => y.Value == x.Value)).ToList();
+      List<Claim> a = requestClaims.Where(x => !claims.Any(y => y.Value == x.Value)).ToList();
+      foreach (Claim claim in d)
+      {
+        await _roleManager.RemoveClaimAsync(role, claim);
+      }
+
+      foreach (Claim claim in a)
+      {
+        await _roleManager.AddClaimAsync(role, claim);
+      }
+
       response.IsSuccess = true;
+
       return Ok(response);
     }
 

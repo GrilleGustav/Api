@@ -485,9 +485,9 @@ namespace Api.Controllers
       if (!providers.Contains("Email"))
         return Unauthorized(new AuthenticationResponse { ErrorMessage = "Invalid 2-Step Verification Provider." });
 
-      var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-      //var message = new Message(new string[] { user.Email }, "Authentication token", token, null);
-      //await _emailSender.SendEmailAsync(message);
+      var code = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+      var emailMessage = await _emailService.GenerateTwoFactorEmailMessage(user, code);
+      await _emailService.SendMail(emailMessage);
 
       return Ok(new AuthenticationResponse { Is2StepVerificationRequired = true, Provider = "Email", IsSuccess = true });
     }

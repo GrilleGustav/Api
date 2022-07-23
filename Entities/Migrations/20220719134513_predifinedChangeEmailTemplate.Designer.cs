@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220719134513_predifinedChangeEmailTemplate")]
+    partial class predifinedChangeEmailTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +94,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "52c34345-afb3-4de4-bbc4-d0ac055c4237",
+                            ConcurrencyStamp = "5b544b99-3572-4c78-a1e6-21fd038ab2ec",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER",
@@ -101,7 +103,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "fdb06c88-e1ec-4274-a5bd-9bad8258091e",
+                            ConcurrencyStamp = "9c544b76-87f1-4351-9da8-6aea8da1589a",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -109,7 +111,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "edf3222e-3780-4f27-ba34-c7ec31ef2150",
+                            ConcurrencyStamp = "e3a6c63d-65e4-4568-a70b-5480970b9311",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -216,7 +218,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGreIX8a4E6lBEnEx9TM4W7BzG8UfEeYPW3IWopRya2WyrsqzOtRcQ1K8T/LhhsCEA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFIhf5+Q/b3rd+InILwOdXEgBZDuxHAo/OoSkOJGRBxYdrCqhWb8shdz/7ZPJYRrAw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79",
                             TwoFactorEnabled = false,
@@ -387,7 +389,7 @@ namespace Entities.Migrations
                             Description = "Predefined template. Is used for the first installation if the administrator does not create one.",
                             EmailSenderId = 1,
                             Language = 1,
-                            Name = "register 1",
+                            Name = "Register 1",
                             Predefined = true,
                             TemplateTypeId = 1,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -396,98 +398,14 @@ namespace Entities.Migrations
                         {
                             Id = 2,
                             ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihre Registrierung zu bestätigen.<br><span class='placeholder'>{RegisterConfirm}</span>&nbsp;</p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for email confirmation.",
-                            EmailSenderId = 1,
-                            Language = 0,
-                            Name = "register 2",
-                            Predefined = true,
-                            TemplateTypeId = 1,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Please click on the link below to reset your password.</p><p><span class='placeholder'>{PasswortReset}</span></p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for password reset.",
-                            EmailSenderId = 1,
-                            Language = 1,
-                            Name = "password reset 1",
-                            Predefined = true,
-                            TemplateTypeId = 2,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihr Passwort zurück zu setzen.</p><p><span class='placeholder'>{PasswortReset}</span></p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. It is for password reset.",
-                            EmailSenderId = 1,
-                            Language = 0,
-                            Name = "password reset 1",
-                            Predefined = true,
-                            TemplateTypeId = 2,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Content = "<p>Click on the link below to change your email:</p><p><span class='placeholder'>{ChangeEmialLink}</span></p>",
                             Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for changing email.",
+                            Description = "Taplate for changing email.",
                             EmailSenderId = 1,
                             Language = 1,
-                            Name = "changeEmail 1",
+                            Name = "changeEmail",
                             Predefined = true,
                             TemplateTypeId = 3,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Bitte klicken sie auf den unten stehenden Link, um ihre E-Mail Adresse zu ändern.</p><p><span class='placeholder'>{ChangeEmialLink}</span></p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for changing email.",
-                            EmailSenderId = 1,
-                            Language = 0,
-                            Name = "changeEmail 2",
-                            Predefined = true,
-                            TemplateTypeId = 3,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Two factor code:&nbsp;<span class='placeholder'>{TowStepCode}</span></p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for sending TwoStep code for login.",
-                            EmailSenderId = 1,
-                            Language = 1,
-                            Name = "twoStep 1",
-                            Predefined = true,
-                            TemplateTypeId = 4,
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Content = "<p>Zwei Stufen Code:<span class='placeholder'>{TowStepCode}</span></p>",
-                            Default = true,
-                            Description = "Predefined template. Is used for the first installation if the administrator does not create one. Tamplate for sending TwoStep code for login.",
-                            EmailSenderId = 1,
-                            Language = 0,
-                            Name = "twoStep 2",
-                            Predefined = true,
-                            TemplateTypeId = 4,
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -542,14 +460,6 @@ namespace Entities.Migrations
                             Id = 3,
                             ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "ChangeEmail",
-                            PluginName = "BaseApplication",
-                            UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ConcurrencyStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "TwoStep",
                             PluginName = "BaseApplication",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });

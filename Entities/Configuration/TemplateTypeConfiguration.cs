@@ -23,16 +23,25 @@ namespace Entities.Configuration
         Name = "Register",
         PluginName = "BaseApplication"
       });
+
       builder.HasData(new TemplateType()
       {
         Id = 2,
         Name = "PasswordReset",
         PluginName = "BaseApplication"
       });
+
       builder.HasData(new TemplateType()
       {
         Id = 3,
         Name = "ChangeEmail",
+        PluginName = "BaseApplication"
+      });
+
+      builder.HasData(new TemplateType()
+      {
+        Id = 4,
+        Name = "TwoStep",
         PluginName = "BaseApplication"
       });
 

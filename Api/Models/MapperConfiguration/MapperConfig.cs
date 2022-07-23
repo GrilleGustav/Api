@@ -8,6 +8,7 @@ using Entities.Models.Email;
 using Entities.Models.Settings.Email;
 using Models;
 using Models.Request;
+using Models.Request.Role;
 using Models.Request.Settings.Email;
 using Models.Request.Settings.Sender;
 using Models.Request.User;
@@ -66,6 +67,8 @@ namespace Api.Models.MapperConfiguration
       CreateMap<TemplateType, TemplateTypeViewModel>();
 
       CreateMap<TemplateTypeViewModel, TemplateType>();
+
+      CreateMap<RoleUpdateRequest, Role>();
     }
   }
 }

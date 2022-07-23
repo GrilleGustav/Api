@@ -1,4 +1,8 @@
-﻿using Attributes;
+﻿// <copyright file="PlaceholderController.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -55,6 +59,9 @@ namespace Api.Controllers
           break;
         case "ChangeEmail":
           placeholder.Add("ChangeEmialLink");
+          break;
+        case "TwoStep":
+          placeholder.Add("TowStepCode");
           break;
         default:
           break;
