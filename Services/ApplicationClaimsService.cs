@@ -100,6 +100,7 @@ namespace Services
       this.AddClaim("Create", "General");
       this.AddClaim("Update", "General");
       this.AddClaim("Delete", "General");
+      this.AddClaim("ShowAdminMenu", "General");
       this.AddClaim("Administrator", "General");
       this.AddClaim("User", "General");
       this.AddClaim("EmailServerView", "Email");

@@ -54,7 +54,7 @@ namespace Entities.Models.Settings.Email
     public DateTime ConcurrencyStamp { get; set; }
 
     /// <summary>
-    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// A DateTime value that shows when record changed.
     /// </summary>
     public DateTime UpdatedOn { get; set; }
   }
