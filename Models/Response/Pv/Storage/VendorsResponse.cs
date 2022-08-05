@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Models.Response.Pv.Storage
 {
   /// <summary>
-  /// Venders response.
+  /// Vendors response.
   /// </summary>
   public class VendorsResponse : ErrorResponse
   {
@@ -29,7 +29,7 @@ namespace Models.Response.Pv.Storage
     }
 
     /// <summary>
-    /// Get or ser vendors.
+    /// Get or set vendors.
     /// </summary>
     public IList<VendorViewModel> Vendors { get; set; }
   }
