@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220804233808_vendorIdexUnique")]
+    partial class vendorIdexUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +94,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "cdfcfaca-b1bf-4e34-b5b8-95e31eb4fc05",
+                            ConcurrencyStamp = "3e9f021d-7e55-4491-a711-7f78a1d72acc",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER",
@@ -101,7 +103,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "1a7772dd-5c70-4d99-9678-d2aa019b63ca",
+                            ConcurrencyStamp = "15087136-dac7-4a59-b0a1-542a879d028f",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -109,7 +111,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "7d60029d-6750-4adc-a606-8533fe7b70ab",
+                            ConcurrencyStamp = "b8be168b-b5dd-471c-823e-4d3d5e306f29",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -216,7 +218,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKJVDsCYodfoeb0gbFLOmKIieKk0jYWPfLYhEEttj1e903P3BEFOt3LG3D2ks9GHhA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJrgHHH5slcO5fj4kUNomLSniC7AhmRUX1AC4SzVK/GhmMU6GbN1MmQ1o/zfeUlwJQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79",
                             TwoFactorEnabled = false,
@@ -289,7 +291,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("PvStorageId");
 
-                    b.ToTable("Pv_Storage_BatteryBlock");
+                    b.ToTable("BatteryBlocks");
                 });
 
             modelBuilder.Entity("Entities.Models.Pv.Storage.BatteryCell", b =>
@@ -359,7 +361,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("VendorId");
 
-                    b.ToTable("Pv_Storage_BatteryCell");
+                    b.ToTable("BatteryCells");
                 });
 
             modelBuilder.Entity("Entities.Models.Pv.Storage.CellSpecification", b =>
@@ -369,7 +371,7 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -384,7 +386,7 @@ namespace Entities.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedOn")
                         .ValueGeneratedOnAddOrUpdate()
@@ -392,13 +394,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Pv_Storage_CellSpecification");
+                    b.ToTable("CellSpecifications");
 
                     b.HasData(
                         new
@@ -435,7 +431,7 @@ namespace Entities.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedOn")
                         .ValueGeneratedOnAddOrUpdate()
@@ -443,13 +439,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Pv_Storage_CellType");
+                    b.ToTable("CellTypes");
 
                     b.HasData(
                         new
@@ -470,7 +460,7 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -485,7 +475,7 @@ namespace Entities.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedOn")
                         .ValueGeneratedOnAddOrUpdate()
@@ -493,13 +483,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Pv_Storage_ProductionAddress");
+                    b.ToTable("ProductionAddresses");
 
                     b.HasData(
                         new
@@ -545,7 +529,7 @@ namespace Entities.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedOn")
                         .ValueGeneratedOnAddOrUpdate()
@@ -553,13 +537,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Pv_Storage_ProductionType");
+                    b.ToTable("ProductionTypes");
 
                     b.HasData(
                         new
@@ -603,7 +581,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pv_Storage_PvStorage");
+                    b.ToTable("PvStorages");
                 });
 
             modelBuilder.Entity("Entities.Models.Pv.Storage.Vendor", b =>
@@ -642,7 +620,7 @@ namespace Entities.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Pv_Storage_Vendor");
+                    b.ToTable("Vendor");
 
                     b.HasData(
                         new

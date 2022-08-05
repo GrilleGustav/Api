@@ -19,6 +19,8 @@ namespace Entities.Configuration.Pv.Storage
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<PvStorage> builder)
     {
+      builder.ToTable("Pv_Storage_" + nameof(PvStorage));
+
       builder.HasKey(x => x.Id);
       builder.HasMany(x => x.BatteryBlocks)
         .WithOne(x => x.PvStorage)

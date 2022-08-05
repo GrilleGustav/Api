@@ -22,6 +22,8 @@ namespace Entities.Configuration.Pv.Storage
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<ProductionAddress> builder)
     {
+      builder.ToTable("Pv_Storage_" + nameof(ProductionAddress));
+
       builder.HasKey(x => x.Id);
 
       builder.HasMany(x => x.BatteryCells)
@@ -33,6 +35,10 @@ namespace Entities.Configuration.Pv.Storage
       builder.Property(x => x.UpdatedOn).ValueGeneratedOnAddOrUpdate();
 
       builder.Property(x => x.CreatedOn).ValueGeneratedOnAdd();
+
+      builder.HasIndex(x => x.Name).IsUnique();
+
+      builder.HasIndex(x => x.Code).IsUnique();
 
       builder.HasData(
         new ProductionAddress

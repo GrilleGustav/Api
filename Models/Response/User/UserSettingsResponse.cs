@@ -1,9 +1,14 @@
-﻿using Models.View.User;
-using System;
-using System.Collections.Generic;
+﻿// <copyright file="UserSettingsResponse.cs" company="GrilleGustav">
+// Copyright (c) GrilleGustav. All rights reserved.
+// </copyright>
+
+using Models.View.User;
 
 namespace Models.Response.User
 {
+  /// <summary>
+  /// User response.
+  /// </summary>
   public class UserSettingsResponse : ErrorResponse
   {
     /// <summary>
@@ -13,9 +18,9 @@ namespace Models.Response.User
     { }
 
     /// <summary>
-    /// Users response.
+    /// User response.
     /// </summary>
-    /// <param name="users">List of users.</param>
+    /// <param name="user">User.</param>
     public UserSettingsResponse(UserDetailViewModel user)
     {
       this.User = user;

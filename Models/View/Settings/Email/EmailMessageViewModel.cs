@@ -6,6 +6,9 @@ using System;
 
 namespace Models.View.Settings.Email
 {
+  /// <summary>
+  /// Email message view model.
+  /// </summary>
   public class EmailMessageViewModel
   {
     /// <summary>

@@ -87,8 +87,8 @@ namespace Api
       services.AddScoped<IEmailMessageService, EmailMessageService>();
       services.AddScoped<IPlaceholderService, PlaceholderService>();
       services.AddScoped<ITemplateTypeService, TemplateTypeService>();
-
       services.ConfigureApplicationClaimsService();
+      services.ConfigurePvServices();
 
 
       services.AddControllers(config =>

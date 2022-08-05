@@ -5,14 +5,17 @@
 using AutoMapper;
 using Entities.Models.Account;
 using Entities.Models.Email;
+using Entities.Models.Pv.Storage;
 using Entities.Models.Settings.Email;
 using Models;
 using Models.Request;
+using Models.Request.Pv.Storage;
 using Models.Request.Role;
 using Models.Request.Settings.Email;
 using Models.Request.Settings.Sender;
 using Models.Request.User;
 using Models.Response.Role;
+using Models.View.Pv.Storage;
 using Models.View.Settings.Email;
 using Models.View.Settings.Role;
 using Models.View.User;
@@ -69,6 +72,12 @@ namespace Api.Models.MapperConfiguration
       CreateMap<TemplateTypeViewModel, TemplateType>();
 
       CreateMap<RoleUpdateRequest, Role>();
+
+      CreateMap<Vendor, VendorViewModel>();
+
+      CreateMap<VendorAddRequest, Vendor>();
+
+      CreateMap<VendorUpdateRequest, Vendor>();
     }
   }
 }

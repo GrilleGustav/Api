@@ -1,17 +1,17 @@
-﻿// <copyright file="EmailServerRepository.cs" company="GrilleGustav">
+﻿// <copyright file="CellTypeRepository.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
-using Contracts;
+using Contracts.Pv.Storage;
 using Entities.Context;
-using Entities.Models.Settings.Email;
+using Entities.Models.Pv.Storage;
 
-namespace Repository
+namespace Repository.Pv.Storage
 {
   /// <summary>
   /// Used for repository initalization.
   /// </summary>
-  public class EmailServerRepository : RepositoryBase<EmailServer>, IEmailServerRepository
+  public class CellTypeRepository : RepositoryBase<CellType>, ICellTypeRepository
   {
     private RepositoryContext _repositoryContext;
 
@@ -19,7 +19,7 @@ namespace Repository
     /// Used for repository initalization.
     /// </summary>
     /// <param name="repositoryContext">Database context.</param>
-    public EmailServerRepository(RepositoryContext repositoryContext) :base(repositoryContext)
+    public CellTypeRepository(RepositoryContext repositoryContext) : base(repositoryContext)
     {
       _repositoryContext = repositoryContext;
     }

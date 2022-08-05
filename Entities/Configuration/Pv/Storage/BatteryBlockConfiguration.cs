@@ -22,6 +22,8 @@ namespace Entities.Configuration.Pv.Storage
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<BatteryBlock> builder)
     {
+      builder.ToTable("Pv_Storage_" + nameof(BatteryBlock));
+
       builder.HasKey(x => x.Id);
 
       builder.HasMany(x => x.BatteryCells)

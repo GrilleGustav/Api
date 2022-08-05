@@ -42,7 +42,9 @@ namespace Models.Response
     /// </summary>
     /// <param name="errors">List of errors.</param>
     public ErrorResponse(List<Error> errors)
-    { }
+    {
+      this.Errors.AddRange(errors);
+    }
 
     /// <summary>
     /// Get or set succefull

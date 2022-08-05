@@ -22,6 +22,8 @@ namespace Entities.Configuration.Pv.Storage
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<BatteryCell> builder)
     {
+      builder.ToTable("Pv_Storage_" + nameof(BatteryCell));
+
       builder.HasKey(x => x.Id);
 
       builder.Property(x => x.ConcurrencyStamp).IsRowVersion().IsRowVersion().ValueGeneratedOnAddOrUpdate();

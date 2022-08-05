@@ -13,6 +13,8 @@ using NLog.Extensions.Logging;
 using Repository;
 using Services;
 using Services.Interfaces;
+using Services.Interfaces.Pv.Storage;
+using Services.Pv.Storage;
 using System;
 
 namespace Api.Extensions
@@ -57,6 +59,11 @@ namespace Api.Extensions
     public static void ConfigureApplicationClaimsService(this IServiceCollection services)
     {
       services.AddSingleton<IApplicationClaimsService, ApplicationClaimsService>();
+    }
+
+    public static void ConfigurePvServices(this IServiceCollection services)
+    {
+      services.AddScoped<IVendorService, VendorService>();
     }
   }
 }

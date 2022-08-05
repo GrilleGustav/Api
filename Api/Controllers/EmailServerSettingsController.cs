@@ -14,8 +14,7 @@ using Models.Response;
 using Models.Request.Settings.Email;
 using Entities.Models.Settings.Email;
 using Models.View.Settings.Email;
-using Models;
-using System;
+using Models;   
 using System.Linq;
 
 namespace Api.Controllers
@@ -88,7 +87,7 @@ namespace Api.Controllers
 
         return Ok(response);
       }
-      var test = new EmailServerSettingResponse(_mapper.Map<EmailServer, EmailServerViewModel>(result.Data));
+
       return Ok(new EmailServerSettingResponse(_mapper.Map<EmailServer, EmailServerViewModel>(result.Data)));
     }
 
@@ -104,7 +103,7 @@ namespace Api.Controllers
         return BadRequest();
 
       Result<EmailServer> result = await _emailServerSettingsService.Create(_mapper.Map<EmailServerAddRequest, EmailServer>(emailServerAddRequest));
-      if (result.IsSuccess == false)
+      if (!result.IsSuccess)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error creating entity. Data not changed.");
@@ -128,7 +127,7 @@ namespace Api.Controllers
 
       EmailServerSettingResponse response = new EmailServerSettingResponse();
       Result<EmailServer> result = await _emailServerSettingsService.Update(_mapper.Map<EmailServerEditRequest, EmailServer>(request));
-      if (result.IsSuccess == false)
+      if (!result.IsSuccess)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
@@ -154,7 +153,7 @@ namespace Api.Controllers
         return BadRequest();
       ErrorResponse response = new ErrorResponse();
       Result<EmailServer> result = await _emailServerSettingsService.Delete(id);
-      if (result.IsSuccess == false)
+      if (!result.IsSuccess)
       {
         response.AddError(errorCode: "9", errorMessage: "Error deleting record.");
         if (_logger.IsEnabled(LogLevel.Error))
