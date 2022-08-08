@@ -1,29 +1,34 @@
-﻿// <copyright file="BatteryCell.cs" company="GrilleGustav">
+﻿// <copyright file=">BatteryCellUpdateRequest.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Pv.Storage;
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Entities.Models.Pv.Storage
+namespace Models.Request.Pv.Storage
 {
   /// <summary>
-  /// Pv-Storage battery cell.
+  /// Battry cell update request.
   /// </summary>
-  public class BatteryCell
+  public class BatteryCellUpdateRequest
   {
     /// <summary>
     /// Get or set Id.
     /// </summary>
+    [Required]
     public int Id { get; set; }
 
     /// <summary>
     /// Production date.
     /// </summary>
+    [Required]
     public DateTime ProductionDate { get; set; }
 
     /// <summary>
     /// Get or set voltage input measurement.
     /// </summary>
+    [Required]
     public double VoltageInputMeasurement { get; set; }
 
     /// <summary>

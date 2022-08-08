@@ -1,30 +1,33 @@
-﻿// <copyright file="ProductionAddress.cs" company="GrilleGustav">
+﻿// <copyright file="ProductionAddressUpdateRequest.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace Entities.Models.Pv.Storage
+namespace Models.Request.Pv.Storage
 {
   /// <summary>
-  /// Production address.
+  /// ProductionAddress update request.
   /// </summary>
-  public class ProductionAddress
+  public class ProductionAddressUpdateRequest
   {
     /// <summary>
     /// Get or set Id
     /// </summary>
+    [Required]
     public int Id { get; set; }
 
     /// <summary>
     /// Proction address name.
     /// </summary>
+    [Required]
     public string Name { get; set; }
 
     /// <summary>
     /// Get or set production address code.
     /// </summary>
+    [Required]
     public string Code { get; set; }
 
     /// <summary>
@@ -35,23 +38,7 @@ namespace Entities.Models.Pv.Storage
     /// <summary>
     /// A DateTime value that should change whenever a role is persisted to the store.
     /// </summary>
+    [Required]
     public DateTime ConcurrencyStamp { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record changed.
-    /// </summary>
-    public DateTime UpdatedOn { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record was created.
-    /// </summary>
-    public DateTime CreatedOn { get; set; }
-
-    // Navigation Properties.
-
-    /// <summary>
-    /// Navigation property to battery cell.
-    /// </summary>
-    public List<BatteryCell> BatteryCells { get; set; }
   }
 }

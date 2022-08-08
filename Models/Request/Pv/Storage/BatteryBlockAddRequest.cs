@@ -1,31 +1,23 @@
-﻿// <copyright file="ProductionAddress.cs" company="GrilleGustav">
+﻿// <copyright file=">BatteryBlockAddRequest.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Pv.Storage;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace Entities.Models.Pv.Storage
+namespace Models.Request.Pv.Storage
 {
   /// <summary>
-  /// Production address.
+  /// Request for adding new battery block.
   /// </summary>
-  public class ProductionAddress
+  public class BatteryBlockAddRequest
   {
     /// <summary>
-    /// Get or set Id
+    /// Get or set name.
     /// </summary>
-    public int Id { get; set; }
-
-    /// <summary>
-    /// Proction address name.
-    /// </summary>
+    [Required]
     public string Name { get; set; }
-
-    /// <summary>
-    /// Get or set production address code.
-    /// </summary>
-    public string Code { get; set; }
 
     /// <summary>
     /// Get or set description.
@@ -33,9 +25,9 @@ namespace Entities.Models.Pv.Storage
     public string Description { get; set; }
 
     /// <summary>
-    /// A DateTime value that should change whenever a role is persisted to the store.
+    /// Get or set Pv Storage id.
     /// </summary>
-    public DateTime ConcurrencyStamp { get; set; }
+    public int PvStorageId { get; set; }
 
     /// <summary>
     /// A DateTime value that shows when record changed.
@@ -50,8 +42,8 @@ namespace Entities.Models.Pv.Storage
     // Navigation Properties.
 
     /// <summary>
-    /// Navigation property to battery cell.
+    /// Navigation property to pv storage.
     /// </summary>
-    public List<BatteryCell> BatteryCells { get; set; }
+    public PvStorage PvStorage { get; set; }
   }
 }
