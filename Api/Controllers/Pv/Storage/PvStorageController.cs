@@ -1,4 +1,4 @@
-﻿// <copyright file="VendorController.cs" company="GrilleGustav">
+﻿// <copyright file="PvStorageController.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -20,66 +20,66 @@ using System.Threading.Tasks;
 namespace Api.Controllers.Pv.Storage
 {
   /// <summary>
-  /// Controller for pv-vendor.
+  /// Controller for pv-storage.
   /// </summary>
   //[Authorize]
   [ApiController]
   [Route("[controller]")]
-  public class VendorController : ControllerBase
+  public class PvStorageController : ControllerBase
   {
-    private ILogger<VendorController> _logger;
-    private IVendorService _vendorService;
+    private ILogger<PvStorageController> _logger;
+    private IPvStorageService _pvStorageService;
     private readonly IMapper _mapper;
 
     /// <summary>
-    /// Controller for pv-vendor.
+    /// Controller for pv-storage.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
-    /// <param name="vendorService">Manage vendor data.</param>
+    /// <param name="pvStorageService">Manage pv storage data.</param>
     /// <param name="mapper">Mapper to copy the same properties of two different objects from the source object to target object.</param>
-    public VendorController(ILogger<VendorController> logger, IVendorService vendorService, IMapper mapper)
+    public PvStorageController(ILogger<PvStorageController> logger, IPvStorageService pvStorageService, IMapper mapper)
     {
       _logger = logger;
-      _vendorService = vendorService;
+      _pvStorageService = pvStorageService;
       _mapper = mapper;
     }
 
     /// <summary>
-    /// Get all vendors.
+    /// Get all pv storages.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of vendors.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of pv storages.</returns>
     [HttpGet("[action]")]
-    public async Task<ActionResult<VendorsResponse>> GetAll()
+    public async Task<ActionResult<PvStoragesResponse>> GetAll()
     {
-      Result<List<Vendor>> result = await _vendorService.GetAll();
+      Result<List<PvStorage>> result = await _pvStorageService.GetAll();
 
       if (result.Data == null)
       {
-        VendorsResponse response = new VendorsResponse();
+        PvStoragesResponse response = new PvStoragesResponse();
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
 
         return Ok(response);
       }
 
-      return Ok(new VendorsResponse(_mapper.Map<IList<Vendor>, IList<VendorViewModel>>(result.Data)));
+      return Ok(new PvStoragesResponse(_mapper.Map<IList<PvStorage>, IList<PvStorageViewModel>>(result.Data)));
     }
 
     /// <summary>
-    /// Get one vendor.
+    /// Get one pv storage.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or one vendor.</returns>
+    /// <param name="id">Pv storage id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or one pv storage.</returns>
     [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<VendorResponse>> GetOne(int id)
+    public async Task<ActionResult<PvStorageResponse>> GetOne(int id)
     {
       if (id == 0)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.GetOne(id);
+      Result<PvStorage> result = await _pvStorageService.GetOne(id);
       if (result.Data == null)
       {
-        VendorResponse response = new VendorResponse();
+        PvStorageResponse response = new PvStorageResponse();
         response.AddErrors(result.Errors);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
@@ -87,21 +87,21 @@ namespace Api.Controllers.Pv.Storage
         return Ok(response);
       }
 
-      return Ok(new VendorResponse(_mapper.Map<Vendor, VendorViewModel>(result.Data)));
+      return Ok(new PvStorageResponse(_mapper.Map<PvStorage, PvStorageViewModel>(result.Data)));
     }
 
     /// <summary>
-    /// Add vendor.
+    /// Add pv storage.
     /// </summary>
-    /// <param name="request">Vendor add request.</param>
+    /// <param name="request">Pv storage add request.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<ErrorResponse>> Add([FromBody] VendorAddRequest request)
+    public async Task<ActionResult<ErrorResponse>> Add([FromBody] PvStorageAddRequest request)
     {
-       if (!ModelState.IsValid)
+      if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Create(_mapper.Map<VendorAddRequest, Vendor>(request));
+      Result<PvStorage> result = await _pvStorageService.Create(_mapper.Map<PvStorageAddRequest, PvStorage>(request));
       if (result.IsSuccess == false)
       {
         if (_logger.IsEnabled(LogLevel.Error))
@@ -114,23 +114,23 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Update vendor entity.
+    /// Update pv storage entity.
     /// </summary>
-    /// <param name="request">Vendor update data.</param>
+    /// <param name="request">Pv storage update data.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<VendorResponse>> Update([FromBody] VendorUpdateRequest request)
+    public async Task<ActionResult<PvStorageResponse>> Update([FromBody] PvStorageUpdateRequest request)
     {
       if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Update(_mapper.Map<VendorUpdateRequest, Vendor>(request));
-      VendorResponse response = new VendorResponse();
+      Result<PvStorage> result = await _pvStorageService.Update(_mapper.Map<PvStorageUpdateRequest, PvStorage>(request));
+      PvStorageResponse response = new PvStorageResponse();
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
-        response.Vendor = _mapper.Map<Vendor, VendorViewModel>(result.Data);
+        response.PvStorage = _mapper.Map<PvStorage, PvStorageViewModel>(result.Data);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error updating entity. Data not changed.");
       }
@@ -140,9 +140,9 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Delete vendor.
+    /// Delete pv storage.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
+    /// <param name="id">Pv storage id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
@@ -151,7 +151,7 @@ namespace Api.Controllers.Pv.Storage
         return BadRequest();
 
       ErrorResponse response = new ErrorResponse();
-      Result<Vendor> result = await _vendorService.Delete(id);
+      Result<PvStorage> result = await _pvStorageService.Delete(id);
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "9", errorMessage: "Error deleting record.");

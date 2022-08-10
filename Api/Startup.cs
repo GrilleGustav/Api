@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Api.Filters;
+using System.Reflection;
 
 namespace Api
 {
@@ -100,6 +101,9 @@ namespace Api
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        c.IncludeXmlComments(xmlPath);
       });
     }
 

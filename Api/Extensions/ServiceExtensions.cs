@@ -61,8 +61,19 @@ namespace Api.Extensions
       services.AddSingleton<IApplicationClaimsService, ApplicationClaimsService>();
     }
 
+    /// <summary>
+    /// Connfigure PV-Services.
+    /// </summary>
+    /// <param name="services">Service collection to register services.</param>
     public static void ConfigurePvServices(this IServiceCollection services)
     {
+      services.AddScoped<IBatteryBlockService, BatteryBlockService>();
+      services.AddScoped<IBatteryCellService, BatteryCellService>();
+      services.AddScoped<ICellSpecificationService, CellSpecificationService>();
+      services.AddScoped<ICellTypeService, CellTypeService>();
+      services.AddScoped<IProductionAddressService, ProductionAddressService>();
+      services.AddScoped<IProductionTypeService, ProductionTypeService>();
+      services.AddScoped<IPvStorageService, PvStorageService>();
       services.AddScoped<IVendorService, VendorService>();
     }
   }

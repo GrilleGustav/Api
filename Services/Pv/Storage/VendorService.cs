@@ -26,7 +26,7 @@ namespace Services.Pv.Storage
     /// Service to manage Pv battery vendor in backend store.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
-    /// <param name="repositoryManager">Access to backend store.</param>
+    /// <param name="repository">Access to backend store.</param>
     public VendorService(ILogger<VendorService> logger, IRepositoryManager repository)
     {
       _logger = logger;
@@ -62,7 +62,7 @@ namespace Services.Pv.Storage
     /// <summary>
     /// Get one vendor.
     /// </summary>
-    /// <param name="serverId">Vendor backend store id.</param>
+    /// <param name="id">Vendor backend store id.</param>
     /// <returns>The Task that represents asynchronous operation, containing a vendor.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
@@ -96,8 +96,8 @@ namespace Services.Pv.Storage
     /// <summary>
     /// Create vendor entity.
     /// </summary>
-    /// <param name="data">The Task that represents asynchronous operation, containing some errors or success.</param>
-    /// <returns></returns>
+    /// <param name="data">Vendor entity to create.</param>
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
@@ -142,7 +142,7 @@ namespace Services.Pv.Storage
     /// <summary>
     /// Update vendor entity.
     /// </summary>
-    /// <param name="vendor">Vendor entity.</param>
+    /// <param name="data">Vendor entity.</param>
     /// <returns>The task that represents asynchronous operation, containing some errors or if DbUpdateExecption current database entity.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>

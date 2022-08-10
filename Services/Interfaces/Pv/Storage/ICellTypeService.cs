@@ -1,4 +1,4 @@
-﻿// <copyright file="IVendorService.cs" company="GrilleGustav">
+﻿// <copyright file="ICellTypeService.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -6,62 +6,64 @@ using Entities.Models.Pv.Storage;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces.Pv.Storage
 {
   /// <summary>
-  /// Service to manage Pv battery vendor in backend store.
+  /// Service to manage Pv battery cell type in backend store.
   /// </summary>
-  public interface IVendorService
+  public interface ICellTypeService
   {
     /// <summary>
-    /// Get all vendors.
+    /// Get all cell type.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing a list of vendors.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing a list of cell type.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<List<Vendor>>> GetAll();
+    Task<Result<List<CellType>>> GetAll();
 
     /// <summary>
-    /// Get one vendor.
+    /// Get one cell type.
     /// </summary>
-    /// <param name="id">Vendor backend store id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing a vendor.</returns>
+    /// <param name="id">Cell type backend store id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing a cell type.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<Vendor>> GetOne(int id);
+    Task<Result<CellType>> GetOne(int id);
 
     /// <summary>
-    /// Create vendor entity.
+    /// Create cell type entity.
     /// </summary>
-    /// <param name="data">Vendor entity to create.</param>
+    /// <param name="data">Cell type entity to create.</param>
     /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<Vendor>> Create(Vendor data);
+    Task<Result<CellType>> Create(CellType data);
 
     /// <summary>
-    /// Update vendor.
+    /// Update cell type entity.
     /// </summary>
-    /// <param name="data">Vendor entity.</param>
+    /// <param name="data">Production address entity.</param>
     /// <returns>The task that represents asynchronous operation, containing some errors or if DbUpdateExecption current database entity.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<Vendor>> Update(Vendor data);
+    Task<Result<CellType>> Update(CellType data);
 
     /// <summary>
-    /// Delete vendor record.
+    /// Delete cell type record.
     /// </summary>
-    /// <param name="id">Vendor entity id.</param>
+    /// <param name="id">Cell type entity id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<Vendor>> Delete(int id);
+    Task<Result<CellType>> Delete(int id);
   }
 }

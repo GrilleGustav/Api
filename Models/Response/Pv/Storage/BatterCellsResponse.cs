@@ -3,6 +3,7 @@
 // </copyright>
 
 using Entities.Models.Pv.Storage;
+using Models.View.Pv.Storage;
 using System.Collections.Generic;
 
 namespace Models.Response.Pv.Storage
@@ -10,19 +11,19 @@ namespace Models.Response.Pv.Storage
   /// <summary>
   /// Battery cells response.
   /// </summary>
-  public class BatteryCellsReponse : ErrorResponse
+  public class BatteryCellsResponse : ErrorResponse
   {
     /// <summary>
     /// Battery cells reponse.
     /// </summary>
-    public BatteryCellsReponse()
+    public BatteryCellsResponse()
     { }
 
     /// <summary>
     /// Battery cells response.
     /// </summary>
     /// <param name="batteryCells">List of Battery cells.</param>
-    public BatteryCellsReponse(IList<BatteryCell> batteryCells)
+    public BatteryCellsResponse(IList<BatteryCellViewModel> batteryCells)
     {
       this.BatteryCells = batteryCells;
       this.IsSuccess = true;
@@ -31,6 +32,6 @@ namespace Models.Response.Pv.Storage
     /// <summary>
     /// Get or set battery cells.
     /// </summary>
-    public IList<BatteryCell> BatteryCells { get; set; }
+    public IList<BatteryCellViewModel> BatteryCells { get; set; }
   }
 }

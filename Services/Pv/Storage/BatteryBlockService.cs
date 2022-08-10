@@ -1,4 +1,4 @@
-﻿// <copyright file="ProductionTypeService.cs" company="GrilleGustav">
+﻿// <copyright file="BatteryBlockService.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -10,163 +10,163 @@ using Models;
 using Services.Interfaces.Pv.Storage;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Pv.Storage
 {
   /// <summary>
-  /// Service to manage Pv battery production type in backend store.
+  /// Service to manage battery block in backend store.
   /// </summary>
-  public class ProductionTypeService : IProductionTypeService
+  public class BatteryBlockService : IBatteryBlockService
   {
-    private readonly ILogger<ProductionTypeService> _logger;
+    private readonly ILogger<BatteryBlockService> _logger;
     private readonly IRepositoryManager _repository;
 
     /// <summary>
-    /// Service to manage Pv battery production type in backend store.
+    /// Service to manage battery block in backend store.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
     /// <param name="repository">Access to backend store.</param>
-    public ProductionTypeService(ILogger<ProductionTypeService> logger, IRepositoryManager repository)
+    public BatteryBlockService(ILogger<BatteryBlockService> logger, IRepositoryManager repository)
     {
       _logger = logger;
       _repository = repository;
     }
 
     /// <summary>
-    /// Get all production types.
+    /// Get all battery block.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing a list of production types.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing a list of battery block.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<List<ProductionType>>> GetAll()
+    public async Task<Result<List<BatteryBlock>>> GetAll()
     {
       try
       {
-        return new Result<List<ProductionType>>(await _repository.ProductionType.FindAll(false).ToListAsync());
+        return new Result<List<BatteryBlock>>(await _repository.BatteryBlock.FindAll(false).Include(x => x.BatteryCells) .ToListAsync());
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<List<ProductionType>>(new Error("13", "Database connection error."));
+        return new Result<List<BatteryBlock>>(new Error("13", "Database connection error."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<List<ProductionType>>(new Error("1", "Error loading data."));
+        return new Result<List<BatteryBlock>>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Get one production type.
+    /// Get one battery block.
     /// </summary>
-    /// <param name="id">Production type backend store id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing a production type.</returns>
+    /// <param name="id">Battery block backend store id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing a Battery block.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> GetOne(int id)
+    public async Task<Result<BatteryBlock>> GetOne(int id)
     {
       try
       {
-        return new Result<ProductionType>(await _repository.ProductionType.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync());
+        return new Result<BatteryBlock>(await _repository.BatteryBlock.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryCells).SingleOrDefaultAsync());
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<BatteryBlock>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<BatteryBlock>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<BatteryBlock>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Create production type entity.
+    /// Create battery block entity.
     /// </summary>
-    /// <param name="data">Production type entity to create.</param>
+    /// <param name="data">Battery block entity to create.</param>
     /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Create(ProductionType data)
+    public async Task<Result<BatteryBlock>> Create(BatteryBlock data)
     {
       try
       {
-        _repository.ProductionType.Create(data);
+        _repository.BatteryBlock.Create(data);
         await _repository.SaveAsync();
-        return new Result<ProductionType>(true);
+        return new Result<BatteryBlock>(true);
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<BatteryBlock>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<BatteryBlock>(new Error("14", "Invalid operation."));
       }
       catch (DbUpdateException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("15", "Duplicate Key Entry."));
+        return new Result<BatteryBlock>(new Error("15", "Duplicate Key Entry."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<BatteryBlock>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Update production type entity.
+    /// Update batter block entity.
     /// </summary>
-    /// <param name="data">Production type entity.</param>
+    /// <param name="data">Batter block entity.</param>
     /// <returns>The task that represents asynchronous operation, containing some errors or if DbUpdateExecption current database entity.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Update(ProductionType data)
+    public async Task<Result<BatteryBlock>> Update(BatteryBlock data)
     {
       try
       {
-        ProductionType productionType = await _repository.ProductionType.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
-        if (productionType.ConcurrencyStamp == data.ConcurrencyStamp)
-          _repository.ProductionType.Update(data);
+        BatteryBlock batteryBlock = await _repository.BatteryBlock.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
+        if (batteryBlock.ConcurrencyStamp == data.ConcurrencyStamp)
+          _repository.BatteryBlock.Update(data);
         else
         {
           _logger.LogWarning("This record was beeing editied by another user");
-          Result<ProductionType> result = new Result<ProductionType>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
-          result.AddData(productionType);
+          Result<BatteryBlock> result = new Result<BatteryBlock>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+          result.AddData(batteryBlock);
           result.IsSuccess = false;
           return result;
         }
 
         await _repository.SaveAsync();
-        return new Result<ProductionType>(true);
+        return new Result<BatteryBlock>(true);
 
       }
       catch (ArgumentNullException e)
@@ -174,69 +174,69 @@ namespace Services.Pv.Storage
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<BatteryBlock>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<BatteryBlock>(new Error("14", "Invalid operation."));
       }
       catch (DbUpdateException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("5", "Error updating entity. Data not changed."));
+        return new Result<BatteryBlock>(new Error("5", "Error updating entity. Data not changed."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<BatteryBlock>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Delete production type record.
+    /// Delete battery block record.
     /// </summary>
-    /// <param name="id">Production type entity id.</param>
+    /// <param name="id">Battery block entity id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Delete(int id)
+    public async Task<Result<BatteryBlock>> Delete(int id)
     {
       try
       {
-        ProductionType productionType = await _repository.ProductionType.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
-        if (productionType != null)
+        BatteryBlock batteryBlock = await _repository.BatteryBlock.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
+        if (batteryBlock != null)
         {
-          _repository.ProductionType.Delete(productionType);
+          _repository.BatteryBlock.Delete(batteryBlock);
           await _repository.SaveAsync();
-          return new Result<ProductionType>(true);
+          return new Result<BatteryBlock>(true);
         }
 
-        return new Result<ProductionType>(new Error(errorCode: "8", errorMessage: "Can´t delete server, server not found."));
+        return new Result<BatteryBlock>(new Error(errorCode: "8", errorMessage: "Can´t delete server, server not found."));
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<BatteryBlock>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<BatteryBlock>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<BatteryBlock>(new Error("1", "Error loading data."));
       }
     }
   }

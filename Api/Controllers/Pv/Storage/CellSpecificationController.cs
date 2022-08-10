@@ -1,4 +1,4 @@
-﻿// <copyright file="VendorController.cs" company="GrilleGustav">
+﻿// <copyright file="CellSpecificationController.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -20,66 +20,66 @@ using System.Threading.Tasks;
 namespace Api.Controllers.Pv.Storage
 {
   /// <summary>
-  /// Controller for pv-vendor.
+  /// Controller for cell specification.
   /// </summary>
   //[Authorize]
   [ApiController]
   [Route("[controller]")]
-  public class VendorController : ControllerBase
+  public class CellSpecificationController : ControllerBase
   {
-    private ILogger<VendorController> _logger;
-    private IVendorService _vendorService;
+    private ILogger<CellSpecificationController> _logger;
+    private ICellSpecificationService _cellSpecificationService;
     private readonly IMapper _mapper;
 
     /// <summary>
-    /// Controller for pv-vendor.
+    /// Controller for cell specification.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
-    /// <param name="vendorService">Manage vendor data.</param>
+    /// <param name="cellSpecificationService">Manage cell specification data.</param>
     /// <param name="mapper">Mapper to copy the same properties of two different objects from the source object to target object.</param>
-    public VendorController(ILogger<VendorController> logger, IVendorService vendorService, IMapper mapper)
+    public CellSpecificationController(ILogger<CellSpecificationController> logger, ICellSpecificationService cellSpecificationService, IMapper mapper)
     {
       _logger = logger;
-      _vendorService = vendorService;
+      _cellSpecificationService = cellSpecificationService;
       _mapper = mapper;
     }
 
     /// <summary>
-    /// Get all vendors.
+    /// Get all cell specifications.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of vendors.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of cell specifications.</returns>
     [HttpGet("[action]")]
-    public async Task<ActionResult<VendorsResponse>> GetAll()
+    public async Task<ActionResult<CellSpecificationsResponse>> GetAll()
     {
-      Result<List<Vendor>> result = await _vendorService.GetAll();
+      Result<List<CellSpecification>> result = await _cellSpecificationService.GetAll();
 
       if (result.Data == null)
       {
-        VendorsResponse response = new VendorsResponse();
+        CellSpecificationsResponse response = new CellSpecificationsResponse();
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
 
         return Ok(response);
       }
 
-      return Ok(new VendorsResponse(_mapper.Map<IList<Vendor>, IList<VendorViewModel>>(result.Data)));
+      return Ok(new CellSpecificationsResponse(_mapper.Map<IList<CellSpecification>, IList<CellSpecificationViewModel>>(result.Data)));
     }
 
     /// <summary>
-    /// Get one vendor.
+    /// Get one cell specification.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or one vendor.</returns>
+    /// <param name="id">Cell specifications id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or one cell specifications.</returns>
     [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<VendorResponse>> GetOne(int id)
+    public async Task<ActionResult<CellSpecificationResponse>> GetOne(int id)
     {
       if (id == 0)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.GetOne(id);
+      Result<CellSpecification> result = await _cellSpecificationService.GetOne(id);
       if (result.Data == null)
       {
-        VendorResponse response = new VendorResponse();
+        CellSpecificationResponse response = new CellSpecificationResponse();
         response.AddErrors(result.Errors);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
@@ -87,21 +87,21 @@ namespace Api.Controllers.Pv.Storage
         return Ok(response);
       }
 
-      return Ok(new VendorResponse(_mapper.Map<Vendor, VendorViewModel>(result.Data)));
+      return Ok(new CellSpecificationResponse(_mapper.Map<CellSpecification, CellSpecificationViewModel>(result.Data)));
     }
 
     /// <summary>
-    /// Add vendor.
+    /// Add cell specifications.
     /// </summary>
-    /// <param name="request">Vendor add request.</param>
+    /// <param name="request">Cell specifications add request.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<ErrorResponse>> Add([FromBody] VendorAddRequest request)
+    public async Task<ActionResult<ErrorResponse>> Add([FromBody] CellSpecificationAddRequest request)
     {
-       if (!ModelState.IsValid)
+      if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Create(_mapper.Map<VendorAddRequest, Vendor>(request));
+      Result<CellSpecification> result = await _cellSpecificationService.Create(_mapper.Map<CellSpecificationAddRequest, CellSpecification>(request));
       if (result.IsSuccess == false)
       {
         if (_logger.IsEnabled(LogLevel.Error))
@@ -114,23 +114,23 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Update vendor entity.
+    /// Update cell specifications entity.
     /// </summary>
-    /// <param name="request">Vendor update data.</param>
+    /// <param name="request">Cell specifications update data.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<VendorResponse>> Update([FromBody] VendorUpdateRequest request)
+    public async Task<ActionResult<CellSpecificationResponse>> Update([FromBody] CellSpecificationUpdateRequest request)
     {
       if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Update(_mapper.Map<VendorUpdateRequest, Vendor>(request));
-      VendorResponse response = new VendorResponse();
+      Result<CellSpecification> result = await _cellSpecificationService.Update(_mapper.Map<CellSpecificationUpdateRequest, CellSpecification>(request));
+      CellSpecificationResponse response = new CellSpecificationResponse();
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
-        response.Vendor = _mapper.Map<Vendor, VendorViewModel>(result.Data);
+        response.CellSpecification = _mapper.Map<CellSpecification, CellSpecificationViewModel>(result.Data);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error updating entity. Data not changed.");
       }
@@ -140,9 +140,9 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Delete vendor.
+    /// Delete cell specifications.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
+    /// <param name="id">Cell specifications id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
@@ -151,7 +151,7 @@ namespace Api.Controllers.Pv.Storage
         return BadRequest();
 
       ErrorResponse response = new ErrorResponse();
-      Result<Vendor> result = await _vendorService.Delete(id);
+      Result<CellSpecification> result = await _cellSpecificationService.Delete(id);
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "9", errorMessage: "Error deleting record.");

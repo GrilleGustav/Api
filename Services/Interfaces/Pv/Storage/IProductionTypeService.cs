@@ -6,7 +6,6 @@ using Entities.Models.Pv.Storage;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Interfaces.Pv.Storage
@@ -27,7 +26,7 @@ namespace Services.Interfaces.Pv.Storage
     /// <summary>
     /// Get one production type.
     /// </summary>
-    /// <param name="serverId">Production type backend store id.</param>
+    /// <param name="id">Production type backend store id.</param>
     /// <returns>The Task that represents asynchronous operation, containing a production type.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
@@ -37,23 +36,23 @@ namespace Services.Interfaces.Pv.Storage
     /// <summary>
     /// Create production type entity.
     /// </summary>
-    /// <param name="data">The Task that represents asynchronous operation, containing some errors or success.</param>
-    /// <returns></returns>
+    /// <param name="data">Production type entity to create.</param>
+    /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<ProductionType>> Create(Vendor data);
+    Task<Result<ProductionType>> Create(ProductionType data);
 
     /// <summary>
     /// Update production type entity.
     /// </summary>
-    /// <param name="vendor">Production type entity.</param>
+    /// <param name="data">Production type entity.</param>
     /// <returns>The task that represents asynchronous operation, containing some errors or if DbUpdateExecption current database entity.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<ProductionType>> Update(Vendor data);
+    Task<Result<ProductionType>> Update(ProductionType data);
 
     /// <summary>
     /// Delete production type record.

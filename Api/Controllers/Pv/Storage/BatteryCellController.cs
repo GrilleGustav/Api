@@ -1,4 +1,4 @@
-﻿// <copyright file="VendorController.cs" company="GrilleGustav">
+﻿// <copyright file="BatterCellController.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -20,66 +20,66 @@ using System.Threading.Tasks;
 namespace Api.Controllers.Pv.Storage
 {
   /// <summary>
-  /// Controller for pv-vendor.
+  /// Controller for battery cell.
   /// </summary>
   //[Authorize]
   [ApiController]
   [Route("[controller]")]
-  public class VendorController : ControllerBase
+  public class BatteryCellController : ControllerBase
   {
-    private ILogger<VendorController> _logger;
-    private IVendorService _vendorService;
+    private ILogger<BatteryCellController> _logger;
+    private IBatteryCellService _batteryCellService;
     private readonly IMapper _mapper;
 
     /// <summary>
-    /// Controller for pv-vendor.
+    /// Controller for battery cell.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
-    /// <param name="vendorService">Manage vendor data.</param>
+    /// <param name="batteryCellService">Manage battery cell data.</param>
     /// <param name="mapper">Mapper to copy the same properties of two different objects from the source object to target object.</param>
-    public VendorController(ILogger<VendorController> logger, IVendorService vendorService, IMapper mapper)
+    public BatteryCellController(ILogger<BatteryCellController> logger, IBatteryCellService batteryCellService, IMapper mapper)
     {
       _logger = logger;
-      _vendorService = vendorService;
+      _batteryCellService = batteryCellService;
       _mapper = mapper;
     }
 
     /// <summary>
-    /// Get all vendors.
+    /// Get all battery cells.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of vendors.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or list of battery cells.</returns>
     [HttpGet("[action]")]
-    public async Task<ActionResult<VendorsResponse>> GetAll()
+    public async Task<ActionResult<BatteryCellsResponse>> GetAll()
     {
-      Result<List<Vendor>> result = await _vendorService.GetAll();
+      Result<List<BatteryCell>> result = await _batteryCellService.GetAll();
 
       if (result.Data == null)
       {
-        VendorsResponse response = new VendorsResponse();
+        BatteryCellsResponse response = new BatteryCellsResponse();
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
 
         return Ok(response);
       }
 
-      return Ok(new VendorsResponse(_mapper.Map<IList<Vendor>, IList<VendorViewModel>>(result.Data)));
+      return Ok(new BatteryCellsResponse(_mapper.Map<IList<BatteryCell>, IList<BatteryCellViewModel>>(result.Data)));
     }
 
     /// <summary>
-    /// Get one vendor.
+    /// Get one battery cell.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing data loading error or one vendor.</returns>
+    /// <param name="id">Battery cell id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing data loading error or one battery cell.</returns>
     [HttpGet("[action]/{id}")]
-    public async Task<ActionResult<VendorResponse>> GetOne(int id)
+    public async Task<ActionResult<BatteryCellResponse>> GetOne(int id)
     {
       if (id == 0)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.GetOne(id);
+      Result<BatteryCell> result = await _batteryCellService.GetOne(id);
       if (result.Data == null)
       {
-        VendorResponse response = new VendorResponse();
+        BatteryCellResponse response = new BatteryCellResponse();
         response.AddErrors(result.Errors);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(result.Errors.FirstOrDefault().ErrorMessage);
@@ -87,21 +87,21 @@ namespace Api.Controllers.Pv.Storage
         return Ok(response);
       }
 
-      return Ok(new VendorResponse(_mapper.Map<Vendor, VendorViewModel>(result.Data)));
+      return Ok(new BatteryCellResponse(_mapper.Map<BatteryCell, BatteryCellViewModel>(result.Data)));
     }
 
     /// <summary>
-    /// Add vendor.
+    /// Add battery cell.
     /// </summary>
-    /// <param name="request">Vendor add request.</param>
+    /// <param name="request">Battery cell add request.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<ErrorResponse>> Add([FromBody] VendorAddRequest request)
+    public async Task<ActionResult<ErrorResponse>> Add([FromBody] BatteryCellAddRequest request)
     {
-       if (!ModelState.IsValid)
+      if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Create(_mapper.Map<VendorAddRequest, Vendor>(request));
+      Result<BatteryCell> result = await _batteryCellService.Create(_mapper.Map<BatteryCellAddRequest, BatteryCell>(request));
       if (result.IsSuccess == false)
       {
         if (_logger.IsEnabled(LogLevel.Error))
@@ -114,23 +114,23 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Update vendor entity.
+    /// Update battery cell entity.
     /// </summary>
-    /// <param name="request">Vendor update data.</param>
+    /// <param name="request">Battery cells update data.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpPost("[action]")]
-    public async Task<ActionResult<VendorResponse>> Update([FromBody] VendorUpdateRequest request)
+    public async Task<ActionResult<BatteryCellResponse>> Update([FromBody] BatteryCellUpdateRequest request)
     {
       if (!ModelState.IsValid)
         return BadRequest();
 
-      Result<Vendor> result = await _vendorService.Update(_mapper.Map<VendorUpdateRequest, Vendor>(request));
-      VendorResponse response = new VendorResponse();
+      Result<BatteryCell> result = await _batteryCellService.Update(_mapper.Map<BatteryCellUpdateRequest, BatteryCell>(request));
+      BatteryCellResponse response = new BatteryCellResponse();
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "5", errorMessage: "Error updating entity. Data not changed.");
         response.AddErrors(result.Errors);
-        response.Vendor = _mapper.Map<Vendor, VendorViewModel>(result.Data);
+        response.BatteryCell = _mapper.Map<BatteryCell, BatteryCellViewModel>(result.Data);
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError("Error updating entity. Data not changed.");
       }
@@ -140,9 +140,9 @@ namespace Api.Controllers.Pv.Storage
     }
 
     /// <summary>
-    /// Delete vendor.
+    /// Delete battery cell.
     /// </summary>
-    /// <param name="id">Vendor id.</param>
+    /// <param name="id">Battery cell id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
@@ -151,7 +151,7 @@ namespace Api.Controllers.Pv.Storage
         return BadRequest();
 
       ErrorResponse response = new ErrorResponse();
-      Result<Vendor> result = await _vendorService.Delete(id);
+      Result<BatteryCell> result = await _batteryCellService.Delete(id);
       if (!result.IsSuccess)
       {
         response.AddError(errorCode: "9", errorMessage: "Error deleting record.");

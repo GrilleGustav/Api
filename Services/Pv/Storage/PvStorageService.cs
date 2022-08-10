@@ -1,4 +1,4 @@
-﻿// <copyright file="ProductionTypeService.cs" company="GrilleGustav">
+﻿// <copyright file="PvServiceService.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
@@ -10,163 +10,163 @@ using Models;
 using Services.Interfaces.Pv.Storage;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services.Pv.Storage
 {
   /// <summary>
-  /// Service to manage Pv battery production type in backend store.
+  /// Service to manage Pv storage in backend store.
   /// </summary>
-  public class ProductionTypeService : IProductionTypeService
+  public class PvStorageService : IPvStorageService
   {
-    private readonly ILogger<ProductionTypeService> _logger;
+    private readonly ILogger<PvStorageService> _logger;
     private readonly IRepositoryManager _repository;
 
     /// <summary>
-    /// Service to manage Pv battery production type in backend store.
+    /// Service to manage Pv storage in backend store.
     /// </summary>
     /// <param name="logger">Logger service to log messages in console and log files.</param>
     /// <param name="repository">Access to backend store.</param>
-    public ProductionTypeService(ILogger<ProductionTypeService> logger, IRepositoryManager repository)
+    public PvStorageService(ILogger<PvStorageService> logger, IRepositoryManager repository)
     {
       _logger = logger;
       _repository = repository;
     }
 
     /// <summary>
-    /// Get all production types.
+    /// Get all pv storages.
     /// </summary>
-    /// <returns>The Task that represents asynchronous operation, containing a list of production types.</returns>
+    /// <returns>The Task that represents asynchronous operation, containing a list of pv storages.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<List<ProductionType>>> GetAll()
+    public async Task<Result<List<PvStorage>>> GetAll()
     {
       try
       {
-        return new Result<List<ProductionType>>(await _repository.ProductionType.FindAll(false).ToListAsync());
+        return new Result<List<PvStorage>>(await _repository.PvStorage.FindAll(false).Include(x => x.BatteryBlocks).ToListAsync());
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<List<ProductionType>>(new Error("13", "Database connection error."));
+        return new Result<List<PvStorage>>(new Error("13", "Database connection error."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<List<ProductionType>>(new Error("1", "Error loading data."));
+        return new Result<List<PvStorage>>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Get one production type.
+    /// Get one pv storage.
     /// </summary>
-    /// <param name="id">Production type backend store id.</param>
-    /// <returns>The Task that represents asynchronous operation, containing a production type.</returns>
+    /// <param name="id">Pv storage backend store id.</param>
+    /// <returns>The Task that represents asynchronous operation, containing a pv storage.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> GetOne(int id)
+    public async Task<Result<PvStorage>> GetOne(int id)
     {
       try
       {
-        return new Result<ProductionType>(await _repository.ProductionType.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync());
+        return new Result<PvStorage>(await _repository.PvStorage.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryBlocks).SingleOrDefaultAsync());
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<PvStorage>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<PvStorage>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<PvStorage>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Create production type entity.
+    /// Create pv storage entity.
     /// </summary>
-    /// <param name="data">Production type entity to create.</param>
+    /// <param name="data">Pv storage entity to create.</param>
     /// <returns>The Task that represents asynchronous operation, containing some errors or success.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Create(ProductionType data)
+    public async Task<Result<PvStorage>> Create(PvStorage data)
     {
       try
       {
-        _repository.ProductionType.Create(data);
+        _repository.PvStorage.Create(data);
         await _repository.SaveAsync();
-        return new Result<ProductionType>(true);
+        return new Result<PvStorage>(true);
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<PvStorage>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<PvStorage>(new Error("14", "Invalid operation."));
       }
       catch (DbUpdateException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("15", "Duplicate Key Entry."));
+        return new Result<PvStorage>(new Error("15", "Duplicate Key Entry."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<PvStorage>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Update production type entity.
+    /// Update pv storage entity.
     /// </summary>
-    /// <param name="data">Production type entity.</param>
+    /// <param name="data">Pv storage entity.</param>
     /// <returns>The task that represents asynchronous operation, containing some errors or if DbUpdateExecption current database entity.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="DbUpdateException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Update(ProductionType data)
+    public async Task<Result<PvStorage>> Update(PvStorage data)
     {
       try
       {
-        ProductionType productionType = await _repository.ProductionType.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
-        if (productionType.ConcurrencyStamp == data.ConcurrencyStamp)
-          _repository.ProductionType.Update(data);
+        PvStorage pvStorage = await _repository.PvStorage.FindByCondition(x => x.Id == data.Id, false).SingleOrDefaultAsync();
+        if (pvStorage.ConcurrencyStamp == data.ConcurrencyStamp)
+          _repository.PvStorage.Update(data);
         else
         {
           _logger.LogWarning("This record was beeing editied by another user");
-          Result<ProductionType> result = new Result<ProductionType>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
-          result.AddData(productionType);
+          Result<PvStorage> result = new Result<PvStorage>(new Error(errorCode: "2001", errorMessage: "This record was beeing editied by another user"));
+          result.AddData(pvStorage);
           result.IsSuccess = false;
           return result;
         }
 
         await _repository.SaveAsync();
-        return new Result<ProductionType>(true);
+        return new Result<PvStorage>(true);
 
       }
       catch (ArgumentNullException e)
@@ -174,69 +174,69 @@ namespace Services.Pv.Storage
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<PvStorage>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<PvStorage>(new Error("14", "Invalid operation."));
       }
       catch (DbUpdateException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("5", "Error updating entity. Data not changed."));
+        return new Result<PvStorage>(new Error("5", "Error updating entity. Data not changed."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
 
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<PvStorage>(new Error("1", "Error loading data."));
       }
     }
 
     /// <summary>
-    /// Delete production type record.
+    /// Delete pv storage record.
     /// </summary>
-    /// <param name="id">Production type entity id.</param>
+    /// <param name="id">Pv storage entity id.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<ProductionType>> Delete(int id)
+    public async Task<Result<PvStorage>> Delete(int id)
     {
       try
       {
-        ProductionType productionType = await _repository.ProductionType.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
-        if (productionType != null)
+        CellSpecification cellSpecification = await _repository.CellSpecification.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync();
+        if (cellSpecification != null)
         {
-          _repository.ProductionType.Delete(productionType);
+          _repository.CellSpecification.Delete(cellSpecification);
           await _repository.SaveAsync();
-          return new Result<ProductionType>(true);
+          return new Result<PvStorage>(true);
         }
 
-        return new Result<ProductionType>(new Error(errorCode: "8", errorMessage: "Can´t delete server, server not found."));
+        return new Result<PvStorage>(new Error(errorCode: "8", errorMessage: "Can´t delete server, server not found."));
       }
       catch (ArgumentNullException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("13", "Database connection error."));
+        return new Result<PvStorage>(new Error("13", "Database connection error."));
       }
       catch (InvalidOperationException e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("14", "Invalid operation."));
+        return new Result<PvStorage>(new Error("14", "Invalid operation."));
       }
       catch (Exception e)
       {
         if (_logger.IsEnabled(LogLevel.Error))
           _logger.LogError(e.Message);
-        return new Result<ProductionType>(new Error("1", "Error loading data."));
+        return new Result<PvStorage>(new Error("1", "Error loading data."));
       }
     }
   }

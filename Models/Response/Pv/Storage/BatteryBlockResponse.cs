@@ -2,7 +2,7 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
-using Entities.Models.Pv.Storage;
+using Models.View.Pv.Storage;
 
 namespace Models.Response.Pv.Storage
 {
@@ -21,7 +21,7 @@ namespace Models.Response.Pv.Storage
     /// Battery block response.
     /// </summary>
     /// <param name="batteryBlock">Battery bock.</param>
-    public BatteryBlockResponse(BatteryBlock batteryBlock)
+    public BatteryBlockResponse(BatteryBlockViewModel batteryBlock)
     {
       this.BatteryBlock = batteryBlock;
       this.IsSuccess = true;
@@ -30,6 +30,6 @@ namespace Models.Response.Pv.Storage
     /// <summary>
     /// Get or set battery block.
     /// </summary>
-    public BatteryBlock BatteryBlock { get; set; }
+    public BatteryBlockViewModel BatteryBlock { get; set; }
   }
 }
