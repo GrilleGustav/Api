@@ -43,7 +43,7 @@ namespace Services.Pv.Storage
     {
       try
       {
-        return new Result<List<PvStorage>>(await _repository.PvStorage.FindAll(false).Include(x => x.BatteryBlocks).ToListAsync());
+        return new Result<List<PvStorage>>(await _repository.PvStorage.FindAll(false).Include(x => x.BatteryBlocks).Include(x => x.PvComments).ToListAsync());
       }
       catch (ArgumentNullException e)
       {
@@ -71,7 +71,7 @@ namespace Services.Pv.Storage
     {
       try
       {
-        return new Result<PvStorage>(await _repository.PvStorage.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryBlocks).SingleOrDefaultAsync());
+        return new Result<PvStorage>(await _repository.PvStorage.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryBlocks).Include(x => x.PvComments).SingleOrDefaultAsync());
       }
       catch (ArgumentNullException e)
       {

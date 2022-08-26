@@ -29,7 +29,7 @@ namespace ApplicationTests
 
       _templateType = new TemplateType()
       {
-        Id = 3,
+        Id = 5,
         Name = "UnitTestName",
         PluginName = "UnitTest"
       };
@@ -47,8 +47,8 @@ namespace ApplicationTests
       var result = _templateTypeService.Create(_templateType).Result;
       Assert.IsNotNull(result);
       Assert.IsTrue(result.IsSuccess);
-      var result2 = _templateTypeService.GetOne(3).Result;
-      result2.Data.Should().BeEquivalentTo(_templateType);
+      var result2 = _templateTypeService.GetOne(5).Result;
+      result2.Data.Should().BeEquivalentTo(_templateType, options => options.Excluding(o => o.ConcurrencyStamp).Excluding(o => o.UpdatedOn));
     }
 
     [Test, Order(2)]
@@ -58,18 +58,18 @@ namespace ApplicationTests
       Assert.IsNotNull(result);
       Assert.IsNotNull(result.Data);
       Assert.IsTrue(result.IsSuccess);
-      result.Data.Should().HaveCount(3);
-      result.Data.Where(x => x.Id == 3).SingleOrDefault().Should().BeEquivalentTo(_templateType);
+      result.Data.Should().HaveCount(5);
+      result.Data.Where(x => x.Id == 5).SingleOrDefault().Should().BeEquivalentTo(_templateType, options => options.Excluding(o => o.ConcurrencyStamp).Excluding(o => o.UpdatedOn));
     }
 
     [Test, Order(3)]
     public void GetOne()
     {
-      var result = _templateTypeService.GetOne(3).Result;
+      var result = _templateTypeService.GetOne(5).Result;
       Assert.IsNotNull(result);
       Assert.IsNotNull(result.Data);
       Assert.IsTrue(result.IsSuccess);
-      result.Data.Should().BeEquivalentTo(_templateType);
+      result.Data.Should().BeEquivalentTo(_templateType, options => options.Excluding(o => o.ConcurrencyStamp).Excluding(o => o.UpdatedOn));
     }
   }
 }

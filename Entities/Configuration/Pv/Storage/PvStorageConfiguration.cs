@@ -25,6 +25,9 @@ namespace Entities.Configuration.Pv.Storage
       builder.HasMany(x => x.BatteryBlocks)
         .WithOne(x => x.PvStorage)
         .HasForeignKey(x => x.PvStorageId);
+      builder.HasMany(x => x.PvComments)
+        .WithOne(x => x.PvStorage)
+        .HasForeignKey(x => x.PvStorageId);
 
       builder.Property(x => x.ConcurrencyStamp).IsRowVersion().IsRowVersion().ValueGeneratedOnAddOrUpdate();
 

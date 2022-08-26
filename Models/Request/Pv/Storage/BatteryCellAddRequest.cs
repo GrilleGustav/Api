@@ -75,51 +75,5 @@ namespace Models.Request.Pv.Storage
     /// </summary>
     public int ProductionAddressId { get; set; }
 
-    /// <summary>
-    /// A DateTime value that should change whenever a role is persisted to the store.
-    /// </summary>
-    public DateTime ConcurrencyStamp { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record changed.
-    /// </summary>
-    public DateTime UpdatedOn { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record was created.
-    /// </summary>
-    public DateTime CreatedOn { get; set; }
-
-    // Navigation Properties.
-
-    /// <summary>
-    /// Navigation property to production type.
-    /// </summary>
-    public ProductionType ProductionType { get; set; }
-
-    /// <summary>
-    /// Navigation property to celltype.
-    /// </summary>
-    public CellType CellType { get; set; }
-
-    /// <summary>
-    /// Navigation property to vendor.
-    /// </summary>
-    public Vendor Vendor { get; set; }
-
-    /// <summary>
-    /// Navigation property to cell specification.
-    /// </summary>
-    public CellSpecification CellSpecification { get; set; }
-
-    /// <summary>
-    /// Navigation property to production address.
-    /// </summary>
-    public ProductionAddress ProductionAddress { get; set; }
-
-    /// <summary>
-    /// Navigation property to battery block.
-    /// </summary>
-    public BatteryBlock BatteryBlock { get; set; }
   }
 }

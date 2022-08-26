@@ -22,7 +22,7 @@ namespace Api.Controllers
   /// <summary>
   /// Controller for adminitration of email server.
   /// </summary>
-  [Authorize(Roles = "Administrator")]
+  [Authorize(Roles = "Admin")]
   [ApiController]
   [Route("[controller]")]
   public class EmailServerSettingsController : ControllerBase
@@ -48,6 +48,7 @@ namespace Api.Controllers
     /// Get all email servers.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or list of email servers.</returns>
+    [Authorize(Roles = "Admin,View,Create,Update,Delete,EmailAdmin,EmailView,EmailCreate,EmailUpdate,EmailDelete")]
     [HttpGet("[action]")]
     public async Task<ActionResult<EmailServerSettingsResponse>> GetAll()
     {
@@ -71,6 +72,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Server id.</param>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or one email server.</returns>
+    [Authorize(Roles = "Admin,Update,EmailAdmin,EmailUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<EmailServerSettingResponse>> GetOne(int id)
     {
@@ -96,6 +98,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="emailServerAddRequest">Email server data.</param>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or one email server.</returns>
+    [Authorize(Roles = "Admin,Create,EmailAdmin,EmailCreate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Add([FromBody] EmailServerAddRequest emailServerAddRequest)
     {
@@ -117,8 +120,9 @@ namespace Api.Controllers
     /// <summary>
     /// Update email server entity.
     /// </summary>
-    /// <param name="emailServerEditRequest">Email server data.</param>
+    /// <param name="request">Email server data.</param>
     /// <returns>The Task that represents asynchronous operation, containing task result.</returns>
+    [Authorize(Roles = "Admin,Update,EmailAdmin,EmailUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<EmailServerSettingResponse>> Update([FromBody] EmailServerEditRequest request)
     {
@@ -146,6 +150,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Email server id.</param>
     /// <returns>Some error or success if entity was deleted.</returns>
+    [Authorize(Roles = "Admin,Delete,EmailAdmin,EmailDelete")]
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
     {

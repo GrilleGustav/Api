@@ -1,7 +1,9 @@
 ﻿using Entities.Configuration;
+using Entities.Configuration.Pv;
 using Entities.Configuration.Pv.Storage;
 using Entities.Models.Account;
 using Entities.Models.Email;
+using Entities.Models.Pv;
 using Entities.Models.Pv.Storage;
 using Entities.Models.Settings.Email;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +35,8 @@ namespace Entities.Context
       modelBuilder.ApplyConfiguration(new TemplateTypeConfiguration());
 
       // Pv
+      modelBuilder.ApplyConfiguration(new PvCommentsConfiguration());
+      // Pv-Storage
       modelBuilder.ApplyConfiguration(new BatteryBlockConfiguration());
       modelBuilder.ApplyConfiguration(new BatteryCellConfiguration());
       modelBuilder.ApplyConfiguration(new CellSpecificationConfiguration());
@@ -50,6 +54,9 @@ namespace Entities.Context
     public DbSet<EmailMessage> EmailMessages { get; set; }
 
     // Pv
+    public DbSet<PvComments> PvComments { get; set; }
+
+    // Pv-Storage
     public DbSet<BatteryBlock> BatteryBlocks { get; set; }
     public DbSet<BatteryCell> BatteryCells { get; set; }
     public DbSet<CellSpecification> CellSpecifications { get; set; }

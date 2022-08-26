@@ -41,6 +41,7 @@ namespace Api.Controllers
     /// Get placeholders from application.
     /// </summary>
     /// <returns></returns>
+    [Authorize(Roles = "Admin,View,Create,Update,EmailView,EmailCreate,EmailUpdate")]
     [HttpGet("[action]/{templateType}")]
     public ActionResult<PlaceholderResponse> GetPlaceholdersFromApplication(string templateType)
     {

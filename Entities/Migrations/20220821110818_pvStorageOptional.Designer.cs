@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220821110818_pvStorageOptional")]
+    partial class pvStorageOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +94,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "21a3abd7-4c71-4c01-9d60-89019aeb518c",
+                            ConcurrencyStamp = "0f7f1be8-d540-4b6f-91f5-b43326e41f77",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER",
@@ -101,7 +103,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "233e9221-74e8-4e4d-adf0-0deba66784ad",
+                            ConcurrencyStamp = "b27f0234-f3bc-41ac-8b0f-26ed1d32347e",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -109,7 +111,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "4125b84e-a9f0-481d-8bec-921daf3f303f",
+                            ConcurrencyStamp = "e27a36e1-0cab-49f9-bd91-67850a4085ce",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -216,7 +218,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAELH1jWo9Q2grhDiL6Fk21zwZAFr2F1SgBtR10PH2k322WPuv3vw1fMOKrkBDb8gGjA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBdRbGvuLKHUmZPSgiN1iOGtvuwkWotqoM51HZDxd2ho5P8lOTxk9IYZOREUX9OYyg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79",
                             TwoFactorEnabled = false,
@@ -263,10 +265,10 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("BatterCellId")
+                    b.Property<int>("BatterCellId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BatteryBlockId")
+                    b.Property<int>("BatteryBlockId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ConcurrencyStamp")
@@ -281,7 +283,7 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("PvStorageId")
+                    b.Property<int>("PvStorageId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedOn")

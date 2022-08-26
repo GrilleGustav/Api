@@ -108,15 +108,16 @@ namespace Services
     /// Get default template for template type.
     /// </summary>
     /// <param name="Id">Email template type.</param>
+    /// <param name="language">Email template language.</param>
     /// <returns>The Task that represents asynchronous operation, containing a template.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    public async Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id)
+    public async Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id, Language language)
     {
       try
       {
-        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == id, false).SingleOrDefaultAsync();
+        EmailTemplate emailTemplate = await _repository.EmailTemplate.FindByCondition(x => x.Default == true && x.TemplateType.Id == id && x.Language == language, false).SingleOrDefaultAsync();
         if (emailTemplate == null)
         {
           if (_logger.IsEnabled(LogLevel.Error))

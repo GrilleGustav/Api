@@ -71,7 +71,7 @@ namespace Services.Pv.Storage
     {
       try
       {
-        return new Result<BatteryBlock>(await _repository.BatteryBlock.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryCells).SingleOrDefaultAsync());
+        return new Result<BatteryBlock>(await _repository.BatteryBlock.FindByCondition(x => x.Id == id, false).Include(x => x.BatteryCells).Include(x => x.PvComments).SingleOrDefaultAsync());
       }
       catch (ArgumentNullException e)
       {

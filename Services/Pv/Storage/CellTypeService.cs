@@ -107,7 +107,7 @@ namespace Services.Pv.Storage
     {
       try
       {
-        _repository.ProductionAddress.Create(data);
+        _repository.CellType.Create(data);
         await _repository.SaveAsync();
         return new Result<CellType>(true);
       }

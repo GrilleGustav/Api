@@ -72,7 +72,7 @@ namespace Api.Controllers
     /// Get all user.
     /// </summary>
     /// <returns>List of users.</returns>
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrator,View,Create,Update,Delete,UserAdmin,UserView,UserCreate,UserUpdate,UserDelete")]
     [HttpGet("[action]")]
     public ActionResult<UsersSettingsResponse> GetAll()
     {
@@ -84,6 +84,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">User database id.</param>
     /// <returns>User object.</returns>
+    [Authorize(Roles = "Administrator,View,Update,UserAdmin,UserView,UserUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<UserSettingsResponse>> GetOne(string id)
     {
@@ -115,6 +116,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="detailRequest">User data.</param>
     /// <returns>Some error or success if user was chnaged.</returns>
+    [Authorize(Roles = "Administrator,View,Update,UserAdmin,UserView,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<UserSettingsResponse>> Update([FromBody] UserDetailRequest detailRequest)
     {
@@ -178,6 +180,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="tokenRequest">Request containing user id and client url.</param>
     /// <returns>Email confirm url.</returns>
+    [Authorize(Roles = "Administrator,Update,UserAdmin,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailConfirmToken([FromBody] TokenUrlRequest tokenRequest)
     {
@@ -212,6 +215,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="emailChangeRequest"></param>
     /// <returns>Generated url with token.</returns>
+    [Authorize(Roles = "Administrator,Update,UserAdmin,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<GeneratedUrlTokenResponse>> SendEmailChangeToken([FromBody] UserEmailChangeTokenRequest emailChangeRequest)
     {
@@ -242,6 +246,11 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Change email.
+    /// </summary>
+    /// <param name="request">Change user email request.</param>
+    /// <returns>If user enail changed return true or some error messages.</returns>
     [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> ChangeEmail([FromBody] UserChangeEmailRequest request)
@@ -320,7 +329,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">User id.</param>
     /// <returns>List of roles.</returns>
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrator,Update,UserAdmin,UserUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<RolesSettingsResponse>> GetUserRoles(string id)
     {
@@ -342,6 +351,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">Entity to update.</param>
     /// <returns>If fails eturn some error otherwise return success.</returns>
+    [Authorize(Roles = "Administrator,Update,UserAdmin,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> UpdateUserRoles([FromBody] UserRolesUpdateRequest request)
     {
@@ -378,6 +388,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">User id.</param>
     /// <returns></returns>
+    [Authorize(Roles = "Administrator,Updatate,UserAdmin,UserUpdate,")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<ClaimsSettingsResponse>> GetUserClaims(string id)
     {
@@ -401,6 +412,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">User id and list of cliam names.</param>
     /// <returns>Error or success.</returns>
+    [Authorize(Roles = "Administrator,Update,UserAdmin,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> UpdateUserClaims([FromBody] UserClaimsUpdateRequest request)
     {
@@ -431,6 +443,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">User id and role name.</param>
     /// <returns>Error or success.</returns>
+    [Authorize(Roles = "Administrator,Create,Update,UserAdmin,UserCreate,UserUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> AddUserRole([FromBody] UserRoleAddRequest request)
     {
@@ -463,6 +476,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">User id and role name.</param>
     /// <returns>Error or success.</returns>
+    [Authorize(Roles = "Administrator,Update,Delete,UserAdmin,UserUpdate,UserDelete")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> RemoveRole([FromBody] UserRoleRemoveRequest request)
     {

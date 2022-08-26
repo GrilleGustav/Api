@@ -3,14 +3,16 @@ using System;
 using Entities.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220815220239_pvComments")]
+    partial class pvComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +94,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec1457"),
-                            ConcurrencyStamp = "21a3abd7-4c71-4c01-9d60-89019aeb518c",
+                            ConcurrencyStamp = "9e44f1a3-8eb3-42cf-bce8-527a285b2995",
                             Description = "Normal User.",
                             Name = "User",
                             NormalizedName = "USER",
@@ -101,7 +103,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec2084"),
-                            ConcurrencyStamp = "233e9221-74e8-4e4d-adf0-0deba66784ad",
+                            ConcurrencyStamp = "06bb4a7f-82a7-4ac9-a0a1-afce8385a527",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -109,7 +111,7 @@ namespace Entities.Migrations
                         new
                         {
                             Id = new Guid("a0615a54-e885-46a9-9215-ea78faec9985"),
-                            ConcurrencyStamp = "4125b84e-a9f0-481d-8bec-921daf3f303f",
+                            ConcurrencyStamp = "b8e1c3e6-739d-485f-a3b1-cbcad36b6b1e",
                             Name = "Developper",
                             NormalizedName = "DEVELOPPER",
                             UpdatedOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -216,7 +218,7 @@ namespace Entities.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SAM@WEB.DE",
                             NormalizedUserName = "SAM@WEB.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAELH1jWo9Q2grhDiL6Fk21zwZAFr2F1SgBtR10PH2k322WPuv3vw1fMOKrkBDb8gGjA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIWvzgyaR5QH0B46LMzhhLOvQbLqruvc2l1lIqzHn6ZBsZpXFsIN7wXgG9dLQdk1pg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "9b7d341b-d91d-4dec-a439-41df3f2a0d79",
                             TwoFactorEnabled = false,
@@ -263,10 +265,10 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("BatterCellId")
+                    b.Property<int>("BatterCellId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BatteryBlockId")
+                    b.Property<int>("BatteryBlockId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ConcurrencyStamp")
@@ -281,7 +283,7 @@ namespace Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("PvStorageId")
+                    b.Property<int>("PvStorageId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedOn")
@@ -1230,15 +1232,21 @@ namespace Entities.Migrations
                 {
                     b.HasOne("Entities.Models.Pv.Storage.BatteryCell", "BatteryCell")
                         .WithMany("PvComments")
-                        .HasForeignKey("BatterCellId");
+                        .HasForeignKey("BatterCellId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Entities.Models.Pv.Storage.BatteryBlock", "BatteryBlock")
                         .WithMany("PvComments")
-                        .HasForeignKey("BatteryBlockId");
+                        .HasForeignKey("BatteryBlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Entities.Models.Pv.Storage.PvStorage", "PvStorage")
                         .WithMany("PvComments")
-                        .HasForeignKey("PvStorageId");
+                        .HasForeignKey("PvStorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BatteryBlock");
 

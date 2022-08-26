@@ -22,7 +22,7 @@ namespace Api.Controllers.Pv.Storage
   /// <summary>
   /// Controller for pv-vendor.
   /// </summary>
-  //[Authorize]
+  [Authorize]
   [ApiController]
   [Route("[controller]")]
   public class VendorController : ControllerBase
@@ -48,6 +48,7 @@ namespace Api.Controllers.Pv.Storage
     /// Get all vendors.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or list of vendors.</returns>
+    [Authorize(Roles = "Admin,View,Update,Create,Delete,PvStorageAdmin, PvStorageView,PvStorageUpdate,PvStorageCreate,PvStorageDelete")]
     [HttpGet("[action]")]
     public async Task<ActionResult<VendorsResponse>> GetAll()
     {

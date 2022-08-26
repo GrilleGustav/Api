@@ -46,6 +46,7 @@ namespace Api.Controllers
     /// Get all email, who was send by application.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or List  of emails.</returns>
+    [Authorize(Roles = "Admin,EmailAdmin")]
     [HttpGet("[action]")]
     public async Task<ActionResult<EmailMessageResponse>> GetAll()
     {

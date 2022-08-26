@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 
 namespace Entities.Models.Pv.Storage
 {
@@ -122,5 +123,10 @@ namespace Entities.Models.Pv.Storage
     /// Navigation property to battery block.
     /// </summary>
     public BatteryBlock BatteryBlock { get; set; }
+
+    /// <summary>
+    /// Navigation property to pv comments.
+    /// </summary>
+    public List<PvComments> PvComments { get; set; }
   }
 }

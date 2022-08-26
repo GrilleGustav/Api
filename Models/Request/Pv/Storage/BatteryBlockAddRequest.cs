@@ -28,22 +28,5 @@ namespace Models.Request.Pv.Storage
     /// Get or set Pv Storage id.
     /// </summary>
     public int PvStorageId { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record changed.
-    /// </summary>
-    public DateTime UpdatedOn { get; set; }
-
-    /// <summary>
-    /// A DateTime value that shows when record was created.
-    /// </summary>
-    public DateTime CreatedOn { get; set; }
-
-    // Navigation Properties.
-
-    /// <summary>
-    /// Navigation property to pv storage.
-    /// </summary>
-    public PvStorage PvStorage { get; set; }
   }
 }

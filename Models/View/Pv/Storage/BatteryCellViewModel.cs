@@ -2,7 +2,9 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Pv;
 using System;
+using System.Collections.Generic;
 
 namespace Models.View.Pv.Storage
 {
@@ -17,7 +19,7 @@ namespace Models.View.Pv.Storage
     public int Id { get; set; }
 
     /// <summary>
-    /// Production date.
+    /// Get or set Production date.
     /// </summary>
     public DateTime ProductionDate { get; set; }
 
@@ -90,5 +92,12 @@ namespace Models.View.Pv.Storage
     /// A DateTime value that shows when record was created.
     /// </summary>
     public DateTime CreatedOn { get; set; }
+
+    // Navigation properties.
+
+    /// <summary>
+    /// Navigation property to pv comments.
+    /// </summary>
+    public List<PvComments> PvComments { get; set; }
   }
 }

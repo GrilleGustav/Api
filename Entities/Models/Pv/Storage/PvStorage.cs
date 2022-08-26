@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 namespace Entities.Models.Pv.Storage
 {
+  /// <summary>
+  /// Pv-Storage.
+  /// </summary>
   public class PvStorage
   {
     /// <summary>
@@ -60,5 +63,10 @@ namespace Entities.Models.Pv.Storage
     /// Navigation property to battery cell.
     /// </summary>
     public List<BatteryBlock> BatteryBlocks { get; set; }
+
+    /// <summary>
+    /// Navigation property to pv comments.
+    /// </summary>
+    public List<PvComments> PvComments { get; set; }
   }
 }

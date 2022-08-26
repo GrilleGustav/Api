@@ -48,6 +48,7 @@ namespace Api.Controllers
     /// Get all email senders.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or list of email senders.</returns>
+    [Authorize(Roles = "Admin,View,Create,Update,Delete,EmailAdmin,EmailView,EmailCreate,EmailUpdate,EmailDelete")]
     [HttpGet("[action]")]
     public async Task<ActionResult<EmailSenderSettingsResponse>> GetAll()
     {
@@ -69,6 +70,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Sender id.</param>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or one email senders.</returns>
+    [Authorize(Roles = "Admin,Create,Update,EmailAdmin,EmailCreate,EmailUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<EmailSenderSettingResponse>> GetOne(int id)
     {
@@ -92,6 +94,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="emailSenderAddRequest">Email server id and sender name.</param>
     /// <returns>The Task that represents asynchronous operation, containing data loading error or one email senders.</returns>
+    [Authorize(Roles = "Admin,Creat,EmailAdmin,EmailCreate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<EmailSenderSettingResponse>> Add([FromBody] EmailSenderAddRequest emailSenderAddRequest)
     {
@@ -122,6 +125,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Sender id.</param>
     /// <returns>The Task that represents asynchronous operation, containing result.</returns>
+    [Authorize(Roles = "Admin,Delete,EmailAdmin,EmailDelete")]
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
     {

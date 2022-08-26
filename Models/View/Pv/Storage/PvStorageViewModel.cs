@@ -2,7 +2,9 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Pv;
 using System;
+using System.Collections.Generic;
 
 namespace Models.View.Pv.Storage
 {
@@ -27,6 +29,16 @@ namespace Models.View.Pv.Storage
     public double UsableCapacity { get; set; }
 
     /// <summary>
+    /// Get or set capacity.
+    /// </summary>
+    public double Capacity { get; set; }
+
+    /// <summary>
+    /// Get or set battery valtage.
+    /// </summary>
+    public double BatteryVoltage { get; set; }
+
+    /// <summary>
     /// Get or set description.
     /// </summary>
     public string Description { get; set; }
@@ -45,6 +57,13 @@ namespace Models.View.Pv.Storage
     /// A DateTime value that shows when record was created.
     /// </summary>
     public DateTime CreatedOn { get; set; }
+
+    // Navigation properties.
+
+    /// <summary>
+    /// Navigation property to pv comments.
+    /// </summary>
+    public List<PvComments> PvComments { get; set; }
 
     PvStorageViewModel()
     { }

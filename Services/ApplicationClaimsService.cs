@@ -96,32 +96,38 @@ namespace Services
     /// </summary>
     private void InitialAddClaims()
     {
+      //Gerneral
       this.AddClaim("View", "General");
       this.AddClaim("Create", "General");
       this.AddClaim("Update", "General");
       this.AddClaim("Delete", "General");
       this.AddClaim("ShowAdminMenu", "General");
-      this.AddClaim("Administrator", "General");
+      this.AddClaim("Admin", "General");
       this.AddClaim("User", "General");
-      this.AddClaim("EmailServerView", "Email");
-      this.AddClaim("EmailServerCreate", "Email");
-      this.AddClaim("EmailServerUpdate", "Email");
-      this.AddClaim("EmailServerDelete", "Email");
-      this.AddClaim("EmailTemplateView", "Email");
-      this.AddClaim("EmailTemplateUpdate", "Email");
-      this.AddClaim("EmailTemplateDelete", "Email");
-      this.AddClaim("EmailMessagesView", "Email");
+      // Email Settings
+      this.AddClaim("EmailAdmin", "Email");
+      this.AddClaim("EmailView", "Email");
+      this.AddClaim("EmailCreate", "Email");
+      this.AddClaim("EmailUpdate", "Email");
+      this.AddClaim("EmailDelete", "Email");
+      // User
+      this.AddClaim("UserAdmin", "UserSettings");
       this.AddClaim("UserView", "UserSettings");
       this.AddClaim("UserCreate", "UserSettings");
       this.AddClaim("UserUpdate", "UserSettings");
       this.AddClaim("UserDelete", "UserSettings");
-      this.AddClaim("UserRoleAdd", "UserSettings");
-      this.AddClaim("UserRoleUpdate", "UserSettings");
-      this.AddClaim("UserClaimUpdate", "UserSettings");
+      // Role
+      this.AddClaim("RoleAdmin", "RoleSettings");
       this.AddClaim("RoleView", "RoleSettings");
       this.AddClaim("RoleCreate", "RoleSettings");
       this.AddClaim("RoleUpdate", "RoleSettings");
       this.AddClaim("RoleDelete", "RoleSettings");
+      // PvStorage
+      this.AddClaim("PvStorageAdmin", "PvStorage");
+      this.AddClaim("PvStorageView", "PvStorage");
+      this.AddClaim("PvStorageCreate", "PvStorage");
+      this.AddClaim("PvStorageUpdate", "PvStorage");
+      this.AddClaim("PvStorageDelete", "PvStorage");
     }
   }
 }

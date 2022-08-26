@@ -53,6 +53,7 @@ namespace Api.Controllers
     /// Get all email templates.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing a list of templates.</returns>
+    [Authorize(Roles = "Admin,View,Create,Update,EmailAdmin,EmailView,EmailCreate,EmailUpdate")]
     [HttpGet("[action]")]
     public async Task<ActionResult<List<EmailTemplatesResponse>>> GetAll()
     {
@@ -73,7 +74,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Template id.</param>
     /// <returns>Return one email template.</returns>
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin,Update,EmailAdmin,EmailUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<EmailTemplateResponse>> GetOne(int id)
     {
@@ -115,6 +116,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="data">New emailtemplate entity.</param>
     /// <returns>Error code or badrequest, if fails.</returns>
+    [Authorize(Roles = "Admin,Create,EmailAdmin,EmailCreate,")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Add(EmailTemplateViewModel data)
     {
@@ -138,6 +140,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="data">Entity to update.</param>
     /// <returns>Error code or badrequest, if fails.</returns>
+    [Authorize(Roles = "Admin,Update,EmailAdmin,EmailUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<EmailTemplateResponse>> Update(EmailTemplate data)
     {
@@ -166,6 +169,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Template Id.</param>
     /// <returns>Some error or success if template was deletet.</returns>
+    [Authorize(Roles = "Admin,Delete,EmailAdmin,EmailDelete")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(int id)
     {

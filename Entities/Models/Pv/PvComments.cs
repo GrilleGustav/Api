@@ -1,13 +1,16 @@
-﻿// <copyright file="BatteryBlock.cs" company="GrilleGustav">
+﻿// <copyright file="PvComments.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
+using Entities.Models.Pv.Storage;
 using System;
-using System.Collections.Generic;
 
-namespace Entities.Models.Pv.Storage
+namespace Entities.Models.Pv
 {
-  public class BatteryBlock
+  /// <summary>
+  /// Pv-Comments.
+  /// </summary>
+  public class PvComments
   {
     /// <summary>
     /// Get or set id.
@@ -15,19 +18,24 @@ namespace Entities.Models.Pv.Storage
     public int Id { get; set; }
 
     /// <summary>
-    /// Get or set name.
+    /// Get or set content.
     /// </summary>
-    public string Name { get; set; }
+    public string Content { get; set; }
 
     /// <summary>
-    /// Get or set description.
+    /// get or set pv storage id.
     /// </summary>
-    public string Description { get; set; }
+    public int? PvStorageId { get; set; }
 
     /// <summary>
-    /// Get or set Pv Storage id.
+    /// get or set battery block id.
     /// </summary>
-    public int PvStorageId { get; set; }
+    public int? BatteryBlockId { get; set; }
+
+    /// <summary>
+    /// get or set battery cell id.
+    /// </summary>
+    public int? BatterCellId { get; set; }
 
     /// <summary>
     /// A DateTime value that should change whenever a role is persisted to the store.
@@ -47,18 +55,18 @@ namespace Entities.Models.Pv.Storage
     // Navigation Properties.
 
     /// <summary>
-    /// Navigation property to battery cell.
-    /// </summary>
-    public List<BatteryCell> BatteryCells { get; set; }
-
-    /// <summary>
     /// Navigation property to pv storage.
     /// </summary>
     public PvStorage PvStorage { get; set; }
 
     /// <summary>
-    /// Navigation property to pv comments.
+    /// Navigation property to battery block.
     /// </summary>
-    public List<PvComments>  PvComments { get; set; }
+    public BatteryBlock BatteryBlock { get; set; }
+
+    /// <summary>
+    /// Navigation property to battery cell.
+    /// </summary>
+    public BatteryCell BatteryCell { get; set; }
   }
 }

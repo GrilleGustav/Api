@@ -1,35 +1,26 @@
-﻿// <copyright file="ProductionAddressViewModel.cs" company="GrilleGustav">
+﻿// <copyright file="PvStorageViewModel.cs" company="GrilleGustav">
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
 using System;
 
-namespace Models.View.Pv.Storage
+
+namespace Models.View.Pv
 {
   /// <summary>
-  /// Production address view model.
+  /// Pv-Comments view model.
   /// </summary>
-  public class ProductionAddressViewModel
+  public class PvCommentsViewModel
   {
     /// <summary>
-    /// Get or set Id
+    /// Get or set id.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Proction address name.
+    /// Get or set content.
     /// </summary>
-    public string Name { get; set; }
-
-    /// <summary>
-    /// Get or set production address code.
-    /// </summary>
-    public string Code { get; set; }
-
-    /// <summary>
-    /// Get or set description.
-    /// </summary>
-    public string Description { get; set; }
+    public string Content { get; set; }
 
     /// <summary>
     /// A DateTime value that should change whenever a role is persisted to the store.
@@ -45,8 +36,5 @@ namespace Models.View.Pv.Storage
     /// A DateTime value that shows when record was created.
     /// </summary>
     public DateTime CreatedOn { get; set; }
-
-    ProductionAddressViewModel()
-    { }
   }
 }

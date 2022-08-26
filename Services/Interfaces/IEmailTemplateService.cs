@@ -35,11 +35,12 @@ namespace Services.Interfaces
     /// Get default template for template type.
     /// </summary>
     /// <param name="Id">Email template type.</param>
+    /// <param name="language">Email template language.</param>
     /// <returns>The Task that represents asynchronous operation, containing a template.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     /// <exception cref="Exception"></exception>
-    Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id);
+    Task<Result<EmailTemplate>> GetDefaultTemplateForType(int id, Language language);
 
     /// <summary>
     /// Update email template. If entity to update default == true, set other default to false.

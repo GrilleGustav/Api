@@ -3,8 +3,10 @@
 // </copyright>
 
 using Contracts;
+using Contracts.Pv;
 using Contracts.Pv.Storage;
 using Entities.Context;
+using Repository.Pv;
 using Repository.Pv.Storage;
 using System.Threading.Tasks;
 
@@ -30,6 +32,7 @@ namespace Repository
     private ICellSpecificationRepository _cellSpecificationRepository;
     private IBatteryCellRepository _batteryCellRepository;
     private IBatteryBlockRepository _batteryBlockRepository;
+    private IPvCommentRepository _pvCommentRepository;
 
     /// <summary>
     /// Manage database backend.
@@ -233,6 +236,17 @@ namespace Repository
           _batteryBlockRepository = new BatteryBlockRepository(_repositoryContext);
 
         return _batteryBlockRepository;
+      }
+    }
+
+    public IPvCommentRepository PvComment
+    {
+      get
+      {
+        if (_pvCommentRepository == null)
+          _pvCommentRepository = new PvCommentsRepository(_repositoryContext);
+
+        return _pvCommentRepository;
       }
     }
 

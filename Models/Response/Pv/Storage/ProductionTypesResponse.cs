@@ -19,15 +19,15 @@ namespace Models.Response.Pv.Storage
     /// Production types response.
     /// </summary>
     /// <param name="productionType">Production type.</param>
-    public ProductionTypesResponse(IList<ProductionTypeViewModel> productionType)
+    public ProductionTypesResponse(IList<ProductionTypeViewModel> productionTypes)
     {
-      this.ProductionType = productionType;
+      this.ProductionTypes = productionTypes;
       this.IsSuccess = true;
     }
 
     /// <summary>
     /// Get or set production types.
     /// </summary>
-    public IList<ProductionTypeViewModel> ProductionType { get; set; }
+    public IList<ProductionTypeViewModel> ProductionTypes { get; set; }
   }
 }

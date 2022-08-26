@@ -71,7 +71,7 @@ namespace Services.Pv.Storage
     {
       try
       {
-        return new Result<BatteryCell>(await _repository.BatteryCell.FindByCondition(x => x.Id == id, false).SingleOrDefaultAsync());
+        return new Result<BatteryCell>(await _repository.BatteryCell.FindByCondition(x => x.Id == id, false).Include(x => x.PvComments).SingleOrDefaultAsync());
       }
       catch (ArgumentNullException e)
       {

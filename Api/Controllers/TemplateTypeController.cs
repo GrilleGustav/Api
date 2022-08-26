@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Models.Settings.Email;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Models;
@@ -15,6 +16,7 @@ namespace Api.Controllers
   /// <summary>
   /// Controller to manage template types.
   /// </summary>
+  [Authorize]
   [ApiController]
   [Route("[controller]")]
   public class TemplateTypeController : ControllerBase
@@ -40,6 +42,7 @@ namespace Api.Controllers
     /// Get all template tapes.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing a list of template types.</returns>
+    [Authorize(Roles = "Administrator,View,EmailAdmin,EmailView,")]
     [HttpGet("[action]")]
     public async Task<ActionResult<TemplateTypesResponse>> GetAll()
     {
@@ -61,6 +64,7 @@ namespace Api.Controllers
     /// Get one template type.
     /// </summary>
     /// <returns>The Task that represents asynchronous operation, containing one template type.</returns>
+    [AllowAnonymous]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<TemplateTypeResponse>> GetOne(int id)
     {
@@ -86,6 +90,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="data">Template rype</param>
     /// <returns>The Task that represents asynchronous operation, containing some errors or if add fails.</returns>
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Add(TemplateTypeViewModel data)
     {

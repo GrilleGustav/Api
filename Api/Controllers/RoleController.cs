@@ -5,6 +5,7 @@
 using AutoMapper;
 using Contracts;
 using Entities.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace Api.Controllers
   /// <summary>
   /// Controller to manage user roles.
   /// </summary>
+  [Authorize]
   [ApiController]
   [Route("[controller]")]
   public class RoleController : ControllerBase
@@ -47,6 +49,7 @@ namespace Api.Controllers
     /// Get all rolews from database.
     /// </summary>
     /// <returns>List of roles.</returns>
+    [Authorize(Roles = "Admin,View,RoleAdmin,RoleView")]
     [HttpGet("[action]")]
     public async Task<ActionResult<RolesSettingsResponse>> GetAll()
     {
@@ -58,6 +61,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Role id.</param>
     /// <returns>Return role. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,Update,RoleAdmin,RoleUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<RoleSettingsResponse>> GetOne(string id)
     {
@@ -80,6 +84,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">Role data with name and description.</param>
     /// <returns>Return added role. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Create,RoleAdmin,RoleView,RoleCreate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<RoleSettingsResponse>> Add([FromBody] RoleAddRequest request)
     {
@@ -142,6 +147,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">Changed role.</param>
     /// <returns>If role successfuly changed return true. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Update,RoleAdmin,RoleView,RoleUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> Update([FromBody] RoleUpdateRequest request)
     {
@@ -194,6 +200,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="id">Role id.</param>
     /// <returns>Return success true if role successfuly removed. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,Delete,RoleAdmin,RoleDelete")]
     [HttpDelete("[action]/{id}")]
     public async Task<ActionResult<ErrorResponse>> Delete(string id)
     {
@@ -227,6 +234,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="roleId">Role id.</param>
     /// <returns>List of claims. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Update,RoleAdmin,RoleView,RoleUpdate")]
     [HttpGet("[action]/{id}")]
     public async Task<ActionResult<ClaimsSettingsResponse>> GetClaimsFromRole(string id)
     {
@@ -251,6 +259,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">Role and claim value.</param>
     /// <returns>If claim is added return is_success = true. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Create,Update,RoleAdmin,RoleView,RoleCreate,RoleUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> AddClaimToRole([FromBody] ClaimRequest request)
     {
@@ -286,6 +295,12 @@ namespace Api.Controllers
       return Ok(response);
     }
 
+    /// <summary>
+    /// Update role claims,
+    /// </summary>
+    /// <param name="request">Claims request.</param>
+    /// <returns>If claim is added return is_success = true. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Update,RoleAdmin,RoleView,RoleUpdate")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> UpdateRoleClaims([FromBody] ClaimsRequest request)
     {
@@ -322,6 +337,7 @@ namespace Api.Controllers
     /// </summary>
     /// <param name="request">Role and claim from role to remove.</param>
     /// <returns>If claim was removed from role return is_success = true. Otherwise return one or more errors.</returns>
+    [Authorize(Roles = "Admin,View,Delete,RoleAdmin,RoleView,RoleDelete")]
     [HttpPost("[action]")]
     public async Task<ActionResult<ErrorResponse>> RemoveClaimFromRole([FromBody] ClaimRequest request)
     {
