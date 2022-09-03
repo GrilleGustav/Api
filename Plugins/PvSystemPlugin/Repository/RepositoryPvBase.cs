@@ -1,0 +1,80 @@
+﻿using Contracts;
+using Microsoft.EntityFrameworkCore;
+using PvSystemPlugin.Entities.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+
+namespace PvSystemPlugin.Repository
+{
+  public class RepositoryPvBase<T> : IRepositoryPvBase<T> where T : class
+  {
+    protected RepositoryPvContext RepositoryContext { get; set; }
+
+    public RepositoryPvBase(RepositoryPvContext repositoryContext)
+    {
+      RepositoryContext = repositoryContext;
+    }
+
+    /// <summary>
+    /// Get all records from the entity type.
+    /// </summary>
+    /// <param name="trackChanges">Track changes of found entities.</param>
+    /// <returns>Return all found entites.</returns>
+    public IQueryable<T> FindAll(bool trackChanges) => !trackChanges ? RepositoryContext.Set<T>().AsNoTracking() : RepositoryContext.Set<T>();
+
+    /// <summary>
+    /// Get one or more records of a certain condition.
+    /// </summary>
+    /// <param name="expression">Condition.</param>
+    /// <param name="trackChanges">Track changes of found entities.</param>
+    /// <returns>Return all found entities.</returns>
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
+        bool trackChanges) =>
+            !trackChanges ?
+              RepositoryContext.Set<T>()
+                .Where(expression)
+                .AsNoTracking() :
+              RepositoryContext.Set<T>()
+                .Where(expression);
+
+    /// <summary>
+    /// Create one record.
+    /// </summary>
+    /// <param name="entity">Entity to create.</param>
+    public void Create(T entity) => RepositoryContext.Set<T>().Add(entity);
+
+    /// <summary>
+    /// Create one or more entitys.
+    /// </summary>
+    /// <param name="entities">Entities to create.</param>
+    public void CreateRange(List<T> entities) => RepositoryContext.Set<T>().AddRange(entities);
+
+    /// <summary>
+    /// Update one entity.
+    /// </summary>
+    /// <param name="entity">Entity to update.</param>
+    public void Update(T entity) => RepositoryContext.Set<T>().Update(entity);
+
+    /// <summary>
+    /// Update one or more entities.
+    /// </summary>
+    /// <param name="entities">Entities to update.</param>
+    public void UpdateRange(List<T> entities) => RepositoryContext.Set<T>().UpdateRange(entities);
+
+    /// <summary>
+    /// Delete one entity.
+    /// </summary>
+    /// <param name="entity">Entity to delete.</param>
+    public void Delete(T entity) => RepositoryContext.Set<T>().Remove(entity);
+
+    /// <summary>
+    /// Ingnore Property of entity.
+    /// </summary>
+    /// <param name="entity">Entity with property to be ignored.</param>
+    /// <param name="expression">Property to ignore.</param>
+    public void IgnoreProperty(T entity, Expression<Func<T, string>> expression) =>
+      RepositoryContext.Entry<T>(entity).Property(expression).IsModified = false;
+  }
+}

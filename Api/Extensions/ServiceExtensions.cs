@@ -10,12 +10,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using PluginBase.Services.Interfaces;
+using PluginBase.Services;
 using Repository;
 using Services;
 using Services.Interfaces;
-using Services.Interfaces.Pv.Storage;
-using Services.Pv.Storage;
-using System;
+using System.Collections.Generic;
+using System.IO;
+using PluginBase;
 
 namespace Api.Extensions
 {
@@ -61,20 +63,30 @@ namespace Api.Extensions
       services.AddSingleton<IApplicationClaimsService, ApplicationClaimsService>();
     }
 
-    /// <summary>
-    /// Connfigure PV-Services.
-    /// </summary>
-    /// <param name="services">Service collection to register services.</param>
-    public static void ConfigurePvServices(this IServiceCollection services)
+    public static void LoadPlugins(this IServiceCollection services)
     {
-      services.AddScoped<IBatteryBlockService, BatteryBlockService>();
-      services.AddScoped<IBatteryCellService, BatteryCellService>();
-      services.AddScoped<ICellSpecificationService, CellSpecificationService>();
-      services.AddScoped<ICellTypeService, CellTypeService>();
-      services.AddScoped<IProductionAddressService, ProductionAddressService>();
-      services.AddScoped<IProductionTypeService, ProductionTypeService>();
-      services.AddScoped<IPvStorageService, PvStorageService>();
-      services.AddScoped<IVendorService, VendorService>();
+      IPluginPathService pluginService = services.AddScoped<IPluginPathService, PluginPathService>()
+        .BuildServiceProvider()
+        .GetRequiredService<IPluginPathService>();
+      List<string> plugins = pluginService.GetPluginDlls();
+
+      pluginService.LoadPlugins(plugins);
     }
+
+    ///// <summary>
+    ///// Connfigure PV-Services.
+    ///// </summary>
+    ///// <param name="services">Service collection to register services.</param>
+    //public static void ConfigurePvServices(this IServiceCollection services)
+    //{
+    //  services.AddScoped<IBatteryBlockService, BatteryBlockService>();
+    //  services.AddScoped<IBatteryCellService, BatteryCellService>();
+    //  services.AddScoped<ICellSpecificationService, CellSpecificationService>();
+    //  services.AddScoped<ICellTypeService, CellTypeService>();
+    //  services.AddScoped<IProductionAddressService, ProductionAddressService>();
+    //  services.AddScoped<IProductionTypeService, ProductionTypeService>();
+    //  services.AddScoped<IPvStorageService, PvStorageService>();
+    //  services.AddScoped<IVendorService, VendorService>();
+    //}
   }
 }

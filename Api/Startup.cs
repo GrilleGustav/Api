@@ -21,6 +21,8 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Api.Filters;
 using System.Reflection;
+using PluginBase.Services.Interfaces;
+using PluginBase.Services;
 
 namespace Api
 {
@@ -89,7 +91,9 @@ namespace Api
       services.AddScoped<IPlaceholderService, PlaceholderService>();
       services.AddScoped<ITemplateTypeService, TemplateTypeService>();
       services.ConfigureApplicationClaimsService();
-      services.ConfigurePvServices();
+      services.LoadPlugins();
+      
+      //services.ConfigurePvServices();
 
 
       services.AddControllers(config =>

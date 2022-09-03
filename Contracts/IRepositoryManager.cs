@@ -2,7 +2,6 @@
 // Copyright (c) GrilleGustav. All rights reserved.
 // </copyright>
 
-using Contracts.Pv.Storage;
 using System.Threading.Tasks;
 
 namespace Contracts
@@ -20,22 +19,6 @@ namespace Contracts
     IRefreshTokenRepository RefreshToken { get; }
 
     ITemplateTypeRepository TemplateType { get; }
-
-    IVendorRepository Vendor { get; }
-
-    IPvStorageRepository PvStorage { get; }
-
-    IProductionTypeRepository ProductionType { get; }
-
-    IProductionAddressRepository ProductionAddress { get; }
-
-    ICellTypeRepository CellType { get; }
-
-    ICellSpecificationRepository CellSpecification { get; }
-
-    IBatteryCellRepository BatteryCell { get; }
-
-    IBatteryBlockRepository BatteryBlock { get; }
 
     /// <summary>
     /// Save database actions.
