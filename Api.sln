@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginBase", "Plugins\Plugi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PvSystemPlugin", "Plugins\PvSystemPlugin\PvSystemPlugin.csproj", "{874F7F8E-690C-46E9-8E67-73B4BD4DCE49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHomePlugin", "Plugins\SmartHomePlugin\SmartHomePlugin.csproj", "{6A095304-4501-4C51-B28C-ACC2DFAC1835}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{874F7F8E-690C-46E9-8E67-73B4BD4DCE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874F7F8E-690C-46E9-8E67-73B4BD4DCE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874F7F8E-690C-46E9-8E67-73B4BD4DCE49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A095304-4501-4C51-B28C-ACC2DFAC1835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A095304-4501-4C51-B28C-ACC2DFAC1835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A095304-4501-4C51-B28C-ACC2DFAC1835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A095304-4501-4C51-B28C-ACC2DFAC1835}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{55C0E196-95FF-4C5E-8205-ECC1F1A5D736} = {AE3C7453-4036-4025-85F3-666485227717}
 		{874F7F8E-690C-46E9-8E67-73B4BD4DCE49} = {AE3C7453-4036-4025-85F3-666485227717}
+		{6A095304-4501-4C51-B28C-ACC2DFAC1835} = {AE3C7453-4036-4025-85F3-666485227717}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7BE05380-5CBB-461B-8895-F1C0BF0B7A50}

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,9 +10,8 @@ using System.Threading.Tasks;
 
 namespace PluginBase.Services.Interfaces
 {
-  public interface IPluginPathService
+  public interface IPluginService
   {
-    List<string> GetPluginDlls();
-    void LoadPlugins(List<string> pluginPaths);
+    void Initialize(IServiceCollection services);
   }
 }

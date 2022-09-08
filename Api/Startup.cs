@@ -28,12 +28,14 @@ namespace Api
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
     {
       Configuration = configuration;
+      HostingEnvironment = hostingEnvironment;
     }
 
     public IConfiguration Configuration { get; }
+    public IWebHostEnvironment HostingEnvironment { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
@@ -91,9 +93,12 @@ namespace Api
       services.AddScoped<IPlaceholderService, PlaceholderService>();
       services.AddScoped<ITemplateTypeService, TemplateTypeService>();
       services.ConfigureApplicationClaimsService();
-      services.LoadPlugins();
-      
+
       //services.ConfigurePvServices();
+
+      services.AddScoped<IPluginService, PluginService>()
+                    .BuildServiceProvider().GetService<IPluginService>()
+                    .Initialize(services);
 
 
       services.AddControllers(config =>
@@ -102,6 +107,7 @@ namespace Api
       })
         .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
+
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
@@ -109,6 +115,9 @@ namespace Api
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         c.IncludeXmlComments(xmlPath);
       });
+
+      //services.InitializePlugins(HostingEnvironment, Configuration);
+      //services.LoadPlugins2(HostingEnvironment);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
