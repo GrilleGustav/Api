@@ -3,11 +3,7 @@
 // </copyright>
 
 using Contracts;
-using Contracts.Pv;
-using Contracts.Pv.Storage;
 using Entities.Context;
-using Repository.Pv;
-using Repository.Pv.Storage;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -24,15 +20,6 @@ namespace Repository
     private IEmailMessageRepository _emailMessageRepository;
     private IRefreshTokenRepository _refreshTokenRepository;
     private ITemplateTypeRepository _templateTypeRepository;
-    private IVendorRepository _vendorRepository;
-    private IPvStorageRepository _pvStorageRepository;
-    private IProductionTypeRepository _productionTypeRepository;
-    private IProductionAddressRepository _productionAddressRepository;
-    private ICellTypeRepository _cellTypeRepository;
-    private ICellSpecificationRepository _cellSpecificationRepository;
-    private IBatteryCellRepository _batteryCellRepository;
-    private IBatteryBlockRepository _batteryBlockRepository;
-    private IPvCommentRepository _pvCommentRepository;
 
     /// <summary>
     /// Manage database backend.
@@ -124,129 +111,6 @@ namespace Repository
           _templateTypeRepository = new TemplateTypeRepository(_repositoryContext);
 
         return _templateTypeRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate vendor repository and make it accessible.
-    /// </summary>
-    public IVendorRepository Vendor
-    {
-      get
-      {
-        if (_vendorRepository == null)
-          _vendorRepository = new VendorRepository(_repositoryContext);
-
-        return _vendorRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate pvStorage repository and make it accessible.
-    /// </summary>
-    public IPvStorageRepository PvStorage
-    {
-      get
-      {
-        if (_pvStorageRepository == null)
-          _pvStorageRepository = new PvStorageRepository(_repositoryContext);
-
-        return _pvStorageRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate productionType repository and make it accessible.
-    /// </summary>
-    public IProductionTypeRepository ProductionType
-    {
-      get
-      {
-        if (_productionTypeRepository == null)
-          _productionTypeRepository = new ProductionTypeRepository(_repositoryContext);
-
-        return _productionTypeRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate productionAddress repository and make it accessible.
-    /// </summary>
-    public IProductionAddressRepository ProductionAddress
-    {
-      get
-      {
-        if (_productionAddressRepository == null)
-          _productionAddressRepository = new ProductionAddressRepository(_repositoryContext);
-
-        return _productionAddressRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate cellType repository and make it accessible.
-    /// </summary>
-    public ICellTypeRepository CellType
-    {
-      get
-      {
-        if (_cellTypeRepository == null)
-          _cellTypeRepository = new CellTypeRepository(_repositoryContext);
-
-        return _cellTypeRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate cellSpecification repository and make it accessible.
-    /// </summary>
-    public ICellSpecificationRepository CellSpecification
-    {
-      get
-      {
-        if (_cellSpecificationRepository == null)
-          _cellSpecificationRepository = new CellSpecificationRepository(_repositoryContext);
-
-        return _cellSpecificationRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate batteryCell repository and make it accessible.
-    /// </summary>
-    public IBatteryCellRepository BatteryCell
-    {
-      get
-      {
-        if (_batteryCellRepository == null)
-          _batteryCellRepository = new BatteryCellRepository(_repositoryContext);
-
-        return _batteryCellRepository;
-      }
-    }
-
-    /// <summary>
-    /// Initiate batteryBlock repository and make it accessible.
-    /// </summary>
-    public IBatteryBlockRepository BatteryBlock
-    {
-      get
-      {
-        if (_batteryBlockRepository == null)
-          _batteryBlockRepository = new BatteryBlockRepository(_repositoryContext);
-
-        return _batteryBlockRepository;
-      }
-    }
-
-    public IPvCommentRepository PvComment
-    {
-      get
-      {
-        if (_pvCommentRepository == null)
-          _pvCommentRepository = new PvCommentsRepository(_repositoryContext);
-
-        return _pvCommentRepository;
       }
     }
 

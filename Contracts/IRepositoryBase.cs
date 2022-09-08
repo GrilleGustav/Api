@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace Contracts
 {
-  public interface IRepositoryBase<T>
+  public interface IRepositoryPvBase<T>
   {
     /// <summary>
     /// Get all records from the entity type.

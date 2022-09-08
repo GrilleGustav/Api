@@ -9,7 +9,7 @@ namespace Contracts
   /// <summary>
   /// Used for repository initalization.
   /// </summary>
-  public interface ITemplateTypeRepository : IRepositoryBase<TemplateType>
+  public interface ITemplateTypeRepository : IRepositoryPvBase<TemplateType>
   {
   }
 }

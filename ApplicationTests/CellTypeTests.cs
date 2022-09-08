@@ -1,10 +1,10 @@
 ﻿using Entities.Context;
-using Entities.Models.Pv.Storage;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Services.Interfaces.Pv.Storage;
-using Services.Pv.Storage;
+using PvSystemPlugin.Entities.Models.Pv.Storage;
+using PvSystemPlugin.Services.Interfaces.Pv.Storage;
+using PvSystemPlugin.Services.Pv.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
